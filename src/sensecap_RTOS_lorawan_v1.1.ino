@@ -4,10 +4,15 @@
 #include "disk91_LoRaE5.h"
 #include "LIS3DHTR.h"
 #include "Seeed_Arduino_GroveAI.h"
+#include "seeed_line_chart.h" 
+#include <math.h>
 
 TFT_eSPI tft = TFT_eSPI();
+#define max_size 50 // maximum size of data
+//doubles oooo;  // Initilising a doubles type to store data
 TFT_eSprite spr = TFT_eSprite(&tft); // Sprite
 LIS3DHTR<TwoWire> lis;
+
 
 // 显示尺寸设置
 #define SCREEN_WIDTH 320
@@ -79,102 +84,219 @@ void myDelayMs(int ms)
     vTaskDelay((ms * 1000) / portTICK_PERIOD_US);
 }
 
+void Page_1()
+{
+    char str_num[1], str_conf[1], str_light[1], str_mic_val[1], str_x_values[8], str_y_value[8], str_z_val[8];
+    sprintf(str_num, "%d", num);
+    sprintf(str_conf, "%d", conf_avg);
+    sprintf(str_light, "%d", light);
+    sprintf(str_mic_val, "%d", mic_val);
+    snprintf((char *)str_x_values, 8, "%.2f", x_values);
+    snprintf((char *)str_y_value, 8, "%.2f", y_value);
+    snprintf((char *)str_z_val, 8, "%.2f", z_val);
+
+    conf_avg = 0;
+
+    // Serial.println(str_mic_val);
+
+    spr.createSprite(300, 230);
+    spr.setTextSize(1); //设置字体大小
+
+    spr.fillRect(0, 32, 320, 28, tft.color565(61, 145, 64));
+    // spr.fillRect(0, 60, 320, 100, tft.color565(220, 220, 220));
+    spr.fillRect(0, 60, 320, 100, tft.color565(163, 148, 128));
+
+    spr.setTextColor(TFT_WHITE); //设置字体颜色和背景颜色
+    // spr.fillRect(0, 0, 290, 30, TFT_GREEN);
+    spr.drawString("                              LoRaWAN", FONT_LEFT_START, 5, 4);
+    // spr.drawString("                              LoRaWAN", FONT_LEFT_START, 2, 2);
+
+    // spr.setTextColor(tft.color565(61, 89, 171), TFT_BLACK);
+    // spr.setTextColor(tft.color565(250, 128, 114), TFT_BLACK);
+    // spr.drawString("  Vision AI Module     On-board Sensor", FONT_LEFT_START, 32, 2); //写字（参数：字符串、开始x坐标、开始y坐标、字体）
+    spr.setTextColor(TFT_BLACK); //设置字体颜色和背景颜色
+    // tft.setFreeFont(FF10);
+    spr.drawString("  Vision AI Module     On-board Sensor", FONT_LEFT_START, 36, 2); //写字（参数：字符串、开始x坐标、开始y坐标、字体）
+    spr.drawString("  People Counting: ", FONT_LEFT_START, 32 + 1.5 * FONT_ROW_HEIGHT, 2);
+    spr.drawString("  Average", FONT_LEFT_START, 32 + 2.5 * FONT_ROW_HEIGHT, 2);
+    spr.drawString("  Accuracy:", FONT_LEFT_START, 32 + 3.5 * FONT_ROW_HEIGHT, 2);
+    spr.drawString("%", FONT_LEFT_START + 100, 32 + 3.5 * FONT_ROW_HEIGHT, 2);
+    spr.drawString("Light: ", FONT_LEFT_START + 149, 32 + 1.5 * FONT_ROW_HEIGHT, 2);
+    spr.drawString("Sound: ", FONT_LEFT_START + 149, 32 + 2.5 * FONT_ROW_HEIGHT, 2);
+    spr.drawString("IMU: ", FONT_LEFT_START + 149, 32 + 3.5 * FONT_ROW_HEIGHT, 2);
+    spr.drawString("(x,y,z)", FONT_LEFT_START + 149, 32 + 4.5 * FONT_ROW_HEIGHT, 2);
+    // spr.drawLine(0, 32+5.5*FONT_ROW_HEIGHT, 300, 32+5.5*FONT_ROW_HEIGHT, TFT_BLACK);
+    spr.drawLine(FONT_LEFT_START + 140, 32, FONT_LEFT_START + 140, 160, TFT_BLACK);
+
+    spr.setTextColor(TFT_WHITE); //设置字体颜色和背景颜色
+
+    if (col)
+    {
+        spr.fillCircle(FONT_LEFT_START + 280, 14, 10, TFT_GREEN);
+    }
+    else
+    {
+        spr.fillCircle(FONT_LEFT_START + 280, 14, 10, TFT_RED);
+    }
+
+    // spr.drawRect(FONT_LEFT_START+23, 25+6*FONT_ROW_HEIGHT, 248, 55, TFT_BLUE);
+
+    spr.setTextColor(tft.color565(25, 25, 112), tft.color565(163, 148, 128)); //设置字体颜色和背景颜色
+    spr.drawString(str_num, FONT_LEFT_START + 123, 32 + 1.5 * FONT_ROW_HEIGHT, 2);
+    spr.drawString(str_conf, FONT_LEFT_START + 80, 32 + 3.5 * FONT_ROW_HEIGHT, 2);
+    spr.drawString(str_light, FONT_LEFT_START + 186, 32 + 1.5 * FONT_ROW_HEIGHT, 2);
+    spr.drawString(str_mic_val, FONT_LEFT_START + 194, 32 + 2.5 * FONT_ROW_HEIGHT, 2);
+    spr.drawString(str_x_values, FONT_LEFT_START + 179, 32 + 3.5 * FONT_ROW_HEIGHT, 2);
+    spr.drawString(str_y_value, FONT_LEFT_START + 214, 32 + 3.5 * FONT_ROW_HEIGHT, 2);
+    spr.drawString(str_z_val, FONT_LEFT_START + 254, 32 + 3.5 * FONT_ROW_HEIGHT, 2);
+
+    spr.setTextColor(TFT_BLACK); //设置字体颜色和背景颜色
+    spr.drawString(",", FONT_LEFT_START + 210, 32 + 3.5 * FONT_ROW_HEIGHT, 2);
+    spr.drawString(",", FONT_LEFT_START + 250, 32 + 3.5 * FONT_ROW_HEIGHT, 2);
+
+    spr.setTextColor(TFT_WHITE); //设置字体颜色和背景颜色
+    spr.drawString("Please login to                    to", FONT_LEFT_START + 30, 32 + 6.5 * FONT_ROW_HEIGHT, 2);
+    spr.drawString("bind your device.", FONT_LEFT_START + 30, 32 + 7.5 * FONT_ROW_HEIGHT, 2);
+
+    spr.setTextColor(tft.color565(127, 255, 0)); //设置字体颜色和背景颜色
+    spr.drawString("sensecap.seeed.cc", FONT_LEFT_START + 129, 32 + 6.5 * FONT_ROW_HEIGHT, 2);
+
+    spr.pushSprite(0 + SCREEN_PADDING, 0 + SCREEN_PADDING);
+    spr.deleteSprite();
+    myDelayMs(200);
+}
+
+void Page_2()
+{
+    char str_num[1], str_conf[1], str_light[1], str_mic_val[1], str_x_values[8], str_y_value[8], str_z_val[8];
+    // sprintf(str_num, "%d", num);
+    // sprintf(str_conf, "%d", conf_avg);
+    // sprintf(str_light, "%d", light);
+    // sprintf(str_mic_val, "%d", mic_val);
+    // snprintf((char *)str_x_values, 8, "%.2f", x_values);
+    // snprintf((char *)str_y_value, 8, "%.2f", y_value);
+    // snprintf((char *)str_z_val, 8, "%.2f", z_val);
+
+    conf_avg = 0;
+
+    // Serial.println(str_mic_val);
+
+    spr.createSprite(300, 230);
+    spr.setTextSize(1); //设置字体大小
+
+    spr.fillRect(0, 32, 320, 28, tft.color565(61, 145, 64));
+    // spr.fillRect(0, 60, 320, 100, tft.color565(220, 220, 220));
+    spr.fillRect(0, 60, 320, 100, tft.color565(163, 148, 128));
+
+    spr.setTextColor(TFT_WHITE); //设置字体颜色和背景颜色
+    // spr.fillRect(0, 0, 290, 30, TFT_GREEN);
+    spr.drawString("                              LoRaWAN", FONT_LEFT_START, 5, 4);
+    // spr.drawString("                              LoRaWAN", FONT_LEFT_START, 2, 2);
+
+    // spr.setTextColor(tft.color565(61, 89, 171), TFT_BLACK);
+    // spr.setTextColor(tft.color565(250, 128, 114), TFT_BLACK);
+    // spr.drawString("  Vision AI Module     On-board Sensor", FONT_LEFT_START, 32, 2); //写字（参数：字符串、开始x坐标、开始y坐标、字体）
+    spr.setTextColor(TFT_BLACK); //设置字体颜色和背景颜色
+    // tft.setFreeFont(FF10);
+    // spr.drawString("  Test ", FONT_LEFT_START, 36, 2); //写字（参数：字符串、开始x坐标、开始y坐标、字体）
+    // spr.drawString("  Test ", FONT_LEFT_START, 32 + 1.5 * FONT_ROW_HEIGHT, 2);
+    // spr.drawString("  Test", FONT_LEFT_START, 32 + 2.5 * FONT_ROW_HEIGHT, 2);
+    // spr.drawString("  Test", FONT_LEFT_START, 32 + 3.5 * FONT_ROW_HEIGHT, 2);
+    // spr.drawString("Test", FONT_LEFT_START + 100, 32 + 3.5 * FONT_ROW_HEIGHT, 2);
+    // spr.drawString("Test: ", FONT_LEFT_START + 149, 32 + 1.5 * FONT_ROW_HEIGHT, 2);
+    // spr.drawString("Test: ", FONT_LEFT_START + 149, 32 + 2.5 * FONT_ROW_HEIGHT, 2);
+    // spr.drawString("Test: ", FONT_LEFT_START + 149, 32 + 3.5 * FONT_ROW_HEIGHT, 2);
+    // spr.drawString("(x,y,z)", FONT_LEFT_START + 149, 32 + 4.5 * FONT_ROW_HEIGHT, 2);
+    // // spr.drawLine(0, 32+5.5*FONT_ROW_HEIGHT, 300, 32+5.5*FONT_ROW_HEIGHT, TFT_BLACK);
+
+ 
+    // spr.fillSprite(TFT_RED);
+    // if (data.size() == max_size) {
+    //     data.pop(); // this is used to remove the first read variable
+    // }
+    // data.push(x_values); // read variables and store in data
+    
+    
+    spr.drawLine(FONT_LEFT_START + 140, 32, FONT_LEFT_START + 140, 160, TFT_BLACK);
+
+    spr.setTextColor(TFT_WHITE); //设置字体颜色和背景颜色
+
+    if (col)
+    {
+        spr.fillCircle(FONT_LEFT_START + 280, 14, 10, TFT_GREEN);
+    }
+    else
+    {
+        spr.fillCircle(FONT_LEFT_START + 280, 14, 10, TFT_RED);
+    }
+
+    // spr.drawRect(FONT_LEFT_START+23, 25+6*FONT_ROW_HEIGHT, 248, 55, TFT_BLUE);
+
+    spr.setTextColor(tft.color565(25, 25, 112), tft.color565(163, 148, 128)); //设置字体颜色和背景颜色
+    // spr.drawString(str_num, FONT_LEFT_START + 123, 32 + 1.5 * FONT_ROW_HEIGHT, 2);
+    // spr.drawString(str_conf, FONT_LEFT_START + 80, 32 + 3.5 * FONT_ROW_HEIGHT, 2);
+    // spr.drawString(str_light, FONT_LEFT_START + 186, 32 + 1.5 * FONT_ROW_HEIGHT, 2);
+    // spr.drawString(str_mic_val, FONT_LEFT_START + 194, 32 + 2.5 * FONT_ROW_HEIGHT, 2);
+    // spr.drawString(str_x_values, FONT_LEFT_START + 179, 32 + 3.5 * FONT_ROW_HEIGHT, 2);
+    // spr.drawString(str_y_value, FONT_LEFT_START + 214, 32 + 3.5 * FONT_ROW_HEIGHT, 2);
+    // spr.drawString(str_z_val, FONT_LEFT_START + 254, 32 + 3.5 * FONT_ROW_HEIGHT, 2);
+
+    spr.setTextColor(TFT_BLACK); //设置字体颜色和背景颜色
+    spr.drawString(",", FONT_LEFT_START + 210, 32 + 3.5 * FONT_ROW_HEIGHT, 2);
+    spr.drawString(",", FONT_LEFT_START + 250, 32 + 3.5 * FONT_ROW_HEIGHT, 2);
+
+    spr.setTextColor(TFT_WHITE); //设置字体颜色和背景颜色
+    spr.drawString("Please login to                    to", FONT_LEFT_START + 30, 32 + 6.5 * FONT_ROW_HEIGHT, 2);
+    spr.drawString("bind your device.", FONT_LEFT_START + 30, 32 + 7.5 * FONT_ROW_HEIGHT, 2);
+
+    spr.setTextColor(tft.color565(127, 255, 0)); //设置字体颜色和背景颜色
+    spr.drawString("sensecap.seeed.cc", FONT_LEFT_START + 129, 32 + 6.5 * FONT_ROW_HEIGHT, 2);
+
+    spr.pushSprite(0 + SCREEN_PADDING, 0 + SCREEN_PADDING);
+    spr.deleteSprite();
+    myDelayMs(200);
+}
+int page_flag = 1; // 默认显示页
 // RTOS：显示屏任务
 static void LCD_TASK_1(void *pvParameters)
 {
     Serial.println("Thread A: Started");
     while (1)
     {
-        char str_num[1], str_conf[1], str_light[1], str_mic_val[1], str_x_values[8], str_y_value[8], str_z_val[8];
-        sprintf(str_num, "%d", num);
-        sprintf(str_conf, "%d", conf_avg);
-        sprintf(str_light, "%d", light);
-        sprintf(str_mic_val, "%d", mic_val);
-        snprintf((char *)str_x_values, 8, "%.2f", x_values);
-        snprintf((char *)str_y_value, 8, "%.2f", y_value);
-        snprintf((char *)str_z_val, 8, "%.2f", z_val);
 
-        conf_avg = 0;
-
-        // Serial.println(str_mic_val);
-
-        spr.createSprite(300, 230);
-        spr.setTextSize(1); //设置字体大小
-
-        spr.fillRect(0, 32, 320, 28, tft.color565(61, 145, 64));
-        // spr.fillRect(0, 60, 320, 100, tft.color565(220, 220, 220));
-        spr.fillRect(0, 60, 320, 100, tft.color565(163, 148, 128));
-
-        spr.setTextColor(TFT_WHITE); //设置字体颜色和背景颜色
-        // spr.fillRect(0, 0, 290, 30, TFT_GREEN);
-        spr.drawString("                              LoRaWAN", FONT_LEFT_START, 5, 4);
-        // spr.drawString("                              LoRaWAN", FONT_LEFT_START, 2, 2);
-
-        // spr.setTextColor(tft.color565(61, 89, 171), TFT_BLACK);
-        // spr.setTextColor(tft.color565(250, 128, 114), TFT_BLACK);
-        // spr.drawString("  Vision AI Module     On-board Sensor", FONT_LEFT_START, 32, 2); //写字（参数：字符串、开始x坐标、开始y坐标、字体）
-        spr.setTextColor(TFT_BLACK); //设置字体颜色和背景颜色
-        // tft.setFreeFont(FF10);
-        spr.drawString("  Vision AI Module     On-board Sensor", FONT_LEFT_START, 36, 2); //写字（参数：字符串、开始x坐标、开始y坐标、字体）
-        spr.drawString("  People Counting: ", FONT_LEFT_START, 32 + 1.5 * FONT_ROW_HEIGHT, 2);
-        spr.drawString("  Average", FONT_LEFT_START, 32 + 2.5 * FONT_ROW_HEIGHT, 2);
-        spr.drawString("  Accuracy:", FONT_LEFT_START, 32 + 3.5 * FONT_ROW_HEIGHT, 2);
-        spr.drawString("%", FONT_LEFT_START + 100, 32 + 3.5 * FONT_ROW_HEIGHT, 2);
-        spr.drawString("Light: ", FONT_LEFT_START + 149, 32 + 1.5 * FONT_ROW_HEIGHT, 2);
-        spr.drawString("Sound: ", FONT_LEFT_START + 149, 32 + 2.5 * FONT_ROW_HEIGHT, 2);
-        spr.drawString("IMU: ", FONT_LEFT_START + 149, 32 + 3.5 * FONT_ROW_HEIGHT, 2);
-        spr.drawString("(x,y,z)", FONT_LEFT_START + 149, 32 + 4.5 * FONT_ROW_HEIGHT, 2);
-        // spr.drawLine(0, 32+5.5*FONT_ROW_HEIGHT, 300, 32+5.5*FONT_ROW_HEIGHT, TFT_BLACK);
-        spr.drawLine(FONT_LEFT_START + 140, 32, FONT_LEFT_START + 140, 160, TFT_BLACK);
-
-        spr.setTextColor(TFT_WHITE); //设置字体颜色和背景颜色
-        if (key_status == 1)
+        if (digitalRead(WIO_KEY_C) == LOW)
         {
-            spr.drawString("  EU868", FONT_LEFT_START, 5, 2);
+            Serial.println("A Key pressed");
+            page_flag = 1;
         }
-        else if (key_status == 2)
+        else if (digitalRead(WIO_KEY_B) == LOW)
         {
-            spr.drawString("  US915", FONT_LEFT_START, 5, 2);
+            Serial.println("B Key pressed");
+            page_flag = 2;
         }
-        else if (key_status == 3)
+        else if (digitalRead(WIO_KEY_A) == LOW)
         {
-            spr.drawString("  AU915", FONT_LEFT_START, 5, 2);
+            Serial.println("C Key pressed");
+            page_flag = 3;
         }
 
-        if (col)
+        switch (page_flag)
         {
-            spr.fillCircle(FONT_LEFT_START + 280, 14, 10, TFT_GREEN);
+            case 1:
+                Page_1();
+                break;
+            case 2:
+                Page_2();   //
+                break;
+            case 3:
+                // Page_3(); //todo
+                // break;
+            default:
+                Page_1();
+                break;
         }
-        else
-        {
-            spr.fillCircle(FONT_LEFT_START + 280, 14, 10, TFT_RED);
-        }
 
-        // spr.drawRect(FONT_LEFT_START+23, 25+6*FONT_ROW_HEIGHT, 248, 55, TFT_BLUE);
 
-        spr.setTextColor(tft.color565(25, 25, 112), tft.color565(163, 148, 128)); //设置字体颜色和背景颜色
-        spr.drawString(str_num, FONT_LEFT_START + 123, 32 + 1.5 * FONT_ROW_HEIGHT, 2);
-        spr.drawString(str_conf, FONT_LEFT_START + 80, 32 + 3.5 * FONT_ROW_HEIGHT, 2);
-        spr.drawString(str_light, FONT_LEFT_START + 186, 32 + 1.5 * FONT_ROW_HEIGHT, 2);
-        spr.drawString(str_mic_val, FONT_LEFT_START + 194, 32 + 2.5 * FONT_ROW_HEIGHT, 2);
-        spr.drawString(str_x_values, FONT_LEFT_START + 179, 32 + 3.5 * FONT_ROW_HEIGHT, 2);
-        spr.drawString(str_y_value, FONT_LEFT_START + 214, 32 + 3.5 * FONT_ROW_HEIGHT, 2);
-        spr.drawString(str_z_val, FONT_LEFT_START + 254, 32 + 3.5 * FONT_ROW_HEIGHT, 2);
-
-        spr.setTextColor(TFT_BLACK); //设置字体颜色和背景颜色
-        spr.drawString(",", FONT_LEFT_START + 210, 32 + 3.5 * FONT_ROW_HEIGHT, 2);
-        spr.drawString(",", FONT_LEFT_START + 250, 32 + 3.5 * FONT_ROW_HEIGHT, 2);
-
-        spr.setTextColor(TFT_WHITE); //设置字体颜色和背景颜色
-        spr.drawString("Please login to                    to", FONT_LEFT_START + 30, 32 + 6.5 * FONT_ROW_HEIGHT, 2);
-        spr.drawString("bind your device.", FONT_LEFT_START + 30, 32 + 7.5 * FONT_ROW_HEIGHT, 2);
-
-        spr.setTextColor(tft.color565(127, 255, 0)); //设置字体颜色和背景颜色
-        spr.drawString("sensecap.seeed.cc", FONT_LEFT_START + 129, 32 + 6.5 * FONT_ROW_HEIGHT, 2);
-
-        spr.pushSprite(0 + SCREEN_PADDING, 0 + SCREEN_PADDING);
-        spr.deleteSprite();
-        myDelayMs(200);
     }
 }
 
@@ -650,6 +772,7 @@ void setup()
     Lora_Init();
 
     xTaskCreate(LCD_TASK_1, "Task A", 256, NULL, tskIDLE_PRIORITY + 1, &Handle_pageTask);
+
     xTaskCreate(read_sensor, "Task B", 128, NULL, tskIDLE_PRIORITY + 2, &Handle_ReadSensor_Task);
     if (state == 1)
     {
