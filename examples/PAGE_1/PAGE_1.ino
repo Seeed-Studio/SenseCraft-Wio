@@ -4,13 +4,13 @@
 #include "disk91_LoRaE5.h"
 #include "LIS3DHTR.h"
 #include "Seeed_Arduino_GroveAI.h"
-#include "seeed_line_chart.h" 
+#include "seeed_line_chart.h"
 #include <math.h>
 #include "Free_Fonts.h"
 TFT_eSPI tft = TFT_eSPI();
-#define DATA_MAX_SIZE 30 // maximum size of data
-#define MAX_SIZE 30 // maximum size of data
-doubles data;  // Initilising a doubles type to store data
+#define DATA_MAX_SIZE 30             // maximum size of data
+#define MAX_SIZE 30                  // maximum size of data
+doubles data;                        // Initilising a doubles type to store data
 TFT_eSprite spr = TFT_eSprite(&tft); // Sprite
 LIS3DHTR<TwoWire> lis;
 
@@ -30,11 +30,11 @@ const static unsigned int FONT_LEFT_START = 0;  // px
 const static unsigned int FONT_COLOR = TFT_WHITE;
 const static unsigned int FONT_BG_COLOR = TFT_RED;
 const static unsigned int BACKGROUD = TFT_BLACK;
-int conf=0;    //置信度
-int num=0;     //人体数量
-int light=0, mic_val=0;  //光线值、麦克风响度
-bool col = false;        //控制LoRaWAN灯色
-float x_values=0.0, y_value=0.0, z_val=0.0; //IMU数值
+int conf = 0;                                     //置信度
+int num = 0;                                      //人体数量
+int light = 0, mic_val = 0;                       //光线值、麦克风响度
+bool col = false;                                 //控制LoRaWAN灯色
+float x_values = 0.0, y_value = 0.0, z_val = 0.0; // IMU数值
 int conf_avg = 0;
 
 void setup()
@@ -48,7 +48,7 @@ void setup()
 
 void Page_1()
 {
-  
+
     char str_num[1], str_conf[1], str_light[1], str_mic_val[1], str_x_values[8], str_y_value[8], str_z_val[8];
     sprintf(str_num, "%d", num);
     sprintf(str_conf, "%d", conf_avg);
@@ -60,32 +60,25 @@ void Page_1()
 
     conf_avg = 0;
 
-    // Serial.println(str_mic_val);
-
     spr.createSprite(320, 240);
 
-
     spr.fillRect(0, 32, 320, 28, tft.color565(61, 145, 64));
-    // spr.fillRect(0, 60, 320, 100, tft.color565(220, 220, 220));
     spr.fillRect(0, 60, 320, 100, tft.color565(163, 148, 128));
 
     spr.setTextColor(TFT_WHITE); //设置字体颜色和背景颜色
-
-    // spr.setTextColor(tft.color565(61, 89, 171), TFT_BLACK);
-    // spr.setTextColor(tft.color565(250, 128, 114), TFT_BLACK);
 
     spr.fillRect(10, 0, 75, 30, TFT_WHITE);
     spr.fillRect(90, 0, 95, 30, TFT_WHITE);
     spr.fillRect(190, 0, 100, 30, TFT_WHITE);
 
-    spr.setTextColor(TFT_BLACK); //设置字体颜色和背景颜色
+    spr.setTextColor(TFT_BLACK);                                            //设置字体颜色和背景颜色
     spr.drawString("  Sense  Process  Network", FONT_LEFT_START, 5, FONT4); //写字（参数：字符串、开始x坐标、开始y坐标、字体）
-    
+
     spr.drawLine(0, 35, 320, 35, TFT_WHITE);
 
     spr.setTextColor(TFT_WHITE);
-    spr.drawString("  Sensor ", 90,35 , FONT4); //写字（参数：字符串、开始x坐标、开始y坐标、字体）
-   
+    spr.drawString("  Sensor ", 90, 35, FONT4); //写字（参数：字符串、开始x坐标、开始y坐标、字体）
+
     spr.drawString("  Average", FONT_LEFT_START, 32 + 2.5 * FONT_ROW_HEIGHT, 2);
     spr.drawString("  Accuracy:", FONT_LEFT_START, 32 + 3.5 * FONT_ROW_HEIGHT, 2);
     spr.drawString("%", FONT_LEFT_START + 100, 32 + 3.5 * FONT_ROW_HEIGHT, 2);
@@ -93,8 +86,6 @@ void Page_1()
     spr.drawString("Sound: ", FONT_LEFT_START + 149, 32 + 2.5 * FONT_ROW_HEIGHT, 2);
     spr.drawString("IMU: ", FONT_LEFT_START + 149, 32 + 3.5 * FONT_ROW_HEIGHT, 2);
     spr.drawString("(x,y,z)", FONT_LEFT_START + 149, 32 + 4.5 * FONT_ROW_HEIGHT, 2);
-    // spr.drawLine(0, 32+5.5*FONT_ROW_HEIGHT, 300, 32+5.5*FONT_ROW_HEIGHT, TFT_BLACK);
-//    spr.drawLine(FONT_LEFT_START + 140, 32, FONT_LEFT_START + 140, 160, TFT_BLACK);
 
     spr.setTextColor(TFT_WHITE); //设置字体颜色和背景颜色
 
@@ -120,7 +111,6 @@ void Page_1()
 
     spr.pushSprite(0 + SCREEN_PADDING, 0 + SCREEN_PADDING);
     spr.deleteSprite();
-    
 }
 void loop()
 {

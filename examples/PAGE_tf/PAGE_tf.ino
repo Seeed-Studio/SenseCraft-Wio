@@ -123,7 +123,7 @@ void Page_tf()
     if (digitalRead(WIO_KEY_B) == LOW)
     {
         Serial.println("B Key pressed");
-        gg_storage_is_full ++;
+        gg_storage_is_full++;
         delay(200);
     }
 
@@ -137,9 +137,9 @@ void Page_tf()
     }
 
     switch_button_gui(gg_switch_location_x, gg_switch_location_y, gg_switch_circle, gg_switch_rect_width, gg_switch);
-//    int gg_storage_is_full = 1 ;
-   
-    if (gg_storage_is_full%2)
+    //    int gg_storage_is_full = 1 ;
+
+    if (gg_storage_is_full % 2)
     {
         spr.setTextColor(TFT_YELLOW);
         spr.setFreeFont(FSSB9);
@@ -147,21 +147,23 @@ void Page_tf()
         spr.drawString("! ", 158, 140, 2);
         spr.drawString("TF card storage space is fully occupied ", 30, 160, 2);
     }
-    
-    else{
-        if(gg_switch == 0){
-          spr.setTextColor(TFT_YELLOW);
-          spr.setFreeFont(FSSB9);
-          spr.drawString("Please insert TF card to activate this function ", 10, 140, 2);
+
+    else
+    {
+        if (gg_switch == 0)
+        {
+            spr.setTextColor(TFT_YELLOW);
+            spr.setFreeFont(FSSB9);
+            spr.drawString("Please insert TF card to activate this function ", 10, 140, 2);
         }
-        else{
-          spr.fillRect(40, 130, 250, 50, TFT_WHITE);
-          spr.setTextColor(TFT_BLACK);
-          spr.setFreeFont(FSSB9);
-          spr.drawString("Saving has been started", 60, 140, GFXFF);
+        else
+        {
+            spr.fillRect(40, 130, 250, 50, TFT_WHITE);
+            spr.setTextColor(TFT_BLACK);
+            spr.setFreeFont(FSSB9);
+            spr.drawString("Saving has been started", 60, 140, GFXFF);
         }
     }
-
 
     spr.setTextColor(TFT_YELLOW);
     spr.drawString("Network:", 10, 220, GFXFF);
@@ -170,7 +172,6 @@ void Page_tf()
 
     spr.pushSprite(0 + SCREEN_PADDING, 0 + SCREEN_PADDING);
     spr.deleteSprite();
-    
 }
 void loop()
 {

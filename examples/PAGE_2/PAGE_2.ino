@@ -85,17 +85,6 @@ void loop()
 
     data.push(brightness); // read variables and store in data
 
-    // Settings for the line graph title
-    //    auto header = text(0, 0)
-    //                      .value("Light Sensor Readings")
-    //                      .align(center)
-    //                      .valign(vcenter)
-    //                      .width(tft.width())
-    //                      .thickness(2);
-    //
-    //    header.height(header.font_height(&tft) * 2);
-    //    header.draw(&tft); // Header height is the twice the height of the font
-
     // Settings for the line graph
     auto content = line_chart(20, 80); //(x,y) where the line graph begins
     content

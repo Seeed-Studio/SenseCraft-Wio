@@ -59,8 +59,6 @@ void PAGE()  //设置频段页面
   tft.drawLine(168, 30, 168, 85, TFT_YELLOW);
   tft.drawLine(168, 85, 245, 85, TFT_YELLOW);
 
-  
-  //tft.setTextSize(2);
   tft.setTextColor(TFT_CYAN, TFT_BLACK);
   tft.drawString("Button A", 0, 23, 2);
   tft.drawString("EU868", 280, 125, 2);
@@ -76,7 +74,6 @@ void PAGE()  //设置频段页面
   tft.setTextDatum(0);
 }
 
-//int brightness; 
 void loop()
 {
   PAGE();
