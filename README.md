@@ -20,6 +20,7 @@ pio run -v
 
 ### Structure
 
+```
 +-- examples
 |   +-- Page_1
 |   +-- Page_2
@@ -31,7 +32,8 @@ pio run -v
 |   +-- *.cpp
 |   +-- *.h
 -- *.md
-----
+```
+
 
 ### Todo
 
@@ -41,8 +43,8 @@ pio run -v
 
 ❌ 与文档内容无关或暂未开始
 
-|Code | Content ||
-|---|---|---|---|
+| Code | Content | Status|
+| :------------ |:---------------:| -----:|
 |Page_1| Sence |✅ |
 |Page_2| Process |✅✅ |
 |Page_3| Network|❌|
