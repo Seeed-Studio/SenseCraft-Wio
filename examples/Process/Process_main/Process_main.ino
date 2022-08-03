@@ -26,7 +26,11 @@ void DISPLAY_INIT() // Display initialization, black background rotation
 
 void Process_main(int page)
 {
-    //    page = 0;
+    //    page = 0; 
+    //case 0   Vision AI log 
+    //case 1  Proccsee首页
+    //case 2  TinyML示例 
+    //case 3  TinyML已进入
     switch (page)
     {
     case 0:
@@ -146,7 +150,7 @@ void Vision_AI_real_time_analysis(void) // todo
     }
 }
 
-void Sense_Display(int G, int G_network) // Sense interface display
+void Process_Display(int G, int G_network) // Sense interface display
 {
     spr.createSprite(SCREEN_WIDTH, SCREEN_HIGH);
 
@@ -207,5 +211,5 @@ void loop()
         delay(200);
     }
 
-    Sense_Display(gg_switch % 4, gg_network_flag % 2);
+    Process_Display(gg_switch % 4, gg_network_flag % 2);
 }
