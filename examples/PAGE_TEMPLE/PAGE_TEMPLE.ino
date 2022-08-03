@@ -42,6 +42,14 @@ void Sense_Display() // Sense interface display
     spr.fillRect(128, 50, 16 * PIXEL, FONT_ROW_HEIGHT, tft.color565(220, 220, 220));
     spr.drawString("Sensor", 132, 54, GFXFF);
 
+    spr.drawString("Network :", 5, 218 , GFXFF);
+
+//  spr.setTextColor(TFT_RED, TFT_BLACK);             //Networking status indication：OFF
+//  spr.drawString("OFF", 82, 218 , GFXFF);
+
+    spr.setTextColor(TFT_GREEN, TFT_BLACK);             //Networking status indication：ON
+    spr.drawString("ON", 82, 218 , GFXFF);
+
     spr.pushSprite(0, 0);
     spr.deleteSprite();
 }
