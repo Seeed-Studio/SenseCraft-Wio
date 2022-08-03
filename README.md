@@ -22,11 +22,11 @@ pio run -v
 
 ```
 +-- examples
-|   +-- Page_1
-|   +-- Page_2
-|   +-- Page_3
+|   +-- Sense
+|       +-- Page_tf
+|   +-- Process
+|   +-- Network
 |   +-- Page_TEMPLE
-|   +-- Page_tf
 |   +-- Page_WELCOME
 +-- src
 |   +-- *.cpp
@@ -45,9 +45,9 @@ pio run -v
 
 | Code | Content | Status|
 | :------------ |:---------------:| -----:|
-|Page_1| Sence |✅ |
-|Page_2| Process |✅✅ |
-|Page_3| Network|❌|
+|Sense| Sence |✅ |
+|Process| Process |✅✅ |
+|Network| Network|❌|
 |Page_tf| tf_card (Sence 四级界面 ) | ✅✅ |
 |Page_WELCOME| Welcome & Configure Page | ❌ |
 |Page_TEMPLE| 模板界面 基于此界面 加入 其他界面内容| ❌|
