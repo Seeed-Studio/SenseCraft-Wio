@@ -39,25 +39,29 @@ void DISPLAY_INIT() // Display initialization, black background rotation
 
 void Sense_Display() // Sense interface display
 {
-    spr.createSprite(SCREEN_WIDTH, SCREEN_HIGH);
 
-    spr.setFreeFont(FSSB9);
-    spr.setTextColor(TFT_BLACK, TFT_WHITE);
+    //  spr.createSprite(SCREEN_WIDTH, SCREEN_HIGH);
 
-    spr.fillRect(4 * PIXEL, 0, 21 * PIXEL, FONT_ROW_HEIGHT + 15, TFT_WHITE);
-    spr.fillRect(30 * PIXEL, 0, 21 * PIXEL, FONT_ROW_HEIGHT + 15, TFT_WHITE);
-    spr.fillRect(56 * PIXEL, 0, 21 * PIXEL, FONT_ROW_HEIGHT + 15, TFT_WHITE);
+    tft.setFreeFont(FSSB9);
+    tft.setTextColor(TFT_BLACK, TFT_WHITE);
 
-    spr.drawString("Sense", 32, 11, GFXFF);
-    spr.drawString("Process", 127, 11, GFXFF);
-    spr.drawString("Network", 231, 11, GFXFF);
+    tft.fillRect(4 * PIXEL, 0, 21 * PIXEL, FONT_ROW_HEIGHT + 15, TFT_WHITE);
+    tft.drawString("Sense", 32, 11, GFXFF);
 
-    spr.drawLine(0, 2 * FONT_ROW_HEIGHT, SCREEN_WIDTH, 2 * FONT_ROW_HEIGHT, TFT_WHITE);
+    tft.fillRect(30 * PIXEL, 0, 21 * PIXEL, FONT_ROW_HEIGHT + 15, tft.color565(135, 206, 235));
+    tft.setTextColor(TFT_BLACK, tft.color565(135, 206, 235));
+    tft.drawString("Process", 127, 11, GFXFF);
 
-    spr.setFreeFont(FSS9);
-    spr.setTextColor(TFT_BLACK, tft.color565(220, 220, 220));
-    spr.fillRect(127, 53.5, 16 * PIXEL, FONT_ROW_HEIGHT, tft.color565(220, 220, 220));
-    spr.drawString("Sensor", 130, 56, GFXFF);
+    tft.setTextColor(TFT_BLACK, TFT_WHITE);
+    tft.fillRect(56 * PIXEL, 0, 21 * PIXEL, FONT_ROW_HEIGHT + 15, TFT_WHITE);
+    tft.drawString("Network", 231, 11, GFXFF);
+
+    tft.drawLine(0, 2 * FONT_ROW_HEIGHT, SCREEN_WIDTH, 2 * FONT_ROW_HEIGHT, TFT_WHITE);
+
+    tft.setFreeFont(FSS9);
+    tft.setTextColor(TFT_BLACK, tft.color565(220, 220, 220));
+    tft.fillRect(127, 53.5, 16 * PIXEL, FONT_ROW_HEIGHT, tft.color565(220, 220, 220));
+    tft.drawString("Sensor", 130, 56, GFXFF);
 }
 
 void setup()
@@ -65,7 +69,7 @@ void setup()
     pinMode(A0, INPUT);
     tft.begin();
     tft.setRotation(3);
-    tft.fillScreen(TFT_WHITE);
+    tft.fillScreen(TFT_BLACK);
     //    DISPLAY_INIT();
 }
 
@@ -75,7 +79,8 @@ void loop()
     //    brightness = analogRead(A0);
 
     Sense_Display();
-    //    spr.fillRect(0, 80, 320, 150, TFT_WHITE);
+    tft.fillRect(18, 78, 24, 110, TFT_WHITE);
+
     brightness = analogRead(WIO_MIC);
 
     if (data.size() > DATA_MAX_SIZE) // keep the old line chart front
@@ -96,16 +101,18 @@ void loop()
         .show_circle(false) // drawing a cirle at each point, default is on.
         .value(data)        // passing through the data to line graph
         .max_size(MAX_SIZE)
-        .color(TFT_GREEN)     // Setting the color for the line
-        .backgroud(TFT_WHITE) // Setting the color for the backgroud
+        .color(TFT_GREEN) // Setting the color for the line
+                          //        .backgroud(tft.color565(0,0,0)) // Setting the color for the backgroud
+        .backgroud(tft.color565(0, 0, 0))
         .draw(&tft);
 
-    spr.fillRect(0, 201, 320, 39, TFT_BLACK);
-    spr.setTextColor(TFT_YELLOW);
-    spr.drawString("Network:", 10, 220, GFXFF);
-    spr.setTextColor(tft.color565(254, 0, 0));
-    spr.drawString("OFF", 100, 220, GFXFF);
-    spr.pushSprite(0, 0);
-    spr.deleteSprite();
+    //    spr.fillRect(0, 201, 320, 39, TFT_BLACK);
+    tft.setFreeFont(FSSB9);
+    tft.setTextColor(TFT_YELLOW);
+    tft.drawString("Network:", 10, 220, GFXFF);
+    tft.setTextColor(tft.color565(254, 0, 0));
+    tft.drawString("OFF", 100, 220, GFXFF);
+    //    tft.pushSprite(0, 0);
+    //    tft.deleteSprite();
     delay(2);
 }
