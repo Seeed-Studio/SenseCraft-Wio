@@ -38,7 +38,7 @@ void Process_main(int page)
         return;
     case 1:
         spr.setTextColor(TFT_WHITE);
-        spr.drawString("Vision AI real-time analysis", 74, 33 + MOVE_PIXEL_y, GFXFF);
+        spr.drawString("Vision AI real-time analysis", 63, 33 + MOVE_PIXEL_y, GFXFF);
         spr.fillRect(24, 71 + MOVE_PIXEL_y - 3, 221, FONT_ROW_HEIGHT, tft.color565(0, 204, 2));
         break;
     case 2:
@@ -142,7 +142,7 @@ void Vision_AI_real_time_analysis(void) // todo
             HH += 1;
             MM -= 60;
         }
-        sprintf(buf_T[i], " %02d : %02d : %02d ", HH, MM, SS + i);
+        sprintf(buf_T[i], " %02d:%02d:%02d ", HH, MM, SS + i);
     }
     for (int gg = 0; gg < 4; gg++)
     {
