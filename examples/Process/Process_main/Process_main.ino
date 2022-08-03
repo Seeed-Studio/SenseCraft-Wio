@@ -105,9 +105,7 @@ void loop()
         Serial.println("A Key pressed");
         gg_switch++;
         delay(200);
-    }
-
-    
+    }   
     
     Sense_Display(gg_switch%3);
 }
