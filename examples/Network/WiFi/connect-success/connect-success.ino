@@ -51,7 +51,7 @@ void ConnectSuc_Display(int key) // Select Frequency band interface
     spr.fillRect(156, 54, 40, 4, tft.color565(220, 220, 220));
     spr.fillRect(28 * PIXEL, 8.0 * FONT_ROW_HEIGHT, 25 * PIXEL, FONT_ROW_HEIGHT + 14, tft.color565(160, 34, 34));
 
-    spr.fillCircle(160, 55, 10, TFT_BLUE);                                    //button to the left to select LoRa network
+    spr.fillCircle(192, 55, 10, TFT_BLUE);                                    //button to the right to select the WiFi network
 
     spr.drawString("Sense", 32, 11, GFXFF);
     spr.drawString("Process", 127, 11, GFXFF);
@@ -63,13 +63,14 @@ void ConnectSuc_Display(int key) // Select Frequency band interface
   
     spr.setFreeFont(FSS9);
     spr.setTextColor(TFT_WHITE, tft.color565(0, 139, 0));
-    spr.drawString("LoRa(SenseCAP)", 5, 48, GFXFF);
-    
-    spr.setTextColor(TFT_WHITE, tft.color565(100, 100, 100));
     spr.drawString("WiFi(Ubidots)", 205, 48, GFXFF);
 
+    spr.setFreeFont(FSS9);
+    spr.setTextColor(TFT_WHITE, tft.color565(100, 100, 100));
+    spr.drawString("LoRa (SenseCAP)", 5, 48, GFXFF);
+
     spr.setTextColor(TFT_WHITE);
-    spr.drawString("Connected: LoRa (SenseCAP)", 30, 3.8 * FONT_ROW_HEIGHT, 2);
+    spr.drawString("Connected: WiFi(Ubidots)", 30, 3.8 * FONT_ROW_HEIGHT, 2);
     spr.drawString("Signal:", 30, 4.8 * FONT_ROW_HEIGHT, 2);
     spr.drawString("All data:", 30, 5.8 * FONT_ROW_HEIGHT, 2);
     spr.drawString("packets", 140, 5.8 * FONT_ROW_HEIGHT, 2);
@@ -80,11 +81,6 @@ void ConnectSuc_Display(int key) // Select Frequency band interface
     spr.setTextColor(tft.color565(0, 139, 0));
     spr.drawString("10000", 90, 5.8 * FONT_ROW_HEIGHT, 2);   //Show total number of packages issued
     spr.drawString("999", 90, 6.8 * FONT_ROW_HEIGHT, 2);     //Shows the number of successful deliveries
-
-//    spr.fillRect(78, 110, 3, 11, tft.color565(100, 100, 100));   //No signal
-//    spr.fillRect(84, 107, 3, 14, tft.color565(100, 100, 100));   
-//    spr.fillRect(90, 104, 3, 17, tft.color565(100, 100, 100));
-//    spr.fillRect(96, 101, 3, 20, tft.color565(100, 100, 100));
 
     if(key == 0)  //Press the A button to disconnect
     {
@@ -100,7 +96,7 @@ void ConnectSuc_Display(int key) // Select Frequency band interface
 
       spr.setFreeFont(FSS9);
       spr.setTextColor(tft.color565(0, 139, 0), TFT_BLACK);             //Networking status indication：ON
-      spr.drawString("LoRa(SenseCAP)", 82, 218 , GFXFF);
+      spr.drawString("WiFi(Ubidots)", 82, 218 , GFXFF);
     }
     if(key == 1)  //Press the A button to disconnect
     {
@@ -116,7 +112,7 @@ void ConnectSuc_Display(int key) // Select Frequency band interface
 
       spr.setFreeFont(FSS9);
       spr.setTextColor(tft.color565(0, 139, 0), TFT_BLACK);             //Networking status indication：ON
-      spr.drawString("LoRa(SenseCAP)", 82, 218 , GFXFF);
+      spr.drawString("WiFi(Ubidots)", 82, 218 , GFXFF);
     }
     if(key == 2)  //Press the B button to disconnect
     {
@@ -132,7 +128,7 @@ void ConnectSuc_Display(int key) // Select Frequency band interface
 
       spr.setFreeFont(FSS9);
       spr.setTextColor(tft.color565(0, 139, 0), TFT_BLACK);             //Networking status indication：ON
-      spr.drawString("LoRa(SenseCAP)", 82, 218 , GFXFF);
+      spr.drawString("WiFi(Ubidots)", 82, 218 , GFXFF);
     }
     if(key == 3)  //Press the C button to disconnect
     {
@@ -143,7 +139,7 @@ void ConnectSuc_Display(int key) // Select Frequency band interface
 
       spr.fillCircle(265, 4.9 * FONT_ROW_HEIGHT, 10, TFT_RED);          //Data transmission status: join failed
       spr.setTextColor(TFT_WHITE);
-      spr.drawString("Join LoRaWAN", 220, 5.8 * FONT_ROW_HEIGHT, 2);
+      spr.drawString("Join WiFi", 240, 5.8 * FONT_ROW_HEIGHT, 2);
       spr.drawString("Failed", 250, 6.6 * FONT_ROW_HEIGHT, 2);
 
       spr.setFreeFont(FSS9);
