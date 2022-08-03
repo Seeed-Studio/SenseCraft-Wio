@@ -16,54 +16,44 @@ void DISPLAY_INIT() // Display initialization, black background rotation
     tft.fillScreen(TFT_BLACK);
 }
 
-void Network_state(int s_key)
-{
-    switch (s_key)
-    {
-    case 0:
-        spr.setTextColor(TFT_RED);
-        spr.drawString("OFF", 82, 218 , GFXFF);
-        break;
-    case 1:
-        spr.setTextColor(TFT_GREEN);
-        spr.drawString("ON", 82, 218, GFXFF);
-        break;
-    default:;
-    }
-    spr.setTextColor(TFT_WHITE);
-    spr.drawString("Network :", 5, 218, GFXFF);
-}
+void Process_main(){
+    spr.drawString("Vision AI real-time analysis", 24, 71, GFXFF);
 
+    spr.drawString("TinyML Example", 24, 71, GFXFF);
+
+    spr.drawString("Vision AI real-time analysis", 24, 71, GFXFF);
+}
 void Sense_Display() // Sense interface display
 {
     spr.createSprite(SCREEN_WIDTH, SCREEN_HIGH);
 
     // put your main code here
+
+    Process_main();
+    
     spr.setFreeFont(FSSB9);
     spr.setTextColor(TFT_BLACK, TFT_WHITE);
 
-    spr.fillRect(4 * PIXEL, 0, 21 * PIXEL, FONT_ROW_HEIGHT + 15, tft.color565(135, 206, 235));
+    spr.fillRect(4 * PIXEL, 0, 21 * PIXEL, FONT_ROW_HEIGHT + 15, TFT_WHITE);
     spr.fillRect(30 * PIXEL, 0, 21 * PIXEL, FONT_ROW_HEIGHT + 15, TFT_WHITE);
     spr.fillRect(56 * PIXEL, 0, 21 * PIXEL, FONT_ROW_HEIGHT + 15, TFT_WHITE);
 
+    spr.drawString("Sense", 32, 11, GFXFF);
     spr.drawString("Process", 127, 11, GFXFF);
     spr.drawString("Network", 231, 11, GFXFF);
-
-    spr.setTextColor(TFT_BLACK, tft.color565(135, 206, 235));
-    spr.drawString("Sense", 32, 11, GFXFF);
 
     spr.drawLine(0, 2 * FONT_ROW_HEIGHT, SCREEN_WIDTH, 2 * FONT_ROW_HEIGHT, TFT_WHITE);
 
     spr.setFreeFont(FSS9);
     spr.setTextColor(TFT_BLACK, tft.color565(220, 220, 220));
-    spr.fillRect(128, 50, 16 * PIXEL, FONT_ROW_HEIGHT, tft.color565(220, 220, 220));
-    spr.drawString("Sensor", 132, 54, GFXFF);
-
-    Network_state(1);
+    spr.fillRect(127, 53.5, 16 * PIXEL, FONT_ROW_HEIGHT, tft.color565(220, 220, 220));
+    spr.drawString("Sensor", 130, 56, GFXFF);
 
     spr.pushSprite(0, 0);
     spr.deleteSprite();
 }
+
+
 
 void setup()
 {
