@@ -34,6 +34,7 @@ void Process_main(int page)
     switch (page)
     {
     case 0:
+        spr.setFreeFont(FSSB9);
         Vision_AI_real_time_analysis();
         return;
     case 1:
@@ -108,8 +109,9 @@ int i = 0;
 char buf_T[4][20];
 int time_flag = 4;
 
-void Vision_AI_real_time_analysis(void) // todo
+void Vision_AI_real_time_analysis(int i_data) // todo
 {
+    spr.setFreeFont(FSSB9);
     spr.setTextColor(TFT_WHITE);
     spr.drawString("Vision AI real-time analysis", 64, 52, GFXFF);
     spr.fillRect(40, 73, 216 + 20, 117 + 15, tft.color565(128, 128, 128));
