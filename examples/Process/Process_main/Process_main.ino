@@ -24,18 +24,20 @@ void DISPLAY_INIT() // Display initialization, black background rotation
     tft.fillScreen(TFT_BLACK);
 }
 
+int test_Vision_AI_real_time_data = 0;
 void Process_main(int page)
 {
-    //此处加入 page 0;  page3 为了方便测试 可以调用此函数 也可以独立调用 
-    //case 0   Vision AI log 
-    //case 1  Proccsee首页
-    //case 2  TinyML示例 
-    //case 3  TinyML已进入
+    //此处加入 page 0;  page3 为了方便测试 可以调用此函数 也可以独立调用
+    // case 0   Vision AI log
+    // case 1  Proccsee首页
+    // case 2  TinyML示例
+    // case 3  TinyML已进入
     switch (page)
     {
     case 0:
         spr.setFreeFont(FSSB9);
-        Vision_AI_real_time_analysis(1);
+        Vision_AI_real_time_analysis(test_Vision_AI_real_time_data);
+        test_Vision_AI_real_time_data++;
         return;
     case 1:
         spr.setTextColor(TFT_WHITE);
@@ -86,7 +88,7 @@ void Process_TinyML_ENTER(void)
     spr.drawString("code on the screen ", 135, 106, GFXFF);
     spr.drawString("to view the Github", 135, 126, GFXFF);
     spr.drawString("sample tutorial ", 135, 146, GFXFF);
-    double PIXELL = 3; 
+    double PIXELL = 3;
 
     spr.fillRect(13, 70, 115, 115, TFT_WHITE);
     QRCode qrcode;
@@ -111,10 +113,6 @@ int time_flag = 4;
 
 void Vision_AI_real_time_analysis(int i_data) // todo
 {
-
-    //    i_data 传感器数据 和 时间并列显示即可 位置在这块 需要根据不同传入类型自己实现 可以参考时间的方式
-    //    spr.drawString(i_data, 150, 103 + gg * 26, GFXFF);
-    
     spr.setFreeFont(FSSB9);
     spr.setTextColor(TFT_WHITE);
     spr.drawString("Vision AI real-time analysis", 64, 52, GFXFF);
@@ -130,40 +128,45 @@ void Vision_AI_real_time_analysis(int i_data) // todo
 
     int kk = i % 4;
 
-    if(time_flag==4){
-      for(int oo = 0; oo< 3 ; oo++ ){
-        for(int i =0;i<20;i++){
-          buf_T[oo][i]=buf_T[oo+1][i];
+    if (1)
+    {
+        for (int oo = 0; oo < 3; oo++)
+        {
+            for (int i = 0; i < 20; i++)
+            {
+                buf_T[oo][i] = buf_T[oo + 1][i];
+            }
         }
-      }
     }
 
-    else{
-//      for(int oo = 0; oo< 4-time_flag ; oo++ ){
-//        for(int i =0;i<20;i++){
-//          buf_T[oo][i]={};
-//        }
-//      }
-            ;
+    else
+    {
+        ;
     }
 
-    sprintf(buf_T[3], " %02d:%02d:%02d ", now.hour(), now.minute(), now.second() );
+    sprintf(buf_T[3], " %02d:%02d:%02d      %d", now.hour(), now.minute(), now.second(), i_data);
 
     for (int gg = 0; gg < 4; gg++)
     {
+        spr.setFreeFont(FSSB9);
         spr.drawString(buf_T[gg], 45, 103 + gg * 26, GFXFF);
     }
 
-    if(time_flag=4){
-      time_flag=4;
+    for (int i = 0; i < time_flag - 1; i++)
+    {
+        spr.setFreeFont(FSSB9);
+        spr.drawString(" 00:00:00      00", 45, 103 + i * 26, GFXFF);
     }
-    else if(time_flag>=0&&time_flag<4){
-      time_flag+=1;
+
+    if (time_flag < 0)
+    {
+        time_flag = 0;
     }
-    else{
-      ;
+    else
+    {
+        time_flag--;
     }
-    
+
     delay(1000);
 }
 
