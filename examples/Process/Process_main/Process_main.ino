@@ -105,6 +105,9 @@ void Process_TinyML_ENTER(void)
 }
 
 int i = 0;
+char buf_T[4][20];
+int time_flag = 4;
+
 void Vision_AI_real_time_analysis(void) // todo
 {
     spr.setTextColor(TFT_WHITE);
@@ -115,39 +118,47 @@ void Vision_AI_real_time_analysis(void) // todo
     spr.drawString("Time", 52, 80, GFXFF);
     spr.drawString("Data", 140, 80, GFXFF);
 
-    char buf_T[4][20];
-
     uint8_t HH = now.hour();
     uint8_t MM = now.minute();
     uint8_t SS = now.second();
 
     int kk = i % 4;
-    sprintf(buf_T[i % 4], "%02d:%02d:%02d ", HH, MM, SS);
-    i++;
-    if (i == 4)
-    {
-        i = 0;
+
+    if(time_flag==4){
+      for(int oo = 0; oo< 3 ; oo++ ){
+        for(int i =0;i<20;i++){
+          buf_T[oo][i]=buf_T[oo+1][i];
+        }
+      }
     }
 
-    for (int i = 0; i < 4; i++)
-    {
-        int MM_add = 0;
-        if (SS + i > 59)
-        {
-            MM += 1;
-            SS -= 60;
-        }
-        if (MM > 59)
-        {
-            HH += 1;
-            MM -= 60;
-        }
-        sprintf(buf_T[i], " %02d:%02d:%02d ", HH, MM, SS + i);
+    else{
+//      for(int oo = 0; oo< 4-time_flag ; oo++ ){
+//        for(int i =0;i<20;i++){
+//          buf_T[oo][i]={};
+//        }
+//      }
+            ;
     }
+
+    sprintf(buf_T[3], " %02d:%02d:%02d ", now.hour(), now.minute(), now.second() );
+
     for (int gg = 0; gg < 4; gg++)
     {
         spr.drawString(buf_T[gg], 45, 103 + gg * 26, GFXFF);
     }
+
+    if(time_flag=4){
+      time_flag=4;
+    }
+    else if(time_flag>=0&&time_flag<4){
+      time_flag+=1;
+    }
+    else{
+      ;
+    }
+    
+    delay(1000);
 }
 
 void Process_Display(int G, int G_network) // Sense interface display
