@@ -35,7 +35,7 @@ void Process_main(int page)
     {
     case 0:
         spr.setFreeFont(FSSB9);
-        Vision_AI_real_time_analysis();
+        Vision_AI_real_time_analysis(1);
         return;
     case 1:
         spr.setTextColor(TFT_WHITE);
@@ -111,6 +111,10 @@ int time_flag = 4;
 
 void Vision_AI_real_time_analysis(int i_data) // todo
 {
+
+    //    i_data 传感器数据 和 时间并列显示即可 位置在这块 需要根据不同传入类型自己实现 可以参考时间的方式
+    //    spr.drawString(i_data, 150, 103 + gg * 26, GFXFF);
+    
     spr.setFreeFont(FSSB9);
     spr.setTextColor(TFT_WHITE);
     spr.drawString("Vision AI real-time analysis", 64, 52, GFXFF);
