@@ -106,13 +106,12 @@ void loop()
         .backgroud(tft.color565(0, 0, 0))
         .draw(&tft);
 
-    //    spr.fillRect(0, 201, 320, 39, TFT_BLACK);
     tft.setFreeFont(FSSB9);
-    tft.setTextColor(TFT_YELLOW);
-    tft.drawString("Network:", 10, 220, GFXFF);
-    tft.setTextColor(tft.color565(254, 0, 0));
-    tft.drawString("OFF", 100, 220, GFXFF);
-    //    tft.pushSprite(0, 0);
-    //    tft.deleteSprite();
+    
+    tft.setTextColor(TFT_WHITE);
+    tft.drawString("Network: ", 7, 215, GFXFF);
+    tft.setTextColor(TFT_GREEN);
+    tft.drawString(" ON", 80, 215, GFXFF);
+
     delay(2);
 }

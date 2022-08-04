@@ -115,7 +115,7 @@ void Vision_AI_real_time_analysis(int i_data) // todo
 {
     spr.setFreeFont(FSSB9);
     spr.setTextColor(TFT_WHITE);
-    spr.drawString("Vision AI real-time analysis", 64, 52, GFXFF);
+    spr.drawString("Vision AI real-time analysis", 52, 52, GFXFF);
     spr.fillRect(40, 73, 216 + 20, 117 + 15, tft.color565(128, 128, 128));
     DateTime now = rtc.now();
     //  Serial.print(now.second(), DEC);
