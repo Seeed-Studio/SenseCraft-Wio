@@ -58,37 +58,77 @@ void Sense_Display() // Sense interface display
 
     tft.drawLine(0, 2 * FONT_ROW_HEIGHT, SCREEN_WIDTH, 2 * FONT_ROW_HEIGHT, TFT_WHITE);
 
-    tft.setFreeFont(FSS9);
-    tft.setTextColor(TFT_WHITE);
-    tft.fillRect(120, 50, 58, 20, tft.color565(118, 118, 118));
-    tft.drawString("Sound", 122, 52, GFXFF);
+//    tft.setFreeFont(FSS9);
+//    tft.setTextColor(TFT_WHITE);
+//    tft.fillRect(120, 50, 58, 20, tft.color565(118, 118, 118));
+//    tft.drawString("Sound", 122, 52, GFXFF);
 }
 
 void setup()
 {
     pinMode(A0, INPUT);
+    pinMode(WIO_LIGHT, INPUT);
+    pinMode(WIO_KEY_A, INPUT_PULLUP);
+    pinMode(WIO_KEY_B, INPUT_PULLUP);
+    pinMode(WIO_KEY_C, INPUT_PULLUP);
     tft.begin();
     tft.setRotation(3);
     tft.fillScreen(TFT_BLACK);
+    
     //    DISPLAY_INIT();
 }
 
 int brightness;
+int light;
+int key_flag=0;
+int value_temp;
+
 void loop()
 {
-    //    brightness = analogRead(A0);
+    
 
     Sense_Display();
     tft.fillRect(18, 78, 24, 110, TFT_WHITE);
 
+    if (digitalRead(WIO_KEY_B) == LOW) {
+        
+       Serial.println("B Key pressed");
+       key_flag++;
+       value_temp=0;
+       delay(200);
+    }
+    
     brightness = analogRead(WIO_MIC);
+    light = analogRead(WIO_LIGHT);
+
 
     if (data.size() > DATA_MAX_SIZE) // keep the old line chart front
     {
         data.pop(); // this is used to remove the first read variable
     }
 
-    data.push(brightness); // read variables and store in data
+    value_temp =  key_flag % 2;
+    
+    switch(value_temp){
+      case 0:
+      data.push(brightness);
+      tft.setFreeFont(FSS9);
+      tft.setTextColor(TFT_WHITE);
+      tft.fillRect(130, 50, 58, 20, tft.color565(118, 118, 118));
+      tft.drawString("Sound", 132, 52, GFXFF);
+      break;
+      case 1:
+      data.push(light);
+      tft.setFreeFont(FSS9);
+      tft.setTextColor(TFT_WHITE);
+      tft.fillRect(130, 50, 58, 20, tft.color565(118, 118, 118));
+      tft.drawString("Light", 132, 52, GFXFF);
+      break;
+      default:
+      break;
+      
+    }
+
 
     // Settings for the line graph
     auto content = line_chart(20, 80); //(x,y) where the line graph begins
