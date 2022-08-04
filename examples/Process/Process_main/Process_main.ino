@@ -32,6 +32,7 @@ void Process_main(int page)
     // case 1  Proccsee首页
     // case 2  TinyML示例
     // case 3  TinyML已进入
+    //    page = 3;
     switch (page)
     {
     case 0:
@@ -40,13 +41,16 @@ void Process_main(int page)
         test_Vision_AI_real_time_data++;
         return;
     case 1:
+        spr.setFreeFont(FSSB9);
         spr.setTextColor(TFT_WHITE);
-        spr.drawString("Vision AI real-time analysis", 63, 33 + MOVE_PIXEL_y, GFXFF);
+        spr.fillRect(42, 50, 240, 20, tft.color565(118, 118, 118));
+        spr.drawString("Vision AI real-time analysis", 45, 52, GFXFF);
         spr.fillRect(24, 71 + MOVE_PIXEL_y - 3, 221, FONT_ROW_HEIGHT, tft.color565(0, 204, 2));
         break;
     case 2:
         spr.setTextColor(TFT_WHITE);
-        spr.drawString("TinyML Example", 107, 32 + MOVE_PIXEL_y, GFXFF);
+        spr.fillRect(95, 50, 135, 20, tft.color565(118, 118, 118));
+        spr.drawString("TinyML Example", 95, 52, GFXFF);
         spr.fillRect(24, 100 + MOVE_PIXEL_y - 3, 135, FONT_ROW_HEIGHT, tft.color565(0, 204, 2));
         break;
     case 3:
@@ -84,13 +88,15 @@ void Network_state(int s_key)
 void Process_TinyML_ENTER(void)
 {
     spr.setTextColor(TFT_WHITE);
-    spr.drawString("Please scan the QR ", 135, 86, GFXFF);
-    spr.drawString("code on the screen ", 135, 106, GFXFF);
-    spr.drawString("to view the Github", 135, 126, GFXFF);
-    spr.drawString("sample tutorial ", 135, 146, GFXFF);
+    spr.fillRect(95, 50, 135, 20, tft.color565(118, 118, 118));
+    spr.drawString("TinyML Example", 95, 52, GFXFF);
+    spr.drawString("Please scan the QR ", 135, 106, GFXFF);
+    spr.drawString("code on the screen ", 135, 126, GFXFF);
+    spr.drawString("to view the Github", 135, 146, GFXFF);
+    spr.drawString("sample tutorial ", 135, 166, GFXFF);
     double PIXELL = 3;
 
-    spr.fillRect(13, 70, 115, 115, TFT_WHITE);
+    spr.fillRect(13, 86, 115, 115, TFT_WHITE);
     QRCode qrcode;
     uint8_t *qrcodeData = (uint8_t *)malloc(qrcode_getBufferSize(5));
     qrcode_initText(&qrcode, qrcodeData, 5, 0, "https://wiki.seeedstudio.com/K1100-Getting-Started/#tinyml-section");
@@ -100,7 +106,7 @@ void Process_TinyML_ENTER(void)
         for (uint8_t x = 0; x < qrcode.size; x++)
         {
             if (qrcode_getModule(&qrcode, x, y))
-                spr.fillRect(x * PIXELL + 15, y * PIXELL + 70 + 2, PIXELL, PIXELL, TFT_BLACK);
+                spr.fillRect(x * PIXELL + 15, y * PIXELL + 86 + 2, PIXELL, PIXELL, TFT_BLACK);
         }
     }
 
@@ -115,8 +121,9 @@ void Vision_AI_real_time_analysis(int i_data) // todo
 {
     spr.setFreeFont(FSSB9);
     spr.setTextColor(TFT_WHITE);
-    spr.drawString("Vision AI real-time analysis", 52, 52, GFXFF);
-    spr.fillRect(40, 73, 216 + 20, 117 + 15, tft.color565(128, 128, 128));
+    spr.fillRect(42, 50, 240, 20, tft.color565(118, 118, 118));
+    spr.drawString("Vision AI real-time analysis", 45, 52, GFXFF);
+    spr.fillRect(36, 73, 216 + 35, 117 + 15, tft.color565(128, 128, 128));
     DateTime now = rtc.now();
     //  Serial.print(now.second(), DEC);
     spr.drawString("Time", 52, 80, GFXFF);

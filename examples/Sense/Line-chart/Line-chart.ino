@@ -59,9 +59,9 @@ void Sense_Display() // Sense interface display
     tft.drawLine(0, 2 * FONT_ROW_HEIGHT, SCREEN_WIDTH, 2 * FONT_ROW_HEIGHT, TFT_WHITE);
 
     tft.setFreeFont(FSS9);
-    tft.setTextColor(TFT_BLACK, tft.color565(220, 220, 220));
-    tft.fillRect(127, 53.5, 16 * PIXEL, FONT_ROW_HEIGHT, tft.color565(220, 220, 220));
-    tft.drawString("Sensor", 130, 56, GFXFF);
+    tft.setTextColor(TFT_WHITE);
+    tft.fillRect(120, 50, 58, 20, tft.color565(118, 118, 118));
+    tft.drawString("Sound", 122, 52, GFXFF);
 }
 
 void setup()
