@@ -51,22 +51,19 @@ void ConnectSuc_Display(int key) // Select Frequency band interface
     spr.fillRect(156, 54, 40, 4, tft.color565(220, 220, 220));
     spr.fillRect(28 * PIXEL, 8.0 * FONT_ROW_HEIGHT, 25 * PIXEL, FONT_ROW_HEIGHT + 14, tft.color565(160, 34, 34));
 
-    spr.fillCircle(160, 55, 10, TFT_BLUE);                                    //button to the left to select LoRa network
-
     spr.drawString("Sense", 32, 11, GFXFF);
     spr.drawString("Process", 127, 11, GFXFF);
-    
+
     spr.setTextColor(TFT_BLACK);
     spr.drawString("Network", 231, 11, GFXFF);
-  
-    spr.drawLine(0, 3.5 * FONT_ROW_HEIGHT, SCREEN_WIDTH, 3.5 * FONT_ROW_HEIGHT, TFT_WHITE);
-  
+
+    spr.drawLine(0, 2 * FONT_ROW_HEIGHT, SCREEN_WIDTH, 2 * FONT_ROW_HEIGHT, TFT_WHITE);
+    // spr.drawLine(0, 3.5 * FONT_ROW_HEIGHT, SCREEN_WIDTH, 3.5 * FONT_ROW_HEIGHT, TFT_WHITE);
+
     spr.setFreeFont(FSS9);
-    spr.setTextColor(TFT_WHITE, tft.color565(0, 139, 0));
-    spr.drawString("LoRa(SenseCAP)", 5, 48, GFXFF);
-    
-    spr.setTextColor(TFT_WHITE, tft.color565(100, 100, 100));
-    spr.drawString("WiFi(Ubidots)", 205, 48, GFXFF);
+
+    spr.setTextColor(TFT_WHITE, tft.color565(112, 112, 112));
+    spr.drawString("LoRa(SenseCAP)", 92, 48, GFXFF);
 
     spr.setTextColor(TFT_WHITE);
     spr.drawString("Connected: LoRa (SenseCAP)", 30, 3.8 * FONT_ROW_HEIGHT, 2);
@@ -93,10 +90,10 @@ void ConnectSuc_Display(int key) // Select Frequency band interface
       spr.fillRect(90, 104, 3, 17, tft.color565(100, 100, 100));
       spr.fillRect(96, 101, 3, 20, tft.color565(100, 100, 100));
 
-      spr.fillCircle(265, 4.9 * FONT_ROW_HEIGHT, 10, TFT_GREEN);        //Data transmission status: normal
+//      spr.fillCircle(265, 4.9 * FONT_ROW_HEIGHT, 10, TFT_GREEN);        //Data transmission status: normal
       spr.setTextColor(TFT_WHITE);
-      spr.drawString("Send", 253, 5.8 * FONT_ROW_HEIGHT, 2);
-      spr.drawString("Success", 245, 6.6 * FONT_ROW_HEIGHT, 2);
+//      spr.drawString("Send", 253, 5.8 * FONT_ROW_HEIGHT, 2);
+//      spr.drawString("Success", 245, 6.6 * FONT_ROW_HEIGHT, 2);
 
       spr.setFreeFont(FSS9);
       spr.setTextColor(tft.color565(0, 139, 0), TFT_BLACK);             //Networking status indication：ON
@@ -109,10 +106,10 @@ void ConnectSuc_Display(int key) // Select Frequency band interface
       spr.fillRect(90, 104, 3, 17, tft.color565(0, 139, 0));
       spr.fillRect(96, 101, 3, 20, tft.color565(0, 139, 0));
 
-      spr.fillCircle(265, 4.9 * FONT_ROW_HEIGHT, 10, TFT_GREEN);        //Data transmission status: normal
+//      spr.fillCircle(265, 4.9 * FONT_ROW_HEIGHT, 10, TFT_GREEN);        //Data transmission status: normal
       spr.setTextColor(TFT_WHITE);
-      spr.drawString("Send", 253, 5.8 * FONT_ROW_HEIGHT, 2);
-      spr.drawString("Success", 245, 6.6 * FONT_ROW_HEIGHT, 2);
+//      spr.drawString("Send", 253, 5.8 * FONT_ROW_HEIGHT, 2);
+//      spr.drawString("Success", 245, 6.6 * FONT_ROW_HEIGHT, 2);
 
       spr.setFreeFont(FSS9);
       spr.setTextColor(tft.color565(0, 139, 0), TFT_BLACK);             //Networking status indication：ON
@@ -195,6 +192,6 @@ void loop()
   key();  //ABC button to select network
   ConnectSuc_Display(key_status);
   delay(2000);
-  Disconnect_Tip();
-  delay(2000);
+//  Disconnect_Tip();
+//  delay(2000);
 }
