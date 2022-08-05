@@ -22,11 +22,15 @@ void Network_state(int s_key)
     {
     case 0:
         spr.setTextColor(TFT_RED);
-        spr.drawString("OFF", 82, 218 , GFXFF);
+        spr.drawString("OFF", 82, 218, GFXFF);
         break;
     case 1:
-        spr.setTextColor(TFT_GREEN, TFT_BLACK);             //Networking status indication：ON
-        spr.drawString("LoRa(SenseCAP)", 82, 218 , GFXFF);  //Show the network you are in
+        spr.setTextColor(TFT_GREEN, TFT_BLACK);           // Networking status indication：ON
+        spr.drawString("LoRa(SenseCAP)", 82, 218, GFXFF); // Show the network you are in
+        break;
+    case 2:
+        spr.setTextColor(TFT_GREEN, TFT_BLACK);          // Networking status indication：ON
+        spr.drawString("WIFI(Ubidots)", 82, 218, GFXFF); // Show the network you are in
         break;
     default:;
     }
@@ -34,6 +38,7 @@ void Network_state(int s_key)
     spr.drawString("Network :", 5, 218, GFXFF);
 }
 
+int GG;
 void Sense_Display() // Sense interface display
 {
     spr.createSprite(SCREEN_WIDTH, SCREEN_HIGH);
@@ -59,8 +64,9 @@ void Sense_Display() // Sense interface display
     spr.fillRect(128, 50, 16 * PIXEL, FONT_ROW_HEIGHT, tft.color565(220, 220, 220));
     spr.drawString("Sensor", 132, 54, GFXFF);
 
-    Network_state(1);
-
+    Network_state(GG % 3);
+    GG++;
+    delay(1000);
     spr.pushSprite(0, 0);
     spr.deleteSprite();
 }
