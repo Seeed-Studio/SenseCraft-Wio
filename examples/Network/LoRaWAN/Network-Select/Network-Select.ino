@@ -94,10 +94,10 @@ void NetworkHome_Display(int network_select_status) // Select network interface 
     spr.drawString("WIFI", 208, 88, GFXFF);
     spr.drawString("(Ubidots)", 208, 108, GFXFF);
 
-//    spr.setTextColor(TFT_WHITE, TFT_BLACK);
-//    spr.drawString("Please toggle the bottom right", 30, 95 + FONT_ROW_HEIGHT + 20, GFXFF);
-//    spr.drawString("button left and right to select", 30, 95 + 2 * FONT_ROW_HEIGHT + 20, GFXFF);
-//    spr.drawString("the network.", 30, 95 + 3 * FONT_ROW_HEIGHT + 20, GFXFF);
+    //    spr.setTextColor(TFT_WHITE, TFT_BLACK);
+    //    spr.drawString("Please toggle the bottom right", 30, 95 + FONT_ROW_HEIGHT + 20, GFXFF);
+    //    spr.drawString("button left and right to select", 30, 95 + 2 * FONT_ROW_HEIGHT + 20, GFXFF);
+    //    spr.drawString("the network.", 30, 95 + 3 * FONT_ROW_HEIGHT + 20, GFXFF);
 
     spr.drawString("Network :", 5, 218, GFXFF);
 
