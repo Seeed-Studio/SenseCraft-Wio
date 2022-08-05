@@ -24,6 +24,17 @@ void DISPLAY_INIT() // Display initialization, black background rotation
     tft.fillScreen(TFT_BLACK);
 }
 
+void Please_connect_to_Vision_AI_sensor(void)
+{
+
+    spr.setFreeFont(FSSB9);
+    spr.setTextColor(TFT_WHITE);
+    spr.fillRect(42, 50, 240, 20, tft.color565(118, 118, 118));
+    spr.drawString("Vision AI real-time analysis", 45, 52, GFXFF);
+
+    spr.drawString("Please connect to Vision AI Sensor", 9, 120, GFXFF);
+}
+
 int test_Vision_AI_real_time_data = 0;
 void Process_main(int page)
 {
@@ -32,7 +43,7 @@ void Process_main(int page)
     // case 1  Proccsee首页
     // case 2  TinyML示例
     // case 3  TinyML已进入
-    //    page = 3;
+    //        page = 2;
     switch (page)
     {
     case 0:
@@ -45,26 +56,38 @@ void Process_main(int page)
         spr.setTextColor(TFT_WHITE);
         spr.fillRect(42, 50, 240, 20, tft.color565(118, 118, 118));
         spr.drawString("Vision AI real-time analysis", 45, 52, GFXFF);
-        spr.fillRect(24, 71 + MOVE_PIXEL_y - 3, 221, FONT_ROW_HEIGHT, tft.color565(0, 204, 2));
+        spr.fillRect(22, 71 + MOVE_PIXEL_y - 3, 75, 90, tft.color565(0, 204, 2));
         break;
     case 2:
         spr.setTextColor(TFT_WHITE);
         spr.fillRect(95, 50, 135, 20, tft.color565(118, 118, 118));
         spr.drawString("TinyML Example", 95, 52, GFXFF);
-        spr.fillRect(24, 100 + MOVE_PIXEL_y - 3, 135, FONT_ROW_HEIGHT, tft.color565(0, 204, 2));
+        spr.fillRect(125, 71 + MOVE_PIXEL_y - 3, 75, 50, tft.color565(0, 204, 2));
         break;
     case 3:
         Process_TinyML_ENTER();
+        return;
+    case 4:
+        Please_connect_to_Vision_AI_sensor();
         return;
     default:;
     }
     spr.setFreeFont(FSS9);
     spr.setTextColor(TFT_WHITE);
-    spr.drawString("Vision AI real-time analysis", 24, 71 + MOVE_PIXEL_y, GFXFF);
-    spr.drawString("TinyML Example", 24, 100 + MOVE_PIXEL_y, GFXFF);
+
+    spr.drawString("Vision AI", 24, 71 + MOVE_PIXEL_y, GFXFF);
+    spr.drawString("real-time", 24, 96 + MOVE_PIXEL_y, GFXFF);
+    spr.drawString("analysis", 24, 121 + MOVE_PIXEL_y, GFXFF);
+
+    spr.drawString("TinyML", 127, 71 + MOVE_PIXEL_y, GFXFF);
+    spr.drawString("Example", 127, 96 + MOVE_PIXEL_y, GFXFF);
+    spr.drawString("analysis", 24, 121 + MOVE_PIXEL_y, GFXFF);
 
     spr.setTextColor(tft.color565(169, 169, 169));
-    spr.drawString("Data Filter(In Development)", 24, 129 + MOVE_PIXEL_y, GFXFF);
+    spr.drawString("Data", 219, 71 + MOVE_PIXEL_y, GFXFF);
+    spr.drawString("Filter (In ", 219, 96 + MOVE_PIXEL_y, GFXFF);
+    spr.drawString("Develop", 219, 121 + MOVE_PIXEL_y, GFXFF);
+    spr.drawString("ment)", 219, 146 + MOVE_PIXEL_y, GFXFF);
 }
 
 void Network_state(int s_key)
@@ -238,5 +261,5 @@ void loop()
         delay(200);
     }
 
-    Process_Display(gg_switch % 4, gg_network_flag % 2);
+    Process_Display(gg_switch % 5, gg_network_flag % 2);
 }
