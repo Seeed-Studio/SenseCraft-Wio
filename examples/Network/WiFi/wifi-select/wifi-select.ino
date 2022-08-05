@@ -182,15 +182,15 @@ void setup()
 
 void loop()
 {
-    /// WifiSelection()请使用 Network Select中的实现 点击lora目录网络选择的那个ino就可以看到 我写readme里面 或者一会加上 太多了我先实现新界面 https://github.com/Seeed-Studio/Seeed_Arduino_K1100/commit/c1501d156564bb6538af02114e0d336db666e02e
-    //    WifiSelection();   // Repeat in Network Select LORA_WIFI select network step
-    //    delay(2000);
+    /// WifiSelection() 不要使用它请使用 Network Select中的实现 点击lora目录网络选择的那个ino就可以看到 我写readme里面 或者一会加上 太多了我先实现新界面 https://github.com/Seeed-Studio/Seeed_Arduino_K1100/commit/c1501d156564bb6538af02114e0d336db666e02e
+    //  WifiSelection();   // Repeat in Network Select LORA_WIFI select network step
+    // delay(2000);
 
-    ///  WifiWait_Display(); wifi等待的界面 需要使用的
-    //    WifiWait_Display(); //ok
-    //    delay(2000);
+    ///  WifiWait_Display(); 使用它 wifi等待的界面 需要使用的
+    //        WifiWait_Display(); //ok
+    //        delay(2000);
 
-    // Wificonnect_Display(); //WIFI 连接成功的界面 需要使用
-    Wificonnect_Display();
+    // Wificonnect_Display(); // 使用它 WIFI 连接成功的界面 需要使用
+    //    Wificonnect_Display();
     delay(2000);
 }

@@ -97,10 +97,10 @@ void ConnectSuc_Display(int key) // Select Frequency band interface
         spr.fillRect(112, 150, 3, 17, tft.color565(100, 100, 100));
         spr.fillRect(118, 147, 3, 20, tft.color565(100, 100, 100));
 
-//        spr.fillCircle(265, 4.9 * FONT_ROW_HEIGHT, 10, TFT_GREEN); // Data transmission status: normal
+        //        spr.fillCircle(265, 4.9 * FONT_ROW_HEIGHT, 10, TFT_GREEN); // Data transmission status: normal
         spr.setTextColor(TFT_WHITE);
-//        spr.drawString("Send", 253, 5.8 * FONT_ROW_HEIGHT, 2);
-//        spr.drawString("Success", 245, 6.6 * FONT_ROW_HEIGHT, 2);
+        //        spr.drawString("Send", 253, 5.8 * FONT_ROW_HEIGHT, 2);
+        //        spr.drawString("Success", 245, 6.6 * FONT_ROW_HEIGHT, 2);
 
         spr.setFreeFont(FSS9);
         spr.setTextColor(tft.color565(0, 139, 0), TFT_BLACK); // Networking status indication：ON
@@ -113,10 +113,10 @@ void ConnectSuc_Display(int key) // Select Frequency band interface
         spr.fillRect(112, 150, 3, 17, tft.color565(0, 139, 0));
         spr.fillRect(118, 147, 3, 20, tft.color565(100, 100, 100));
 
-//        spr.fillCircle(265, 4.9 * FONT_ROW_HEIGHT, 10, TFT_GREEN); // Data transmission status: normal
+        //        spr.fillCircle(265, 4.9 * FONT_ROW_HEIGHT, 10, TFT_GREEN); // Data transmission status: normal
         spr.setTextColor(TFT_WHITE);
-//        spr.drawString("Send", 253, 5.8 * FONT_ROW_HEIGHT, 2);
-//        spr.drawString("Success", 245, 6.6 * FONT_ROW_HEIGHT, 2);
+        //        spr.drawString("Send", 253, 5.8 * FONT_ROW_HEIGHT, 2);
+        //        spr.drawString("Success", 245, 6.6 * FONT_ROW_HEIGHT, 2);
 
         spr.setFreeFont(FSS9);
         spr.setTextColor(tft.color565(0, 139, 0), TFT_BLACK); // Networking status indication：ON
@@ -129,10 +129,10 @@ void ConnectSuc_Display(int key) // Select Frequency band interface
         spr.fillRect(112, 150, 3, 17, tft.color565(0, 139, 0));
         spr.fillRect(118, 147, 3, 20, tft.color565(0, 139, 0));
 
-//        spr.fillCircle(265, 4.9 * FONT_ROW_HEIGHT, 10, TFT_GREEN); // Data transmission status: normal
+        //        spr.fillCircle(265, 4.9 * FONT_ROW_HEIGHT, 10, TFT_GREEN); // Data transmission status: normal
         spr.setTextColor(TFT_WHITE);
-//        spr.drawString("Send", 253, 5.8 * FONT_ROW_HEIGHT, 2);
-//        spr.drawString("Success", 245, 6.6 * FONT_ROW_HEIGHT, 2);
+        //        spr.drawString("Send", 253, 5.8 * FONT_ROW_HEIGHT, 2);
+        //        spr.drawString("Success", 245, 6.6 * FONT_ROW_HEIGHT, 2);
 
         spr.setFreeFont(FSS9);
         spr.setTextColor(tft.color565(0, 139, 0), TFT_BLACK); // Networking status indication：ON

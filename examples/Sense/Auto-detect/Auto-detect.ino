@@ -47,14 +47,21 @@ void Sense_AutoDetecte_Display()                      //Display screen for acces
   spr.setTextColor(TFT_WHITE, TFT_BLACK);
   spr.drawString("Sound", 100 - LEFT_SIDE, 80, GFXFF);
   spr.drawString("IMU", 209 - LEFT_SIDE, 80, GFXFF);
+  
+  spr.fillRect(310 - LEFT_SIDE, 80, 12 * PIXEL, 80, TFT_GREEN);
+  spr.setTextColor(TFT_WHITE, TFT_GREEN);
   spr.drawString("ADD", 316 - LEFT_SIDE, 80, GFXFF);
 
+  
   spr.setFreeFont(FSS24);
+  spr.setTextColor(TFT_WHITE);
   spr.drawString("356", 20, 115 , GFXFF);                      // Display the value of loudness
   spr.setFreeFont(FSS12);
+  
   spr.drawString("0.10", 205 - LEFT_SIDE, 102 , GFXFF);        //Display the value of IMU X-axis
   spr.drawString("-0.23", 205 - LEFT_SIDE, 126 , GFXFF);       //Display the value of IMU Y-axis
   spr.drawString("-2.33", 205 - LEFT_SIDE, 150 , GFXFF);       //Display the value of IMU Z-axis
+  
   spr.setFreeFont(FSS9);
   spr.drawString("X,Y,Z", 205 - LEFT_SIDE, 174 , GFXFF);
 

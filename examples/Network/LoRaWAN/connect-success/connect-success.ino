@@ -208,12 +208,12 @@ void loop()
 {
   key();  //ABC button to select network
   ConnectSuc_Display(key_status);
-  delay(2000);
+//  delay(2000);
 
 
 //void Disconnect_Tip(int gg) 绘制了弹窗部分 传入 1 Yes 0 No
-//  Disconnect_Tip(gg%2); //断开网络连接 确认窗口 
-//  gg++;
-//  
-//  delay(1000);
+  Disconnect_Tip(gg%2); //断开网络连接 确认窗口 
+  gg++;
+  
+  delay(1000);
 }
