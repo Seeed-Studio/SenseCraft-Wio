@@ -4,4 +4,4 @@
 *.DS_Store
 .DS_Store
 *.pio
-*.pio/
+.pio/
