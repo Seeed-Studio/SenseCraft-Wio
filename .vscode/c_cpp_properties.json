@@ -1,0 +1,106 @@
+//
+// !!! WARNING !!! AUTO-GENERATED FILE!
+// PLEASE DO NOT MODIFY IT AND USE "platformio.ini":
+// https://docs.platformio.org/page/projectconf/section_env_build.html#build-flags
+//
+{
+    "configurations": [
+        {
+            "name": "PlatformIO",
+            "includePath": [
+                "/Users/limengdu/Desktop/Network/Sensecap/include",
+                "/Users/limengdu/Desktop/Network/Sensecap/src",
+                "/Users/limengdu/.platformio/packages/framework-cmsis/CMSIS/Core/Include",
+                "/Users/limengdu/.platformio/packages/framework-cmsis-atmel/CMSIS/Device/ATMEL",
+                "/Users/limengdu/.platformio/packages/framework-arduino-samd-seeed/cores/arduino",
+                "/Users/limengdu/.platformio/packages/framework-arduino-samd-seeed/cores/arduino/TinyUSB",
+                "/Users/limengdu/.platformio/packages/framework-arduino-samd-seeed/cores/arduino/TinyUSB/Adafruit_TinyUSB_ArduinoCore",
+                "/Users/limengdu/.platformio/packages/framework-arduino-samd-seeed/cores/arduino/TinyUSB/Adafruit_TinyUSB_ArduinoCore/tinyusb/src",
+                "/Users/limengdu/.platformio/packages/framework-cmsis/CMSIS/DSP/Include",
+                "/Users/limengdu/.platformio/packages/framework-arduino-samd-seeed/variants/wio_terminal",
+                "/Users/limengdu/.platformio/packages/framework-arduino-samd-seeed/libraries/Adafruit_ZeroDMA",
+                "/Users/limengdu/.platformio/packages/framework-arduino-samd-seeed/libraries/Adafruit_ZeroDMA/utility",
+                "/Users/limengdu/.platformio/packages/framework-arduino-samd-seeed/libraries/EnergySaving/src",
+                "/Users/limengdu/.platformio/packages/framework-arduino-samd-seeed/libraries/FlashStorage/src",
+                "/Users/limengdu/.platformio/packages/framework-arduino-samd-seeed/libraries/HID",
+                "/Users/limengdu/.platformio/packages/framework-arduino-samd-seeed/libraries/I2S/src",
+                "/Users/limengdu/.platformio/packages/framework-arduino-samd-seeed/libraries/LoRaWan",
+                "/Users/limengdu/.platformio/packages/framework-arduino-samd-seeed/libraries/SPI",
+                "/Users/limengdu/.platformio/packages/framework-arduino-samd-seeed/libraries/Seeed_Arduino_FreeRTOS/src",
+                "/Users/limengdu/.platformio/packages/framework-arduino-samd-seeed/libraries/Seeed_Arduino_LCD",
+                "/Users/limengdu/.platformio/packages/framework-arduino-samd-seeed/libraries/SoftwareSerial",
+                "/Users/limengdu/.platformio/packages/framework-arduino-samd-seeed/libraries/TimerTC3",
+                "/Users/limengdu/.platformio/packages/framework-arduino-samd-seeed/libraries/TimerTCC0",
+                "/Users/limengdu/.platformio/packages/framework-arduino-samd-seeed/libraries/USBHost/src",
+                "/Users/limengdu/.platformio/packages/framework-arduino-samd-seeed/libraries/Wire",
+                ""
+            ],
+            "browse": {
+                "limitSymbolsToIncludedHeaders": true,
+                "path": [
+                    "/Users/limengdu/Desktop/Network/Sensecap/include",
+                    "/Users/limengdu/Desktop/Network/Sensecap/src",
+                    "/Users/limengdu/.platformio/packages/framework-cmsis/CMSIS/Core/Include",
+                    "/Users/limengdu/.platformio/packages/framework-cmsis-atmel/CMSIS/Device/ATMEL",
+                    "/Users/limengdu/.platformio/packages/framework-arduino-samd-seeed/cores/arduino",
+                    "/Users/limengdu/.platformio/packages/framework-arduino-samd-seeed/cores/arduino/TinyUSB",
+                    "/Users/limengdu/.platformio/packages/framework-arduino-samd-seeed/cores/arduino/TinyUSB/Adafruit_TinyUSB_ArduinoCore",
+                    "/Users/limengdu/.platformio/packages/framework-arduino-samd-seeed/cores/arduino/TinyUSB/Adafruit_TinyUSB_ArduinoCore/tinyusb/src",
+                    "/Users/limengdu/.platformio/packages/framework-cmsis/CMSIS/DSP/Include",
+                    "/Users/limengdu/.platformio/packages/framework-arduino-samd-seeed/variants/wio_terminal",
+                    "/Users/limengdu/.platformio/packages/framework-arduino-samd-seeed/libraries/Adafruit_ZeroDMA",
+                    "/Users/limengdu/.platformio/packages/framework-arduino-samd-seeed/libraries/Adafruit_ZeroDMA/utility",
+                    "/Users/limengdu/.platformio/packages/framework-arduino-samd-seeed/libraries/EnergySaving/src",
+                    "/Users/limengdu/.platformio/packages/framework-arduino-samd-seeed/libraries/FlashStorage/src",
+                    "/Users/limengdu/.platformio/packages/framework-arduino-samd-seeed/libraries/HID",
+                    "/Users/limengdu/.platformio/packages/framework-arduino-samd-seeed/libraries/I2S/src",
+                    "/Users/limengdu/.platformio/packages/framework-arduino-samd-seeed/libraries/LoRaWan",
+                    "/Users/limengdu/.platformio/packages/framework-arduino-samd-seeed/libraries/SPI",
+                    "/Users/limengdu/.platformio/packages/framework-arduino-samd-seeed/libraries/Seeed_Arduino_FreeRTOS/src",
+                    "/Users/limengdu/.platformio/packages/framework-arduino-samd-seeed/libraries/Seeed_Arduino_LCD",
+                    "/Users/limengdu/.platformio/packages/framework-arduino-samd-seeed/libraries/SoftwareSerial",
+                    "/Users/limengdu/.platformio/packages/framework-arduino-samd-seeed/libraries/TimerTC3",
+                    "/Users/limengdu/.platformio/packages/framework-arduino-samd-seeed/libraries/TimerTCC0",
+                    "/Users/limengdu/.platformio/packages/framework-arduino-samd-seeed/libraries/USBHost/src",
+                    "/Users/limengdu/.platformio/packages/framework-arduino-samd-seeed/libraries/Wire",
+                    ""
+                ]
+            },
+            "defines": [
+                "PLATFORMIO=60002",
+                "__SAMD51P19A__",
+                "WIO_TERMINAL",
+                "SEEED_WIO_TERMINAL",
+                "SEEED_GROVE_UI_WIRELESS",
+                "__SAMD51__",
+                "__FPU_PRESENT",
+                "ARM_MATH_CM4",
+                "SEEED_GROVE_UI_WIRELESS",
+                "VARIANT_QSPI_BAUD_DEFAULT=50000000",
+                "TXRXLED_ENABLE",
+                "ROLE=0",
+                "ARDUINO=10805",
+                "F_CPU=120000000L",
+                "USBCON",
+                "USB_VID=0x2886",
+                "USB_PID=0x802D",
+                "USB_PRODUCT=\"Seeed Wio Terminal\"",
+                "USB_MANUFACTURER=\"Seeed\"",
+                "ARDUINO_ARCH_SAMD",
+                "USB_CONFIG_POWER=100",
+                ""
+            ],
+            "cStandard": "c11",
+            "cppStandard": "c++11",
+            "compilerPath": "/Users/limengdu/.platformio/packages/toolchain-gccarmnoneeabi/bin/arm-none-eabi-gcc",
+            "compilerArgs": [
+                "-mfloat-abi=hard",
+                "-mfpu=fpv4-sp-d16",
+                "-mcpu=cortex-m4",
+                "-mthumb",
+                ""
+            ]
+        }
+    ],
+    "version": 4
+}
