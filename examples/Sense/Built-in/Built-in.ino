@@ -20,14 +20,14 @@ void DISPLAY_INIT()            // Display initialization, black background rotat
     tft.fillScreen(TFT_BLACK);
 }
 
-void Sense_BuiltIn_Display()          // Wio terminal built-in sensor interface, the main boot screen.
+void Sense_BuiltIn_Display(int _CHOOSE)          // Wio terminal built-in sensor interface, the main boot screen.
 {
   spr.createSprite(SCREEN_WIDTH, SCREEN_HIGH);
 
   // put your main code here
   spr.setFreeFont(FSSB9);
   spr.setTextColor(TFT_BLACK, TFT_WHITE);
-
+  
   spr.fillRect(4 * PIXEL, 0, 21 * PIXEL, FONT_ROW_HEIGHT + 15, tft.color565(135, 206, 235));
   spr.fillRect(30 * PIXEL, 0, 21 * PIXEL, FONT_ROW_HEIGHT + 15, TFT_WHITE);
   spr.fillRect(56 * PIXEL, 0, 21 * PIXEL, FONT_ROW_HEIGHT + 15, TFT_WHITE);
@@ -46,7 +46,23 @@ void Sense_BuiltIn_Display()          // Wio terminal built-in sensor interface,
   spr.fillRect(128, 50, 16 * PIXEL, FONT_ROW_HEIGHT, tft.color565(220, 220, 220));
   spr.drawString("Sensor", 132, 54, GFXFF);
 
-  spr.setTextColor(TFT_WHITE, TFT_BLACK);
+  spr.setTextColor(TFT_WHITE);
+//  _CHOOSE = 1;
+  switch(_CHOOSE){
+    case 1: 
+      spr.fillRect(20, 80, 55, 90, TFT_GREEN);/// GREEN BLOCK 1st
+      break;
+    case 2:
+      spr.fillRect(120, 80, 90, 90, TFT_GREEN);/// GREEN BLOCK 1st
+      break;
+//    case 3:
+//      spr.fillRect(20, 70, 55, 90, TFT_GREEN);/// GREEN BLOCK 1st
+//      break;
+    default:
+      break;
+  }
+
+//  spr.fillRect(20, 70, 55, 90, TFT_GREEN);/// GREEN BLOCK 1st
   spr.drawString("Light", 100 - LEFT_SIDE, 80, GFXFF);
   spr.drawString("Sound", 209 - LEFT_SIDE, 80, GFXFF);
   spr.drawString("IMU", 316 - LEFT_SIDE, 80, GFXFF);
@@ -80,6 +96,14 @@ void setup() {
   DISPLAY_INIT();
 }
 
+int _CHOOSE = 0;
+
 void loop() {
-  Sense_BuiltIn_Display();
+
+  _CHOOSE++;
+  Sense_BuiltIn_Display(_CHOOSE%2+1); 
+  // choose 2 state Select Light or Sound 3 4 in Auto-detect  mengdu之前代码没有留接口 
+  // 临时这样修改  3 4 在 Auto detect
+  delay(1000);
+  
 }

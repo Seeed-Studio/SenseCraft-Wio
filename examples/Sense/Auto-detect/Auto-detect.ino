@@ -19,7 +19,7 @@ void DISPLAY_INIT()            // Display initialization, black background rotat
     tft.fillScreen(TFT_BLACK);
 }
 
-void Sense_AutoDetecte_Display()                      //Display screen for accessing sensors
+void Sense_AutoDetecte_Display(int _CHOOSE)                      //Display screen for accessing sensors
 {
   spr.createSprite(SCREEN_WIDTH, SCREEN_HIGH);
 
@@ -43,13 +43,23 @@ void Sense_AutoDetecte_Display()                      //Display screen for acces
   spr.setTextColor(TFT_BLACK, tft.color565(220, 220, 220));
   spr.fillRect(128, 50, 16 * PIXEL, FONT_ROW_HEIGHT, tft.color565(220, 220, 220));
   spr.drawString("Sensor", 132, 54, GFXFF);
-
-  spr.setTextColor(TFT_WHITE, TFT_BLACK);
+  
+//_CHOOSE = 2;
+   switch(_CHOOSE){
+    case 1: 
+      spr.fillRect(125, 80, 65, 110, TFT_GREEN);/// GREEN BLOCK 1st
+      break;
+    case 2:
+      spr.fillRect(240, 80, 48, 80, TFT_GREEN);
+      break;
+    default:
+      break;
+  }
+  spr.setTextColor(TFT_WHITE);
   spr.drawString("Sound", 100 - LEFT_SIDE, 80, GFXFF);
   spr.drawString("IMU", 209 - LEFT_SIDE, 80, GFXFF);
   
-  spr.fillRect(310 - LEFT_SIDE, 80, 12 * PIXEL, 80, TFT_GREEN);
-  spr.setTextColor(TFT_WHITE, TFT_GREEN);
+//  spr.fillRect(310 - LEFT_SIDE, 80, 12 * PIXEL, 80, TFT_GREEN);
   spr.drawString("ADD", 316 - LEFT_SIDE, 80, GFXFF);
 
   
@@ -125,11 +135,13 @@ void setup() {
   DISPLAY_INIT();
 }
 
+int gg=0;
 void loop() {
-  Sense_AutoDetecte_Display();
+  gg++;
+  Sense_AutoDetecte_Display(gg%2+1);
   delay(2000);
-  Insert_Tip();
-  delay(2000);
-  Connect_Success_Display();
-  delay(2000);
+//  Insert_Tip();
+//  delay(2000);
+//  Connect_Success_Display();
+//  delay(2000);
 }
