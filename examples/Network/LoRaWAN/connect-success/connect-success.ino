@@ -18,14 +18,17 @@ void key()                 //设置按键
     if (digitalRead(WIO_KEY_C) == LOW) {
       Serial.println("A Key pressed");
       key_status = 1;
+      delay(200);
      }
      else if (digitalRead(WIO_KEY_B) == LOW) {
       Serial.println("B Key pressed");
       key_status = 2;
+      delay(200);
      }
      else if (digitalRead(WIO_KEY_A) == LOW) {
       Serial.println("C Key pressed");
       key_status = 3;
+      delay(200);
      }
 }
 
@@ -159,7 +162,7 @@ void ConnectSuc_Display(int key) // Select Frequency band interface
     spr.deleteSprite();
 }
 
-void Disconnect_Tip()       // Pop-up prompt for sensor insertion
+void Disconnect_Tip(int _YES_NO_SELECTION)       // Pop-up prompt for sensor insertion 0 NO 1 Yes
 {
   spr.createSprite(240, 116);
   spr.fillScreen(tft.color565(211, 211, 211));
@@ -168,6 +171,18 @@ void Disconnect_Tip()       // Pop-up prompt for sensor insertion
   spr.setTextColor(TFT_BLACK);
   spr.drawString("Network will be disconnected", 3, 30, GFXFF);
 
+//  _YES_NO_SELECTION = 1;
+  switch( _YES_NO_SELECTION){
+    case 0:
+      spr.fillRect(36, 66, 73, 43, tft.color565(0, 250, 2));
+      break;
+    case 1:
+      spr.fillRect(135, 66, 73, 43, tft.color565(0, 250, 2));
+      break;
+    default:
+      ;
+  }
+  
   spr.fillRect(40, 70, 65, 35, tft.color565(140, 42, 42));
   spr.fillRect(139, 70, 65, 35, tft.color565(70, 130, 160));
 
@@ -187,11 +202,18 @@ void setup()
     pinMode(WIO_KEY_A, INPUT_PULLUP);
 }
 
+int gg=0;
+
 void loop()
 {
   key();  //ABC button to select network
   ConnectSuc_Display(key_status);
   delay(2000);
-//  Disconnect_Tip();
-//  delay(2000);
+
+
+//void Disconnect_Tip(int gg) 绘制了弹窗部分 传入 1 Yes 0 No
+//  Disconnect_Tip(gg%2); //断开网络连接 确认窗口 
+//  gg++;
+//  
+//  delay(1000);
 }
