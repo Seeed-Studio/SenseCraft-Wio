@@ -65,12 +65,23 @@ void NetworkHome_Display(int network_select_status) // Select network interface 
         spr.setTextColor(TFT_WHITE, tft.color565(112, 112, 112));
         spr.drawString("LoRa(SenseCAP)", 92, 48, GFXFF);
         spr.fillRect(30, 85, 145, 45, TFT_GREEN);
+        spr.setTextColor(TFT_WHITE, TFT_BLACK);
+        spr.drawString("Please toggle the bottom right", 30, 95 + FONT_ROW_HEIGHT + 20, GFXFF);
+        spr.drawString("button left and right to select", 30, 95 + 2 * FONT_ROW_HEIGHT + 20, GFXFF);
+        spr.drawString("the network.", 30, 95 + 3 * FONT_ROW_HEIGHT + 20, GFXFF);
+
         break;
     case 2:
 
         spr.setTextColor(TFT_WHITE, tft.color565(112, 112, 112));
         spr.drawString("WIFI(Ubidots)", 102, 48, GFXFF);
         spr.fillRect(206, 85, 78, 45, TFT_GREEN);
+
+        spr.setTextColor(TFT_WHITE, TFT_BLACK);
+        spr.drawString("Please refer to the wiki to", 30, 95 + FONT_ROW_HEIGHT + 20, GFXFF);
+        spr.drawString("modify the configuration file", 30, 95 + 2 * FONT_ROW_HEIGHT + 20, GFXFF);
+        spr.drawString("and send it to this device.", 30, 95 + 3 * FONT_ROW_HEIGHT + 20, GFXFF);
+
         break;
     default:
         break;
@@ -83,10 +94,10 @@ void NetworkHome_Display(int network_select_status) // Select network interface 
     spr.drawString("WIFI", 208, 88, GFXFF);
     spr.drawString("(Ubidots)", 208, 108, GFXFF);
 
-    spr.setTextColor(TFT_WHITE, TFT_BLACK);
-    spr.drawString("Please toggle the bottom right", 30, 95 + FONT_ROW_HEIGHT + 20, GFXFF);
-    spr.drawString("button left and right to select", 30, 95 + 2 * FONT_ROW_HEIGHT + 20, GFXFF);
-    spr.drawString("the network.", 30, 95 + 3 * FONT_ROW_HEIGHT + 20, GFXFF);
+//    spr.setTextColor(TFT_WHITE, TFT_BLACK);
+//    spr.drawString("Please toggle the bottom right", 30, 95 + FONT_ROW_HEIGHT + 20, GFXFF);
+//    spr.drawString("button left and right to select", 30, 95 + 2 * FONT_ROW_HEIGHT + 20, GFXFF);
+//    spr.drawString("the network.", 30, 95 + 3 * FONT_ROW_HEIGHT + 20, GFXFF);
 
     spr.drawString("Network :", 5, 218, GFXFF);
 
