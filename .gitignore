@@ -3,3 +3,5 @@
 *.elf
 *.DS_Store
 .DS_Store
+*.pio
+*.pio/
