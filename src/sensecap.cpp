@@ -1,7 +1,17 @@
 #include "sensecap.h"
+#include "disk91_LoRaE5.h"
+#include "LIS3DHTR.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <Wire.h>
+
+// char deveui[] = "1CF7F1C043200033";
+// char appeui[] = "8000000000000009";
+// char appkey[] = "92C03BCBA4197FBD2BC86E27B6113AFC";
+
+// LIS3DHTR<TwoWire> lis;
+// Disk91_LoRaE5 lorae5(&Serial);
 
 power_data_t power_val = {
     .fix_1 = MEASURE_FIX,
@@ -20,7 +30,7 @@ version_data_t version_val = {
     .software_version = SOFTWARE_VER,
     .CRC_L = VER_CRCL,
     .CRC_H = VER_CRCH,
-}
+};
 
 builtin_sensor_data_t builtin_sensor = {
     .type = MEASURE_BUITIN_DATA_TYPE,
@@ -38,53 +48,111 @@ visionai_sensor_data2_t visionai_data2 = {
     .type = MEASURE_VISIONAI_DATA2_TYPE,
 };
 
-void send_data(void)
-{
-    // // 发送首包
-    // data_start.type = MEASURE_DATA_FIRST_TYPE;
-    // if (data_count <= 2)
-    //     data_start.type = MEASURE_DATA_ONE_TYPE;
-    // data_start.measure_ch = ((value[0].channel + 1) << 4);
-    // data_start.sensor_data[0] = BSWAP32(value[0].data);
-    // if (data_count == 1)
-    //     data_start.sensor_data[1] = 0xFFFFFFFF;
-    // else {
-    //     data_start.measure_ch = data_start.measure_ch | (value[1].channel + 1);
-    //     data_start.sensor_data[1] = BSWAP32(value[1].data);
-    // }
-    // data_list.len = sizeof(dtu_data_start_t);
-    // memcpy(&data_list.data_start, &data_start, sizeof(dtu_data_start_t));
-    // osMessageQueuePut(DataQueueHandle, &data_list, 0, 0);
 
-    // //通道数大于4时，还需要发送追加包
-    // if (data_count > 4) {
-    //     //发送追加包
-    //     for (i = 3; i < data_count - 1; i = i + 2) {
-    //         data_mid.measure_ch = ((value[i - 1].channel + 1) << 4) | (value[i].channel + 1);
-    //         data_mid.sensor_data[0] = BSWAP32(value[i - 1].data);
-    //         data_mid.sensor_data[1] = BSWAP32(value[i].data);
+// //传感器数据值处理(大端模式)
+// void data_decord(int vals, uint8_t *data, int signal)
+// {
+//     if (vals > 0 || vals == 0)
+//     {
+//         Serial.println(data[signal]);
+//         data[signal] = vals >> 8 & 0xFF;
+//         data[signal + 1] = vals & 0xFF;
+//     }
+//     else{
+//         vals = abs(vals);
+//         vals = ~vals+1;
+//         data[signal] = vals >> 8 & 0xFF;
+//         data[signal + 1] = vals & 0xFF;
+//     }
+// }
 
-    //         data_list.len = sizeof(dtu_data_t);
-    //         memcpy(&data_list.data_mid, &data_mid, sizeof(dtu_data_t));
-    //         osMessageQueuePut(DataQueueHandle, &data_list, 0, 0);
-    //     }
-    // }
-    // //通道数大于2时，需要分多包
-    // if (data_count > 2) {
-    //     //发送尾包
-    //     data_start.type = MEASURE_DATA_LAST_TYPE;
-    //     data_start.measure_ch = ((value[data_count + data_count % 2 - 2].channel + 1) << 4);
-    //     data_start.sensor_data[0] = BSWAP32(value[data_count + data_count % 2 - 2].data);
-    //     data_start.sensor_data[1] = 0xFFFFFFFF;
-    //     if (data_count % 2 == 0) {
-    //         data_start.measure_ch =
-    //             data_start.measure_ch | (value[data_count + data_count % 2 - 1].channel + 1);
-    //         data_start.sensor_data[1] = BSWAP32(value[data_count + data_count % 2 - 1].data);
-    //     }
-    //     data_list.len = sizeof(dtu_data_start_t);
-    //     memcpy(&data_list.data_start, &data_start, sizeof(dtu_data_start_t));
-    //     osMessageQueuePut(DataQueueHandle, &data_list, 0, 0);
-    // }
-    // free(value);
-}
+// //lora e5初始化
+// void SenseCAP::Lora_Init()
+// {
+//     // init the library, search the LORAE5 over the different WIO port available
+//     if ( lorae5.begin(DSKLORAE5_SWSERIAL_WIO_P2) ) {
+//         lora_statue_begin = true;
+//     }
+//     #if SENSECAP_DEBUG   
+//         if(SENSECAP_DEBUG)
+//             // Setup the LoRaWan Credentials
+//             if (!lorae5.setup(
+//                     FREQUENCY,
+//                     deveui,
+//                     appeui,
+//                     appkey))
+//             { // Setup the LoRaWAN stack with the stored credentials
+//                 lora_statue_setup = true;
+//             }
+//     #else
+//         // Setup the LoRaWan Credentials
+//         if ( ! lorae5.setup_sensecap(
+//                 FREQUENCY,
+//             ) ){
+//             lora_statue_setup = true;
+//         }
+//     #endif
+// }
+
+
+// void SenseCAP::Lora_SendData(uint8_t channel, uint8_t *data)
+// {
+//     //uint8_t data1[] = { 0x01, 0x02, 0x03, 0x04 };
+//     uint8_t rxBuff[16];
+//     uint8_t rxSize = 16;
+//     uint8_t rxPort;
+//     if(lorae5.join_sync())
+//     {
+//         while ( !lorae5.sendReceive_sync(channel, data, sizeof(data), rxBuff, &rxSize, &rxPort, 7, 14, 0) ) 
+//         {
+//             delay(10000);
+//         }
+//         #if SENSECAP_DEBUG
+//             Serial.println("Uplink done");
+//         #endif
+//             delay(10000);
+//     }
+// }
+
+// void SenseCAP::IMU_init()
+// {
+//     lis.begin(Wire1);
+//     lis.setOutputDataRate(LIS3DHTR_DATARATE_25HZ); //Data output rate
+//     lis.setFullScaleRange(LIS3DHTR_RANGE_2G);
+// }
+
+
+// //初始化内置传感器，读内置传感器的值
+// void SenseCAP::Read_builtin()
+// {
+//     builtin_sensor_data *builtin;
+//     Serial.println("light");
+//     int light = analogRead(WIO_LIGHT);
+//     Serial.println(light);
+//     data_decord(light, builtin->sensor_data, 1);
+//     Serial.println("mic");
+//     int mic_val = analogRead(WIO_MIC);
+//     data_decord(mic_val, builtin->sensor_data, 3);
+//     Serial.println("IMU");
+//     float x_values, y_value, z_val;
+//     lis.getAcceleration(&x_values, &y_value, &z_val);
+//     int x = x_values*100;
+//     int y = y_value*100;
+//     int z = z_val*100;
+    
+//     data_decord(x, builtin->sensor_data, 5);
+//     data_decord(y, builtin->sensor_data, 7);
+//     data_decord(z, builtin->sensor_data, 9);
+
+//     Lora_SendData(2, builtin->sensor_data);
+
+//     #if SENSECAP_DEBUG
+//         Serial.println(light);
+//         Serial.println(mic_val);
+//         Serial.println(x);
+//         Serial.println(y);
+//         Serial.println(z);
+//     #endif
+// }
+
 
