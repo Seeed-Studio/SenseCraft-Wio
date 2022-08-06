@@ -45,16 +45,10 @@ void UI::Run()
                 Serial.printf("%02x ", ((uint8_t *)sdata.data)[i]);
             }
             if(sdata.id == 1){
-                temp_light =  (((uint8_t *)sdata.data)[0] << 24) | \
-                                (((uint8_t *)sdata.data)[1] << 16) | \
-                                 (((uint8_t *)sdata.data)[2] << 8) | \
-                                 (((uint8_t *)sdata.data)[3]);
+                temp_light = ((int *)sdata.data)[0];
             }
             if(sdata.id == 2){     
-                temp_mic =  (((uint8_t *)sdata.data)[0] << 24) | \
-                        (((uint8_t *)sdata.data)[1] << 16) | \
-                            (((uint8_t *)sdata.data)[2] << 8) | \
-                            (((uint8_t *)sdata.data)[3]);      
+                 temp_mic = ((int *)sdata.data)[0];  
             }
             Serial.printf("sensor Receive: %d %d %s %d\r\n", temp_light,temp_mic, sdata.name, sdata.id);
 
