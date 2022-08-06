@@ -12,4 +12,9 @@ enum button_state {
     SELECT_PRESSED,
 };
 
+enum sensor_type {
+    BUILDIN_LIGHT = 1,
+    BUILDIN_MIC,
+};
+
 #endif // __UTILS_H__
