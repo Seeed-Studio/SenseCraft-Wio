@@ -14,14 +14,12 @@ using namespace cpp_freertos;
 class LoRaThread : public Thread
 {
 public:
-    LoRaThread(SysConfig &config, Message &m);
+    LoRaThread(SysConfig &config);
 
 protected:
     virtual void Run();
 
 private:
-    Message &loraMail;
-
 	SysConfig &cfg;
 };
 

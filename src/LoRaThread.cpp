@@ -1,10 +1,9 @@
 
 #include "LoRaThread.h"
 
-LoRaThread::LoRaThread(SysConfig &config, Message &m)
+LoRaThread::LoRaThread(SysConfig &config)
     : Thread("LoRaThread", 256, 1),
-	  cfg(config),
-      loraMail(m)
+	  cfg(config)
 {
     Start();
 };

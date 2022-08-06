@@ -45,7 +45,7 @@ void setup()
     ButtonThread *btn = new ButtonThread(*btnMail);
     UI *u = new UI(tft,spr, *cfg, *btnMail, *sensorMail);
     SamplerThread *sampler = new SamplerThread(*sensorMail);
-    LoRaThread *lora = new LoRaThread(*cfg, *sensorMail);
+    LoRaThread *lora = new LoRaThread(*cfg);
 
 
     Thread::StartScheduler();
