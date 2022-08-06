@@ -5,6 +5,7 @@
 #include "Free_Fonts.h"
 #include <stdint.h>
 #include <TFT_eSPI.h>
+#include "sensor.h"
 
 using namespace cpp_freertos;
 
@@ -14,7 +15,7 @@ using namespace cpp_freertos;
 class UI : public Thread
 {
 public:
-    UI(TFT_eSPI &lcd, TFT_eSprite &display, Message &m);
+    UI(TFT_eSPI &lcd, TFT_eSprite &display, Message &m1, Message &m2);
     void init();
 
 protected:
@@ -27,11 +28,21 @@ private:
     TFT_eSPI &tft;
     TFT_eSprite &spr;
 
-    Message &Mail;
+    Message &btnMail;
+    Message &sensorMail;
 
     uint8_t buff[256];
+    struct  sensor_data sdata;
+
 
     void (UI::*page[2])() = {&UI::sense_1, &UI::sense_2};
+private:
+    //inline function, 4byte uint8_t to float
+    void uint8_to_float(uint8_t *data, float* destination);
+
+    //temp data
+    int temp_light;
+    int temp_mic;
 };
 
 #endif // __UI_H__

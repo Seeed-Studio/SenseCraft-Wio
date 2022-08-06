@@ -4,10 +4,14 @@
 #include <SPI.h>
 #include "ui.h"
 #include "ButtonThread.h"
+#include "SamplerThread.h"
+
+
 using namespace cpp_freertos;
 
 TFT_eSPI tft;
 TFT_eSprite spr = TFT_eSprite(&tft); 
+
 
 
 void display_init()            // Display initialization, black background rotation
@@ -28,10 +32,14 @@ void setup()
 
     display_init();
 
-    Message *Mail;
-    Mail = new Message(256);
-    ButtonThread *btn = new ButtonThread(*Mail);
-    UI *u = new UI(tft,spr, *Mail);
+    Message *btnMail = new Message(256);
+    Message *sensorMail = new Message(256);
+
+
+    ButtonThread *btn = new ButtonThread(*btnMail);
+    UI *u = new UI(tft,spr, *btnMail, *sensorMail);
+    SamplerThread *sampler = new SamplerThread(*sensorMail);
+
     Thread::StartScheduler();
 }
 
