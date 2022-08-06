@@ -10,7 +10,7 @@ public:
 	buildin_light_sensor();
 	void init();
 	const char *get_name();
-	void read(struct sensor_data *data);
+	bool read(struct sensor_data *data);
 private:
 	const char *name = "buildin-light";
 	int light_value;

@@ -8,7 +8,7 @@ class buildin_mic : public sensor_base
 public:
 	buildin_mic();
 	void init();
-	void read(struct sensor_data *data);
+	bool read(struct sensor_data *data);
 	const char *get_name();
 private:
 	const char *name = "buildin-mic";
