@@ -21,17 +21,17 @@ void SamplerThread::Run() {
   while (true) {
     for (auto sensor : sensors) {
       sensor->read(&sdata);
-      Serial.printf("Sampling %s\n", sdata.name);
-      for (size_t i = 0; i < sdata.size; i++) {
-        Serial.printf("%02x ", ((uint8_t *)sdata.data)[i]);
-      }
+      // Serial.printf("Sampling %s\n", sdata.name);
+      // for (size_t i = 0; i < sdata.size; i++) {
+      //   Serial.printf("%02x ", ((uint8_t *)sdata.data)[i]);
+      // }
       // for (auto sensor : sensors) {
       //   Serial.printf("Sampling %s\n", sensor->get_name());
       // }
       // Serial.println(sensors.size());
 	  sensorMail.Send((void *)&sdata, sizeof(sdata));
 
-      Serial.println("SamplerThread");
+      // Serial.println("SamplerThread");
       Delay(Ticks::MsToTicks(100));
     }
   }
