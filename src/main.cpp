@@ -5,6 +5,8 @@
 #include "ui.h"
 #include "ButtonThread.h"
 #include "SamplerThread.h"
+#include "LoRaThread.h"
+#include "SysConfig.h"
 
 
 using namespace cpp_freertos;
@@ -32,13 +34,19 @@ void setup()
 
     display_init();
 
+    SysConfig *cfg = new SysConfig(); 
+
     Message *btnMail = new Message(256);
     Message *sensorMail = new Message(256);
 
 
+
+
     ButtonThread *btn = new ButtonThread(*btnMail);
-    UI *u = new UI(tft,spr, *btnMail, *sensorMail);
+    UI *u = new UI(tft,spr, *cfg, *btnMail, *sensorMail);
     SamplerThread *sampler = new SamplerThread(*sensorMail);
+    LoRaThread *lora = new LoRaThread(*cfg, *sensorMail);
+
 
     Thread::StartScheduler();
 }

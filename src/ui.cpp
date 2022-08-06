@@ -9,10 +9,11 @@ void UI::uint8_to_float(uint8_t *data, float* destination)
     *reinterpret_cast<uint32_t*>(destination) = value;
 }
 
-UI::UI(TFT_eSPI &lcd, TFT_eSprite &display, Message &m1, Message &m2)
+UI::UI(TFT_eSPI &lcd, TFT_eSprite &display, SysConfig &config, Message &m1, Message &m2)
     : Thread("UIThread", 4096, 1),
       tft(lcd),
       spr(display),
+        cfg(config),
       btnMail(m1),
     sensorMail(m2)
 {
@@ -41,9 +42,9 @@ void UI::Run()
         nums = sensorMail.Receive(&sdata, 256, 0);
         if (nums > 0)
         {
-            for (size_t i = 0; i < sdata.size; i++) {
-                Serial.printf("%02x ", ((uint8_t *)sdata.data)[i]);
-            }
+            // for (size_t i = 0; i < sdata.size; i++) {
+            //     Serial.printf("%02x ", ((uint8_t *)sdata.data)[i]);
+            // }
             if(sdata.id == 1){
                 temp_light = ((int *)sdata.data)[0];
             }
@@ -58,6 +59,7 @@ void UI::Run()
         {
             (this->*page[i])();
             Delay(Ticks::MsToTicks(100));
+            cfg.frequency = i;
         }
     }
 }
@@ -123,7 +125,6 @@ void UI::sense_1()
     spr.pushSprite(0, 0);
     spr.deleteSprite();
 
-    Serial.println("Sense: 1");
 }
 
 void UI::sense_2()
@@ -183,9 +184,7 @@ void UI::sense_2()
     spr.drawString(String(temp_mic), 0, 0, GFXFF);
     spr.drawString("mic", 0, 20, GFXFF);
 
-
     spr.pushSprite(0, 150);
     spr.deleteSprite();
 
-    Serial.println("Sense: 2");
 }

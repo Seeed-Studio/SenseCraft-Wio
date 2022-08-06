@@ -7,6 +7,8 @@
 #include <TFT_eSPI.h>
 #include "sensor.h"
 
+#include "SysConfig.h"
+
 using namespace cpp_freertos;
 
 #define SCREEN_WIDTH 320 // Wio Terminal Maximum Width
@@ -15,7 +17,7 @@ using namespace cpp_freertos;
 class UI : public Thread
 {
 public:
-    UI(TFT_eSPI &lcd, TFT_eSprite &display, Message &m1, Message &m2);
+    UI(TFT_eSPI &lcd, TFT_eSprite &display, SysConfig &config, Message &m1, Message &m2);
     void init();
 
 protected:
@@ -31,6 +33,10 @@ private:
     Message &btnMail;
     Message &sensorMail;
 
+    SysConfig &cfg;
+
+
+
     uint8_t buff[256];
     struct  sensor_data sdata;
 
@@ -43,6 +49,7 @@ private:
     //temp data
     int temp_light;
     int temp_mic;
+
 };
 
 #endif // __UI_H__
