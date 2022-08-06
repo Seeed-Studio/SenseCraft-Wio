@@ -62,6 +62,24 @@ void data_decord(int vals[5], unsigned char data[11])
   }
 }
 
+//扫描传感器的IIC地址
+int I2C_scan()
+{
+  byte error, address; //variable for error and I2C address
+  int nDevices = 0;
+  for (address = 1; address < 127; address++ )
+  {
+    Wire.beginTransmission(address);
+    error = Wire.endTransmission();
+    if (error == 0)
+    {
+      return (address);
+    }
+  }
+  return 0;
+}
+
+
 //内置传感器读值任务：如果传感器在线，则读值，如果不在线，对应传感器数值的变量复位为0xFFFF
 //Visionai除了不在线需要复位为0xffff以外，没有识别到人或者训练失败也复位0xffff
 void read_sensor()
@@ -303,17 +321,18 @@ void sensor_init()
   lis.setOutputDataRate(LIS3DHTR_DATARATE_25HZ); //Data output rate
   lis.setFullScaleRange(LIS3DHTR_RANGE_2G);
 
-  //SGP30
-  if (sgp_probe() != STATUS_OK)
+  // //SGP30
+  if(I2C_scan() == 0x58)
+  {
     sgp30_statue = true;
+    sgp_probe();
+  }
   else
     sgp30_statue = false;
-
+  
   //sht40
   sht4x.begin(Wire);
-  uint32_t serialNumber;
-  uint16_t error = sht4x.serialNumber(serialNumber);
-  if (!error)
+  if(I2C_scan() == 0x44)
     sht40_statue = true;
   else
     sht40_statue = false;
