@@ -8,6 +8,7 @@
 #include <SensirionI2CSht4x.h>
 #include "Seeed_Arduino_GroveAI.h"
 
+//定义LoRaWAN频率
 #define Frequency DSKLORAE5_ZONE_EU868
 
 LIS3DHTR<TwoWire> lis;
@@ -17,32 +18,33 @@ GroveAI ai(Wire);
 //Grove LoRa E5
 Disk91_LoRaE5 lorae5(&Serial); // Where the AT command and debut traces are printed
 
+//三码：DevEUI、APPEUI、APPKEY，仅供调试使用，不对用户开放
 char deveui[] = "1CF7F1C043200033";
 char appeui[] = "8000000000000009";
 char appkey[] = "92C03BCBA4197FBD2BC86E27B6113AFC";
 
-//全局变量
+//全局变量，表示传感器的数值，或者引脚定义
 int light=0, mic_val=0;  //光线值、麦克风响度
 float x_values=0.0, y_value=0.0, z_val=0.0; //IMU数值
 u16 tvoc_ppb, co2_eq_ppm; //sgp30
 int humi, temp;  //sht40
 int soilValue = 0;  //soil
-int soilPin = A0;
+int soilPin = A0;   //土壤传感器引脚
 
-//传感器状态
+//传感器状态，没有检测到传感器则为FALSE，检测到传感器在线则为TRUE
 bool sgp30_statue = false;
 bool sht40_statue = false;
 bool soil_statue = false;
 bool visionai_statue = false;
 bool lora_first_data = false;
 
-//SenseCAP
+//SenseCAP数据包
 unsigned char Built_in[11] = {0x40, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
 unsigned char Other_sensor[11] = {0x42, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
 unsigned char VisionAI_data1[11] = {0x43, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
 unsigned char VisionAI_data2[11] = {0x45, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
 
-//传感器数据值处理
+//传感器数据值处理，大端模式，每个数据占2Byte，区分正负处理
 void data_decord(int vals[5], unsigned char data[11])
 {
   for(int i = 0, j = 1; i<5; i++,j+=2)
@@ -60,7 +62,8 @@ void data_decord(int vals[5], unsigned char data[11])
   }
 }
 
-//内置传感器读值任务
+//内置传感器读值任务：如果传感器在线，则读值，如果不在线，对应传感器数值的变量复位为0xFFFF
+//Visionai除了不在线需要复位为0xffff以外，没有识别到人或者训练失败也复位0xffff
 void read_sensor()
 {
   //built-in
@@ -204,10 +207,11 @@ void read_sensor()
 
 }
 
-//lora e5初始化
+//lora e5初始化：第一步启动lora e5，如果接右侧Grove口，则为lorae5.begin(DSKLORAE5_SWSERIAL_WIO_P2)
+//如果接左侧Grove口，则为lorae5.begin(DSKLORAE5_SWSERIAL_WIO_P1)
+//第二步设置lora频段以及三码，如果不需要改变三码，可以使用setup_sensecap(Frequency)仅设置频段
 void Lora_Init()
 {
-  
   // init the library, search the LORAE5 over the different WIO port available
   if ( ! lorae5.begin(DSKLORAE5_SWSERIAL_WIO_P2) ) {
     Serial.println("LoRa E5 Init Failed");
@@ -227,6 +231,8 @@ void Lora_Init()
 }
 
 //lora e5连接LoRa并且发送数据
+//首先先进行入网判断，入网成功则开始发包，发包顺序：电池电量、设备版本号以及发包频率、内置传感器、外接传感器、VisionAI
+//间隔五分钟
 void Join_sent_data()
 { 
     uint8_t rxBuff[16];
@@ -235,7 +241,7 @@ void Join_sent_data()
     if ( lorae5.join_sync() )
     {
       Serial.println("Success in the LoRa");
-      if( lora_first_data )
+      if( lora_first_data )   //关于传感器上报周期和版本号、电池仅上传一次
       {
         static uint8_t data_1[9] = { 0x00, 0x07, 0x00, 0x64, 0x00, 0x05, 0x00, 0x61, 0x89 };
         while ( !lorae5.sendReceive_sync( 2, data_1, sizeof(data_1),rxBuff,&rxSize,&rxPort,7,14,0) ) 
@@ -287,6 +293,7 @@ void Join_sent_data()
     }
 }
 
+//传感器初始化，同时判断设备是否在线
 void sensor_init()
 {
   Wire.begin();
@@ -317,7 +324,7 @@ void sensor_init()
   else
     visionai_statue = false;
 
-  //soil
+  //soil 跟lora e5有冲突，如果读值同时lora e5接右侧，会导致lora e5初始化失败？
   // if( analogRead(soilPin) )
   //   soil_statue = true;
   // else
@@ -328,7 +335,7 @@ void setup()
 {
   // put your setup code here, to run once:
   Serial.begin(9600);
-  while (!Serial) ;
+  while (!Serial) ;  //开启串口后程序执行
   Lora_Init();
 }
 
