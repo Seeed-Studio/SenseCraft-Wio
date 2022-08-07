@@ -6,6 +6,7 @@
 #include <stdint.h>
 #include <TFT_eSPI.h>
 #include "sensor.h"
+#include "utils.h"
 
 #include "SysConfig.h"
 

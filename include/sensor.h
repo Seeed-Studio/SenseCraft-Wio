@@ -4,14 +4,6 @@
 typedef void (*sampler_callback)(const void *sample_buf, unsigned char byteLenght);
 
 
-struct sensor_data
-{
-	const char *name;
-	const void *data;
-	unsigned char size;
-	char id;
-};
-
 class sensor_base
 {
 public:

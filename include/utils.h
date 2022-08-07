@@ -12,9 +12,19 @@ enum button_state {
     SELECT_PRESSED,
 };
 
+struct sensor_data
+{
+	const char *name;
+	const void *data;
+	unsigned char size;
+    uint8_t id;
+    bool status; // 0: normal, 1: error
+};
+
 enum sensor_type {
     BUILDIN_LIGHT = 1,
     BUILDIN_MIC,
+    LIS3DHTRSENSOR,
 };
 
 #endif // __UTILS_H__
