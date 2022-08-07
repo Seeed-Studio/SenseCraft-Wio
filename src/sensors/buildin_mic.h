@@ -2,6 +2,8 @@
 #define __BUILDIN_MIC_H
 
 #include "sensor.h"
+#include "utils.h"
+
 
 class buildin_mic : public sensor_base
 {

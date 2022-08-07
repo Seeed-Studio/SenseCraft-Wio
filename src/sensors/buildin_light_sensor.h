@@ -2,7 +2,7 @@
 #define __BUILDIN_LIGHT_SENSOR_H
 
 #include "sensor.h"
-
+#include "utils.h"
 
 class buildin_light_sensor : public sensor_base
 {

@@ -17,8 +17,9 @@ bool buildin_light_sensor::read(struct sensor_data *sdata)
 	light_value = analogRead(WIO_LIGHT);
 	sdata->data = &light_value;
 	sdata->size = sizeof(light_value);
-	sdata->id = 1;
+	sdata->id = BUILDIN_LIGHT;
 	sdata->name = name;
+	sdata->status = true;
 	return true;
 }
 
