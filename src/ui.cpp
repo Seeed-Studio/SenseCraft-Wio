@@ -1,62 +1,52 @@
 #include "ui.h"
 
-
-//inline function, 4byte uint8_t to float
-void UI::uint8_to_float(uint8_t *data, float* destination)
-{
-    uint32_t value = data[0] | ((uint32_t)data[1]) << 8 | ((uint32_t)data[2]) << 16 |
-                    ((uint32_t)data[1]) << 24;
-    *reinterpret_cast<uint32_t*>(destination) = value;
+// inline function, 4byte uint8_t to float
+void UI::uint8_to_float(uint8_t *data, float *destination) {
+    uint32_t value =
+        data[0] | ((uint32_t)data[1]) << 8 | ((uint32_t)data[2]) << 16 | ((uint32_t)data[1]) << 24;
+    *reinterpret_cast<uint32_t *>(destination) = value;
 }
 
 UI::UI(TFT_eSPI &lcd, TFT_eSprite &display, SysConfig &config, Message &m1, Message &m2)
-    : Thread("UIThread", 4096, 1),
-      tft(lcd),
-      spr(display),
-        cfg(config),
-      btnMail(m1),
-    sensorMail(m2)
-{
+    : Thread("UIThread", 4096, 1), tft(lcd), spr(display), cfg(config), btnMail(m1),
+      sensorMail(m2) {
     Start();
 };
 
-void UI::init()
-{
+void UI::init() {
 }
 
-void UI::Run()
-{
+void UI::Run() {
     uint8_t nums;
 
     init();
 
-    while (true)
-    {
+    while (true) {
         nums = btnMail.Receive(&buff, 256, 0);
-        if (nums > 0)
-        {
+        if (nums > 0) {
             Serial.printf("btn Receive: %d ", nums);
             Serial.println(buff[0]);
         }
 
         nums = sensorMail.Receive(&sdata, 256, 0);
-        if (nums > 0)
-        {
-            // for (size_t i = 0; i < sdata.size; i++) {
-            //     Serial.printf("%02x ", ((uint8_t *)sdata.data)[i]);
+        if (nums > 0) {
+            for (size_t i = 0; i < sdata.size; i = i + 4) {
+                Serial.printf("%d ", ((int32_t *)sdata.data)[i]);
+            }
+            temp_light = sdata.size;
+            temp_mic   = ((int32_t *)sdata.data)[sdata.size - 5];
+            Serial.printf("sensor Receive: %s %d %d\r\n", sdata.name, sdata.id, sdata.size);
+            // if(sdata.id == 1){
+            //     temp_light = ((int *)sdata.data)[0];
             // }
-            if(sdata.id == 1){
-                temp_light = ((int *)sdata.data)[0];
-            }
-            if(sdata.id == 2){     
-                 temp_mic = ((int *)sdata.data)[0];  
-            }
-            Serial.printf("sensor Receive: %d %d %s %d\r\n", temp_light,temp_mic, sdata.name, sdata.id);
-
+            // if(sdata.id == 2){
+            //      temp_mic = ((int *)sdata.data)[0];
+            // }
+            // Serial.printf("sensor Receive: %d %d %s %d\r\n", temp_light,temp_mic, sdata.name,
+            // sdata.id);
         }
 
-        for (int i = 0; i < 2; i++)
-        {
+        for (int i = 0; i < 2; i++) {
             (this->*page[i])();
             Delay(Ticks::MsToTicks(100));
             cfg.frequency = i;
@@ -64,15 +54,12 @@ void UI::Run()
     }
 }
 
-
-
 #define PIXEL 4 // Width of one letter
 #define LEFT_SIDE 70
 #define HIGHT_SIDE 47
 const static unsigned int FONT_ROW_HEIGHT = 22; // The height of a letter
 
-void UI::sense_1()
-{
+void UI::sense_1() {
     spr.createSprite(150, 150);
 
     // put your main code here
@@ -124,11 +111,9 @@ void UI::sense_1()
 
     spr.pushSprite(0, 0);
     spr.deleteSprite();
-
 }
 
-void UI::sense_2()
-{
+void UI::sense_2() {
 
     spr.createSprite(150, 150);
 
@@ -176,15 +161,12 @@ void UI::sense_2()
 
     // spr.drawString("Network :", 5, 218, GFXFF);
 
-    //  spr.setTextColor(TFT_RED, TFT_BLACK);                      //Networking status indication：OFF
-    //  spr.drawString("OFF", 82, 218 , GFXFF);
-
-
+    //  spr.setTextColor(TFT_RED, TFT_BLACK);                      //Networking status
+    //  indication：OFF spr.drawString("OFF", 82, 218 , GFXFF);
 
     spr.drawString(String(temp_mic), 0, 0, GFXFF);
     spr.drawString("mic", 0, 20, GFXFF);
 
     spr.pushSprite(0, 150);
     spr.deleteSprite();
-
 }
