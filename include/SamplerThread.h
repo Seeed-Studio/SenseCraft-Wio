@@ -1,39 +1,34 @@
 
 #ifndef __SAMPLER_H
 #define __SAMPLER_H
-#include <Seeed_Arduino_ooFreeRTOS.h>
-#include <Arduino.h>
+#include "SysConfig.h"
+#include "WiFiThread.h"
 #include "sensor.h"
 #include "utils.h"
-
+#include <Arduino.h>
+#include <Seeed_Arduino_ooFreeRTOS.h>
 
 using namespace cpp_freertos;
 
-class SamplerThread : public Thread
-{
-public:
-    SamplerThread(Message &m1);
+class SamplerThread : public Thread {
+  public:
+    SamplerThread(SysConfig &config, Message &m1);
 
-protected:
-  virtual void Run();
+  protected:
+    virtual void Run();
 
-    // while (true) {
-    //   for (auto sensor : sensor_base::sensors) {
-    //     Serial.printf("Sampling %s\n", sensor->get_name());
-    //     Delay(Ticks::MsToTicks(10));
-    // }
-  //}
+  private:
+    int          DelayInMs;
+    sensor_base *sensor;
 
-private:
-  int DelayInMs;
-  sensor_base *sensor;
+  private:
+    struct sensor_data sdata;
 
-private:
-   struct sensor_data sdata;
+    Message   &sensorMail;
+    SysConfig &cfg;
 
-   Message &sensorMail;
-
+  private:
+    WiFiThread *wifi;
 };
-
 
 #endif
