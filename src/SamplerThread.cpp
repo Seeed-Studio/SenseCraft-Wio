@@ -2,6 +2,8 @@
 #include "SamplerThread.h"
 #include "sensors/buildin_light_sensor.h"
 #include "sensors/buildin_mic.h"
+#include "sensors/LIS3DHTRSensor.h"
+#include "sensors/FakeSensor.h"
 #include <vector>
 
 SamplerThread::SamplerThread(Message &m1) : 
@@ -17,6 +19,12 @@ void SamplerThread::Run() {
   std::vector<sensor_base *> sensors;
   sensors.push_back(new buildin_light_sensor());
   sensors.push_back(new buildin_mic());
+  sensors.push_back(new LIS3DHTRSensor());
+  sensors.push_back(new FakeSensor());
+
+  for (auto sensor : sensors) {
+    sensor->init();
+  }
 
   while (true) {
     for (auto sensor : sensors) {
