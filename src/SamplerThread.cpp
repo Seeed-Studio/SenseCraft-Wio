@@ -13,7 +13,7 @@ SamplerThread::SamplerThread(SysConfig &config, Message &m1)
 }
 
 void SamplerThread::Run() {
-    wifi = new WiFiThread();
+    wifi = new WiFiThread(cfg);
 
     std::vector<sensor_base *> sensors;
     sensors.push_back(new buildin_light_sensor());
