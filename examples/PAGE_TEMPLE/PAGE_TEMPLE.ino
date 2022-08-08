@@ -24,7 +24,7 @@ void DISPLAY_INIT() // Display initialization, black background rotation
 // 320 * 25 = 8000
 void Network_state(int s_key)
 {
-    spr.createSprite(320, 25);
+    spr.createSprite(SCREEN_WIDTH, 25);
     spr.setFreeFont(FSSB9);
     spr.fillSprite(TFT_BLACK);
 
@@ -32,20 +32,22 @@ void Network_state(int s_key)
     {
     case 0:
         spr.setTextColor(TFT_RED);
-        spr.drawString("OFF", 90, 0, GFXFF);
+        spr.drawString("OFF", 60, 0, 2);
         break;
     case 1:
         spr.setTextColor(TFT_GREEN, TFT_BLACK);           // Networking status indication：ON
-        spr.drawString("LoRa(SenseCAP)", 90, 0, GFXFF); // Show the network you are in
+        spr.drawString("LoRa", 60, 0, 2); // Show the network you are in
         break;
     case 2:
         spr.setTextColor(TFT_GREEN, TFT_BLACK);          // Networking status indication：ON
-        spr.drawString("WIFI(Ubidots)", 90, 0, GFXFF); // Show the network you are in
+        spr.drawString("WiFi", 60, 0, 2); // Show the network you are in
         break;
     default:;
     }
     spr.setTextColor(TFT_WHITE);
-    spr.drawString("Network :", 5, 0, GFXFF);
+    spr.drawString("Network:", 5, 0, 2);
+    spr.setFreeFont(FSS9);
+    
     spr.pushSprite(0, 215);
     spr.deleteSprite();
 }
@@ -89,6 +91,56 @@ void Sense_Display(int CHOOSE_PAGE) // Sense interface display
     spr.deleteSprite();
 }
 
+void Below_Right_State_Content(int gg_state)  // SD 插拔状态 Grove 插拔状态
+{
+    
+    spr.createSprite(320, 25);
+    spr.setFreeFont(FSSB9);
+    spr.fillSprite(TFT_BLACK);
+    // int s_key = 1;
+    switch (gg_state)
+    {
+    case 0:
+        spr.setFreeFont(FSS9);
+        spr.setTextColor(TFT_YELLOW);
+        spr.drawString("Plug in a Grove sensor", 0, 0, 2);
+        spr.pushSprite(170, 215);
+        break;
+    case 1:
+        spr.setFreeFont(FSS9);
+        spr.drawTriangle(0, 18, 11, 0, 22, 18, TFT_YELLOW);
+        spr.setTextColor(TFT_YELLOW);
+        spr.drawString("! ", 10, 4, 2);
+        spr.drawString("TF card storage is full", 28, 0, 2);
+        spr.pushSprite(140, 215);
+        break;
+    case 2:
+        spr.setFreeFont(FSS9);
+        spr.setTextColor(TFT_GREEN);
+        spr.drawString("Vision AI Sensor connected", 22, 0, 2);
+        spr.pushSprite(120, 215);
+        break;
+    case 3:
+        spr.setFreeFont(FSS9);
+        spr.setTextColor(TFT_GREEN);
+        spr.drawString("Saving has been started", 22, 0, 2);
+        spr.pushSprite(140, 215);
+        break;
+    case 4:
+        spr.setFreeFont(FSS9);
+        spr.setTextColor(TFT_YELLOW);
+        spr.drawString("Please insert TF card", 22, 0, 2);
+        spr.pushSprite(148, 215);
+        break;
+    
+    default:;
+    }
+    spr.setTextColor(TFT_WHITE);
+    spr.drawString("Network :", 5, 0, GFXFF);
+    
+    spr.deleteSprite();
+}
+
 void setup()
 {
     DISPLAY_INIT();
@@ -111,6 +163,9 @@ void loop()
        delay(300);
     }
 
-    Network_state(test_flag%3);
+    Network_state(test_flag%3); // 修改网络状态  左下角
+
+    Below_Right_State_Content(test_flag%5);  // 修改 右下角 状态 
+    
     delay(20);
 }
