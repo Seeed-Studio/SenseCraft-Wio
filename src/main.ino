@@ -12,10 +12,53 @@
 #include <rpcWiFi.h>
 #include <Adafruit_TinyUSB.h>
 #include <Seeed_Arduino_FS.h>
+#include <Seeed_Arduino_ooFreeRTOS.h>
 #include <Seeed_SFUD.h>
 #include <sfud.h>
 #include <TFT_eSPI.h> // Hardware-specific library
 #include <system.h>
+
+using namespace cpp_freertos;
+
+class WiFiThread : public Thread
+{
+public:
+  WiFiThread();
+
+protected:
+  virtual void Run();
+};
+
+WiFiThread::WiFiThread() : Thread("WiFiThread", 1024, 1)
+{
+  //Start();
+}
+
+void WiFiThread::Run()
+{
+  while (true)
+  {
+    if (WiFi.status() != WL_CONNECTED)
+    {
+      Serial.printf("WiFi Connecting...\n");
+      WiFi.begin(sys.SSID().c_str(), sys.PWD().c_str());
+      for (int i = 0; i < 3; i++)
+      {
+        if (WiFi.status() == WL_CONNECTED)
+          break;
+      }
+      if (WiFi.status() != WL_CONNECTED)
+      {
+        Serial.printf("WiFi Connect failed...\n");
+      }
+      else
+      {
+        Serial.printf("WiFi Connected...\n");
+      }
+    }
+    Delay(Ticks::MsToTicks(100));
+  }
+}
 
 TFT_eSPI tft;
 
@@ -40,6 +83,8 @@ void setup()
 
   sys.begin();
 
+  static WiFiThread w;
+
   tft.begin();
   tft.setRotation(0);
   tft.fillScreen(TFT_BLUE);
@@ -47,10 +92,23 @@ void setup()
   img.setColorDepth(COLOR_DEPTH);
   img.createSprite(RADIUS * 2 + 1, RADIUS * 2 + 1);
   img.fillSprite(TFT_BLACK);
+
+  w.Start();
 }
 
 void loop()
 {
+  Serial.printf("ssid: %s\n", sys.SSID().c_str());
+  Serial.printf("pwd: %s\n", sys.PWD().c_str());
+  Serial.printf("sd: %d\n", sys.TF());
+  if (0 != sys.write(sys.SSID()))
+  {
+    Serial.printf("write successed\n", sys.TF());
+  }
+  else
+  {
+    Serial.printf("write failed\n", sys.TF());
+  }
   // Draw Yin and Yang symbol circles into Sprite
   yinyang(RADIUS, RADIUS, angle, RADIUS);
 
@@ -67,7 +125,7 @@ void loop()
   }
   // Serial.println(sys.SSID());
   // // Slow things down
-  // delay(1000);
+  delay(1000);
 }
 
 // -------------------------------------------------------------------------

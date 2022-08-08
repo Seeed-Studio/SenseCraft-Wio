@@ -4,18 +4,32 @@
 #include <Arduino.h>
 #include <rpcWiFi.h>
 #include <Adafruit_TinyUSB.h>
+#include <Seeed_Arduino_ooFreeRTOS.h>
 #include <Seeed_Arduino_FS.h>
 #include <Seeed_SFUD.h>
 #include <sfud.h>
 
-class CC
+using namespace cpp_freertos;
+
+class System
 {
 public:
-    CC(/* args */);
-    ~CC();
+    System(/* args */);
+    ~System();
     void begin();
-    bool mount();
-    void data_write(uint8_t *buff, uint32_t size_t);
+    String SSID();
+    String PWD();
+    bool TF();
+    uint32_t write(uint8_t *data, uint32_t size);
+    uint32_t write(char *data)
+    {
+        return write((uint8_t *)data, strlen(data));
+    };
+    uint32_t write(String data)
+    {
+        return write((uint8_t *)data.c_str(), data.length());
+    };
+    static SemaphoreHandle_t lock;
 
 private:
     bool sd_mount;
@@ -23,6 +37,6 @@ private:
     Adafruit_USBD_MSC usb_msc;
 };
 
-extern CC sys;
+extern System sys;
 
 #endif /*__XSYSTEM_H__*/
