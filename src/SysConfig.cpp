@@ -73,18 +73,15 @@ void SysConfig::init() {
         usb_msc.setUnitReady(true);
 
         usb_msc.begin();
-    }else
-		Serial.println("spi flash mount failed");
-	
-    pinMode(SDCARD_DET_PIN, INPUT);
-    if (digitalRead(SDCARD_DET_PIN) == LOW) {
-        sd_mount = SD.begin(SDCARD_SS_PIN, SDCARD_SPI, 4000000UL);
-    }else
-		Serial.println("sd card not insert");
+    } else
+        Serial.println("spi flash mount failed");
 
-    // Serial.begin(115200);
-
-    // WiFi.mode(WIFI_MODE_AP);
+    // pinMode(SDCARD_DET_PIN, INPUT);
+    // if (digitalRead(SDCARD_DET_PIN) == LOW) {
+    //     sd_mount = SD.begin(SDCARD_SS_PIN, SDCARD_SPI, 4000000UL);
+    // }else
+    // 	Serial.println("sd card not insert");
+    ReadAllConfig();
 }
 
 // void SysConfig::set_lora_freq(uint8_t frequency)
@@ -96,3 +93,48 @@ void SysConfig::init() {
 // {
 // 	return this->frequency;
 // }
+
+void SysConfig::ReadConfigParam(const String filename, char *prefix_param, String *param) {
+    xSemaphoreTake(SysConfig::lock, portMAX_DELAY);
+    if (spi_flash_mount) {
+        File config = SFUD.open(filename, "r");
+        if (config) {
+
+            if (-1 != config.find(prefix_param)) {
+                *param = config.readStringUntil('\n');
+                param->trim();
+            }
+            config.close();
+        }
+    }
+    xSemaphoreGive(SysConfig::lock);
+}
+
+void SysConfig::ReadAllConfig() {
+    ReadConfigParam("config.txt", "SSID=", &this->ssid);
+    ReadConfigParam("config.txt", "PASSWORD=", &this->password);
+    ReadConfigParam("config.txt", "FREQUENCY=", &this->lora_frequency);
+}
+
+void SysConfig::WriteConfigParam(char *filename, char *prefix_param, char *param) {
+    xSemaphoreTake(SysConfig::lock, portMAX_DELAY);
+    if (spi_flash_mount) {
+        File config = SFUD.open(filename, "r+");
+        if (config) {
+            if (-1 != config.find(prefix_param)) {
+                config.seek(config.position());
+                config.print(param);
+                config.print("\n");
+            }
+        } else {
+            config = SFUD.open(filename, "w");
+            if (config) {
+                config.print(prefix_param);
+                config.print(param);
+                config.print("\n");
+            }
+        }
+        config.close();
+    }
+    xSemaphoreGive(SysConfig::lock);
+}

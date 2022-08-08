@@ -20,9 +20,8 @@ void LoRaThread::Run()
         //     Serial.println("lora Receive");
 
         // }
-		Serial.printf("lora thread %d\r\n", cfg.frequency);
-	
-		Delay(Ticks::MsToTicks(100));
+		Serial.printf("lora thread %s\r\n", cfg.lora_frequency.c_str());
+        Delay(Ticks::MsToTicks(1000));
     }
 }
 

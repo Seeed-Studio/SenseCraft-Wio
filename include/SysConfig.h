@@ -14,20 +14,25 @@ class SysConfig
 {
 public:
 	/* lora */
-	uint8_t frequency;
+	String ssid;
+	String password;
+	String lora_frequency;
+
+	static SemaphoreHandle_t lock;
 
 public:
 	SysConfig(/* args */);
 	~SysConfig();
 	void init();
-	// void set_lora_freq(uint8_t frequency);
-	// uint8_t get_lora_freq();
-	static SemaphoreHandle_t lock;
+	void ReadAllConfig();
+	void WriteConfigParam(char* filename , char *prefix_param, char *param);
 private:
 	/* data */
-	bool sd_mount;
     bool spi_flash_mount;
 	Adafruit_USBD_MSC usb_msc;
+	
+
+	void ReadConfigParam(const String filename,  char *prefix_param, String *param);
 };
 
 #endif // __SYSCONFIG_H__

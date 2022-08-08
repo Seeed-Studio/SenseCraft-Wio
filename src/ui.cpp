@@ -49,7 +49,6 @@ void UI::Run() {
         for (int i = 0; i < 3; i++) {
             (this->*page[i])();
             Delay(Ticks::MsToTicks(100));
-            cfg.frequency = i;
         }
     }
 }
