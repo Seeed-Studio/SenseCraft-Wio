@@ -29,9 +29,9 @@ protected:
   virtual void Run();
 };
 
-WiFiThread::WiFiThread() : Thread("WiFiThread", 1024, 1)
+WiFiThread::WiFiThread() : Thread("WiFiThread", 4096 , 1)
 {
-  //Start();
+  Start();
 }
 
 void WiFiThread::Run()
@@ -93,7 +93,7 @@ void setup()
   img.createSprite(RADIUS * 2 + 1, RADIUS * 2 + 1);
   img.fillSprite(TFT_BLACK);
 
-  w.Start();
+  //w.Start();
 }
 
 void loop()
