@@ -26,6 +26,9 @@ void display_init()            // Display initialization, black background rotat
 
 void setup()
 {
+
+    SysConfig *cfg = new SysConfig(); 
+    cfg->init();
     // put your setup code here, to run once:
     Serial.begin(9600);
     uint32_t start = millis();
@@ -33,9 +36,6 @@ void setup()
         ; // Open the Serial Monitor to get started or wait for 1.5"
 
     display_init();
-
-    SysConfig *cfg = new SysConfig(); 
-    cfg->init();
 
     Message *btnMail = new Message(256);
     Message *sensorMail = new Message(256);
