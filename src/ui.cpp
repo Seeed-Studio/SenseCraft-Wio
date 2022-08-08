@@ -8,7 +8,7 @@ void UI::uint8_to_float(uint8_t *data, float *destination) {
 }
 
 UI::UI(TFT_eSPI &lcd, TFT_eSprite &display, SysConfig &config, Message &m1, Message &m2)
-    : Thread("UIThread", 4096, 1), tft(lcd), spr(display), cfg(config), btnMail(m1),
+    : Thread("UIThread", 1024, 1), tft(lcd), spr(display), cfg(config), btnMail(m1),
       sensorMail(m2) {
     Start();
 };
@@ -61,7 +61,6 @@ const static unsigned int FONT_ROW_HEIGHT = 22; // The height of a letter
 
 void UI::sense_1() {
     spr.createSprite(150, 150);
-
     // put your main code here
     spr.setFreeFont(FSSB9);
     spr.setTextColor(TFT_BLACK, TFT_WHITE);
