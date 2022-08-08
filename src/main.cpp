@@ -35,6 +35,7 @@ void setup()
     display_init();
 
     SysConfig *cfg = new SysConfig(); 
+    cfg->init();
 
     Message *btnMail = new Message(256);
     Message *sensorMail = new Message(256);
@@ -44,7 +45,6 @@ void setup()
     UI *u = new UI(tft,spr, *cfg, *btnMail, *sensorMail);
     SamplerThread *sampler = new SamplerThread(*cfg,*sensorMail);
     LoRaThread *lora = new LoRaThread(*cfg);
-
 }
 
 void loop()

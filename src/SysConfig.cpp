@@ -1,12 +1,90 @@
 #include "SysConfig.h"
 
+using namespace cpp_freertos;
 
-SysConfig::SysConfig(/* args */)
-{
+SemaphoreHandle_t SysConfig::lock = NULL;
+
+static int32_t msc_read_cb(uint32_t lba, void *buffer, uint32_t bufsize, uint32_t offset) {
+    // Serial.printf("read: lba:%d, bufsize:%d, offset: %d\n", lba, bufsize, offset);
+    uint32_t ret_size = -1;
+
+    xSemaphoreTake(SysConfig::lock, portMAX_DELAY);
+
+    const sfud_flash *_flash = sfud_get_device_table() + 0;
+    uint8_t           result =
+        sfud_read(_flash, lba * _flash->chip.erase_gran + offset, bufsize, (uint8_t *)buffer);
+    if (result == SFUD_SUCCESS) {
+        ret_size = bufsize;
+    }
+    xSemaphoreGive(SysConfig::lock);
+    return ret_size;
 }
 
-SysConfig::~SysConfig()
-{
+static int32_t msc_write_cb(uint32_t lba, uint8_t *buffer, uint32_t bufsize, uint32_t offset) {
+    // Serial.printf("write: lba:%d, bufsize:%d, offset:%d\n", lba, bufsize, offset);
+    uint32_t          ret_size = -1;
+    const sfud_flash *_flash   = sfud_get_device_table() + 0;
+    uint8_t           result   = SFUD_SUCCESS;
+    xSemaphoreTake(SysConfig::lock, portMAX_DELAY);
+    if (offset == 0) {
+        result = sfud_erase_write(_flash, lba * _flash->chip.erase_gran, bufsize, buffer);
+    } else {
+        result = sfud_write(_flash, lba * _flash->chip.erase_gran + offset, bufsize, buffer);
+    }
+    if (result == SFUD_SUCCESS) {
+        ret_size = bufsize;
+    }
+    xSemaphoreGive(SysConfig::lock);
+    return ret_size;
+}
+
+static void msc_flush_cb(void) {
+}
+
+SysConfig::SysConfig(/* args */) {
+}
+
+SysConfig::~SysConfig() {
+}
+
+void SysConfig::init() {
+    // 挂载文件系统
+    if (SysConfig::lock == NULL) {
+        SysConfig::lock = xSemaphoreCreateMutex();
+    }
+    spi_flash_mount = SFUD.begin();
+
+    // 如果flash挂载成功 则映射改空间
+    if (spi_flash_mount) {
+        const sfud_flash *_flash = sfud_get_device_table() + 0;
+
+        // Set disk vendor id, product id and revision with string up to 8, 16, 4 characters
+        // respectively
+        usb_msc.setID("K1101", "Mass Storage", "1.0");
+
+        // Set disk size
+        usb_msc.setCapacity((_flash->chip.capacity / _flash->chip.erase_gran),
+                            _flash->chip.erase_gran);
+
+        // Set callback
+        usb_msc.setReadWriteCallback(msc_read_cb, msc_write_cb, msc_flush_cb);
+
+        // Set Lun ready (RAM disk is always ready)
+        usb_msc.setUnitReady(true);
+
+        usb_msc.begin();
+    }else
+		Serial.println("spi flash mount failed");
+	
+    pinMode(SDCARD_DET_PIN, INPUT);
+    if (digitalRead(SDCARD_DET_PIN) == LOW) {
+        sd_mount = SD.begin(SDCARD_SS_PIN, SDCARD_SPI, 4000000UL);
+    }else
+		Serial.println("sd card not insert");
+
+    // Serial.begin(115200);
+
+    // WiFi.mode(WIFI_MODE_AP);
 }
 
 // void SysConfig::set_lora_freq(uint8_t frequency)
