@@ -37,31 +37,76 @@ void DISPLAY_INIT() // Display initialization, black background rotation
     tft.fillScreen(TFT_BLACK);
 }
 
-void Sense_Display() // Sense interface display
+//320*70 = 22400
+void Sense_Display(int CHOOSE_SENSOR) // Sense interface display
 {
 
-    //  spr.createSprite(SCREEN_WIDTH, SCREEN_HIGH);
+    spr.createSprite(320, 70);
 
-    tft.setFreeFont(FSSB9);
-    tft.setTextColor(TFT_BLACK, TFT_WHITE);
+    spr.setFreeFont(FSSB9);
+    spr.setTextColor(TFT_BLACK, TFT_WHITE);
 
-    tft.fillRect(4 * PIXEL, 0, 21 * PIXEL, FONT_ROW_HEIGHT + 15, TFT_WHITE);
-    tft.drawString("Sense", 32, 11, GFXFF);
+    spr.fillRect(4 * PIXEL, 0, 21 * PIXEL, FONT_ROW_HEIGHT + 15, TFT_WHITE);
+    spr.drawString("Sense", 32, 11, GFXFF);
 
-    tft.fillRect(30 * PIXEL, 0, 21 * PIXEL, FONT_ROW_HEIGHT + 15, tft.color565(135, 206, 235));
-    tft.setTextColor(TFT_BLACK, tft.color565(135, 206, 235));
-    tft.drawString("Process", 127, 11, GFXFF);
+    spr.fillRect(30 * PIXEL, 0, 21 * PIXEL, FONT_ROW_HEIGHT + 15, tft.color565(135, 206, 235));
+    spr.setTextColor(TFT_BLACK, tft.color565(135, 206, 235));
+    spr.drawString("Process", 127, 11, GFXFF);
 
-    tft.setTextColor(TFT_BLACK, TFT_WHITE);
-    tft.fillRect(56 * PIXEL, 0, 21 * PIXEL, FONT_ROW_HEIGHT + 15, TFT_WHITE);
-    tft.drawString("Network", 231, 11, GFXFF);
+    spr.setTextColor(TFT_BLACK, TFT_WHITE);
+    spr.fillRect(56 * PIXEL, 0, 21 * PIXEL, FONT_ROW_HEIGHT + 15, TFT_WHITE);
+    spr.drawString("Network", 231, 11, GFXFF);
 
-    tft.drawLine(0, 2 * FONT_ROW_HEIGHT, SCREEN_WIDTH, 2 * FONT_ROW_HEIGHT, TFT_WHITE);
+    spr.drawLine(0, 2 * FONT_ROW_HEIGHT, SCREEN_WIDTH, 2 * FONT_ROW_HEIGHT, TFT_WHITE);
 
-//    tft.setFreeFont(FSS9);
-//    tft.setTextColor(TFT_WHITE);
-//    tft.fillRect(120, 50, 58, 20, tft.color565(118, 118, 118));
-//    tft.drawString("Sound", 122, 52, GFXFF);
+    switch (CHOOSE_SENSOR)
+    {
+    case 0:
+        spr.setFreeFont(FSS9);
+        spr.setTextColor(TFT_WHITE);
+        spr.fillRect(130, 50, 58, 20, tft.color565(118, 118, 118));
+        spr.drawString("Sound", 132, 52, GFXFF);
+        break;
+    case 1:
+        spr.setFreeFont(FSS9);
+        spr.setTextColor(TFT_WHITE);
+        spr.fillRect(130, 50, 58, 20, tft.color565(118, 118, 118));
+        spr.drawString("Light", 132, 52, GFXFF);
+        break;
+    default:
+        break;
+    }
+    spr.pushSprite(0, 0);
+    spr.deleteSprite();
+}
+
+// 320 * 25 = 8000
+void Network_state(int s_key)
+{
+    spr.createSprite(320, 25);
+    spr.setFreeFont(FSSB9);
+    spr.fillSprite(TFT_BLACK);
+
+    switch (s_key)
+    {
+    case 0:
+        spr.setTextColor(TFT_RED);
+        spr.drawString("OFF", 90, 0, GFXFF);
+        break;
+    case 1:
+        spr.setTextColor(TFT_GREEN, TFT_BLACK);           // Networking status indication：ON
+        spr.drawString("LoRa(SenseCAP)", 90, 0, GFXFF); // Show the network you are in
+        break;
+    case 2:
+        spr.setTextColor(TFT_GREEN, TFT_BLACK);          // Networking status indication：ON
+        spr.drawString("WIFI(Ubidots)", 90, 0, GFXFF); // Show the network you are in
+        break;
+    default:;
+    }
+    spr.setTextColor(TFT_WHITE);
+    spr.drawString("Network :", 5, 0, GFXFF);
+    spr.pushSprite(0, 215);
+    spr.deleteSprite();
 }
 
 void setup()
@@ -74,68 +119,57 @@ void setup()
     tft.begin();
     tft.setRotation(3);
     tft.fillScreen(TFT_BLACK);
-    
-    //    DISPLAY_INIT();
+
 }
 
 int brightness;
 int light;
-int key_flag=0;
+int key_flag = 0;
 int value_temp;
+int test_flag = 0;
 
 void loop()
 {
-    
 
-    Sense_Display();
-    tft.fillRect(18, 78, 24, 110, TFT_WHITE);
+    tft.fillRect(18, 78, 24, 90, TFT_WHITE);
 
-    if (digitalRead(WIO_KEY_B) == LOW) {
-        
-       Serial.println("B Key pressed");
-       key_flag++;
-       value_temp=0;
-       delay(200);
+    if (digitalRead(WIO_KEY_B) == LOW)
+    {
+
+        Serial.println("B Key pressed");
+        key_flag++;
+        value_temp = 0;
+        delay(200);
     }
-    
+
     brightness = analogRead(WIO_MIC);
     light = analogRead(WIO_LIGHT);
-
 
     if (data.size() > DATA_MAX_SIZE) // keep the old line chart front
     {
         data.pop(); // this is used to remove the first read variable
     }
 
-    value_temp =  key_flag % 2;
-    
-    switch(value_temp){
-      case 0:
-      data.push(brightness);
-      tft.setFreeFont(FSS9);
-      tft.setTextColor(TFT_WHITE);
-      tft.fillRect(130, 50, 58, 20, tft.color565(118, 118, 118));
-      tft.drawString("Sound", 132, 52, GFXFF);
-      break;
-      case 1:
-      data.push(light);
-      tft.setFreeFont(FSS9);
-      tft.setTextColor(TFT_WHITE);
-      tft.fillRect(130, 50, 58, 20, tft.color565(118, 118, 118));
-      tft.drawString("Light", 132, 52, GFXFF);
-      break;
-      default:
-      break;
-      
+    value_temp = key_flag % 2;
+
+    switch (value_temp)
+    {
+    case 0:
+        data.push(brightness);
+        Sense_Display(0);
+        break;
+    case 1:
+        data.push(light);
+        Sense_Display(1);//
+        break;
+    default:
+        break;
     }
 
-
-    // Settings for the line graph
+    // 85 * 260 = 22100
     auto content = line_chart(20, 80); //(x,y) where the line graph begins
     content
-        //        .height(tft.height() - header.height() * 1.5 - 50) // actual height of the line chart
-        //        .width(tft.width() - content.x() * 2)              // actual width of the line chart
-        .height(120)
+        .height(85)
         .width(260)
         .based_on(0.0)      // Starting point of y-axis, must be a float
         .show_circle(false) // drawing a cirle at each point, default is on.
@@ -146,12 +180,10 @@ void loop()
         .backgroud(tft.color565(0, 0, 0))
         .draw(&tft);
 
-    tft.setFreeFont(FSSB9);
-    
-    tft.setTextColor(TFT_WHITE);
-    tft.drawString("Network: ", 7, 215, GFXFF);
-    tft.setTextColor(TFT_GREEN);
-    tft.drawString(" ON", 80, 215, GFXFF);
-
-    delay(2);
+    if (digitalRead(WIO_KEY_B) == LOW){
+       test_flag++;
+       delay(300);
+    }
+    Network_state(test_flag%3);
+    delay(20);
 }
