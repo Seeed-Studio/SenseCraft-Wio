@@ -7,7 +7,7 @@
 #include <TFT_eSPI.h>
 #include "sensor.h"
 #include "utils.h"
-
+#include "seeed_line_chart.h"
 #include "SysConfig.h"
 
 using namespace cpp_freertos;
@@ -26,6 +26,7 @@ protected:
 
     void sense_1();
     void sense_2();
+    void sense_3();
 
 private:
     TFT_eSPI &tft;
@@ -42,7 +43,7 @@ private:
     struct  sensor_data sdata;
 
 
-    void (UI::*page[2])() = {&UI::sense_1, &UI::sense_2};
+    void (UI::*page[3])() = {&UI::sense_1, &UI::sense_2, &UI::sense_3};
 private:
     //inline function, 4byte uint8_t to float
     void uint8_to_float(uint8_t *data, float* destination);
@@ -50,7 +51,7 @@ private:
     //temp data
     int temp_light;
     int temp_mic;
-
+    doubles data;     //data for fft
 };
 
 #endif // __UI_H__
