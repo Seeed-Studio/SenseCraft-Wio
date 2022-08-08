@@ -15,6 +15,8 @@ using namespace cpp_freertos;
 #define SCREEN_WIDTH 320 // Wio Terminal Maximum Width
 #define SCREEN_HIGH 240  // Wio Terminal Maximum Height
 
+#define LINE_DATA_MAX_SIZE 30             // maximum size of data
+
 class UI : public Thread
 {
 public:
@@ -51,7 +53,7 @@ private:
     //temp data
     int temp_light;
     int temp_mic;
-    doubles data;     //data for fft
+    doubles line_chart_data;
 };
 
 #endif // __UI_H__

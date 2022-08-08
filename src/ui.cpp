@@ -124,15 +124,15 @@ void UI::sense_2() {
     spr.deleteSprite();
 }
 
-#define DATA_MAX_SIZE 30             // maximum size of data
-#define MAX_SIZE 30                  // maximum size of data
 
 void UI::sense_3() {
-    data.push(random(0, 1000));
-    if (data.size() > DATA_MAX_SIZE) // keep the old line chart front
+    tft.fillRect(18, 78, 24, 90, TFT_WHITE);
+    if (line_chart_data.size() > LINE_DATA_MAX_SIZE) // keep the old line chart front
     {
-        data.pop(); // this is used to remove the first read variable
+        line_chart_data.pop(); // this is used to remove the first read variable
     }
+    line_chart_data.push(random(0, 255));
+
 
     // 85 * 260 = 22100
     auto content = line_chart(20, 80); //(x,y) where the line graph begins
@@ -141,8 +141,8 @@ void UI::sense_3() {
         .width(260)
         .based_on(0.0)      // Starting point of y-axis, must be a float
         .show_circle(false) // drawing a cirle at each point, default is on.
-        .value(data)        // passing through the data to line graph
-        .max_size(MAX_SIZE)
+        .value(line_chart_data)        // passing through the data to line graph
+        .max_size(LINE_DATA_MAX_SIZE)
         .color(TFT_GREEN) // Setting the color for the line
                           //        .backgroud(tft.color565(0,0,0)) // Setting the color for the backgroud
         .backgroud(tft.color565(0, 0, 0))
