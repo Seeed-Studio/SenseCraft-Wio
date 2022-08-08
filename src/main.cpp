@@ -40,17 +40,14 @@ void setup()
     Message *sensorMail = new Message(256);
 
 
-
-
     ButtonThread *btn = new ButtonThread(*btnMail);
     UI *u = new UI(tft,spr, *cfg, *btnMail, *sensorMail);
     SamplerThread *sampler = new SamplerThread(*cfg,*sensorMail);
     LoRaThread *lora = new LoRaThread(*cfg);
 
-
-    Thread::StartScheduler();
 }
 
 void loop()
 {
+    delay(1000);
 }
