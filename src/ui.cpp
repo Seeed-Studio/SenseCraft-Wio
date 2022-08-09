@@ -30,20 +30,13 @@ void UI::Run() {
 
         nums = sensorMail.Receive(&sdata, 256, 0);
         if (nums > 0) {
-            for (size_t i = 0; i < sdata.size; i = i + 4) {
-                Serial.printf("%d ", ((int32_t *)sdata.data)[i]);
-            }
-            temp_light = sdata.size;
-            temp_mic   = ((int32_t *)sdata.data)[sdata.size - 5];
-            Serial.printf("sensor Receive: %s %d %d\r\n", sdata.name, sdata.id, sdata.size);
-            // if(sdata.id == 1){
-            //     temp_light = ((int *)sdata.data)[0];
+            // for (size_t i = 0; i < sdata.size; i = i + 4) {
+            //     Serial.printf("%d ", ((int32_t *)sdata.data)[i]);
             // }
-            // if(sdata.id == 2){
-            //      temp_mic = ((int *)sdata.data)[0];
-            // }
-            // Serial.printf("sensor Receive: %d %d %s %d\r\n", temp_light,temp_mic, sdata.name,
-            // sdata.id);
+            // temp_light = sdata.size;
+            // temp_mic   = ((int32_t *)sdata.data)[sdata.size - 5];
+            // Serial.printf("sensor Receive: %s %d %d\r\n", sdata.name, sdata.id, sdata.size);
+            // Serial.printf("UI thread free memory: %d\r", xPortGetFreeHeapSize());
         }
 
         for (int i = 0; i < 3; i++) {

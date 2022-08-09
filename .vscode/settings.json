@@ -49,6 +49,7 @@
         "ctime": "cpp",
         "iostream": "cpp",
         "istream": "cpp",
-        "sstream": "cpp"
+        "sstream": "cpp",
+        "queue": "cpp"
     }
 }

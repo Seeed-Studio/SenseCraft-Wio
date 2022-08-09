@@ -3,6 +3,7 @@
 #define __SAMPLER_H
 #include "SysConfig.h"
 #include "WiFiThread.h"
+#include "LoRaThread.h"
 #include "sensor.h"
 #include "utils.h"
 #include <Arduino.h>
@@ -29,6 +30,7 @@ class SamplerThread : public Thread {
 
   private:
     WiFiThread *wifi;
+    LoRaThread *lora;
 };
 
 #endif

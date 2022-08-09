@@ -7,6 +7,7 @@
 #include "SamplerThread.h"
 #include "LoRaThread.h"
 #include "SysConfig.h"
+#include "FreeRTOS.h"
 
 
 using namespace cpp_freertos;
@@ -44,10 +45,17 @@ void setup()
     ButtonThread *btn = new ButtonThread(*btnMail);
     UI *u = new UI(tft,spr, *cfg, *btnMail, *sensorMail);
     SamplerThread *sampler = new SamplerThread(*cfg,*sensorMail);
-    LoRaThread *lora = new LoRaThread(*cfg);
 }
+
+//Get the size of memory left in the system in freertos.
+int freeMemory() {
+  return xPortGetFreeHeapSize();
+}
+
 
 void loop()
 {
+    Serial.print(F("\r\nFree RAM = ")); //F function does the same and is now a built in library, in IDE > 1.0.0
+    Serial.println(freeMemory());  // print how much RAM is available in bytes.
     delay(1000);
 }
