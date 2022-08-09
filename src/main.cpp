@@ -8,7 +8,11 @@
 #include "LoRaThread.h"
 #include "SysConfig.h"
 #include "FreeRTOS.h"
-
+#ifdef CM_DEBUG
+#include "cm_backtrace.h"
+#endif
+#define HARDWARE_VERSION "seeed_k1100_dev_kit"
+#define SOFTWARE_VERSION "V1.0.0"
 
 using namespace cpp_freertos;
 
@@ -30,6 +34,9 @@ void setup()
 
     SysConfig *cfg = new SysConfig(); 
     cfg->init();
+    #ifdef CM_DEBUG
+    cm_backtrace_init("Seeed K1100 dev kit", HARDWARE_VERSION, SOFTWARE_VERSION);
+    #endif
     // put your setup code here, to run once:
     LOGSS.begin(115200);
     uint32_t start = millis();

@@ -4,6 +4,23 @@ using namespace cpp_freertos;
 
 SemaphoreHandle_t SysConfig::lock = NULL;
 
+
+extern "C"{
+    void cm_printf(const char *format, ...) {
+        char print_buf[1024] = { 0 };
+
+        va_list args;
+        va_start(args, format);
+        int r = vsnprintf(print_buf, sizeof(print_buf), format, args);
+        va_end(args);
+
+        if (r > 0) {
+            LOGSS.write(print_buf);
+        }
+    }    
+}
+
+
 static int32_t msc_read_cb(uint32_t lba, void *buffer, uint32_t bufsize, uint32_t offset) {
     // LOGSS.printf("read: lba:%d, bufsize:%d, offset: %d\n", lba, bufsize, offset);
     uint32_t ret_size = -1;
