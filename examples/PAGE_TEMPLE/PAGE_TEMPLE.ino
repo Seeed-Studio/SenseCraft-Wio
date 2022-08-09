@@ -24,7 +24,7 @@ void DISPLAY_INIT() // Display initialization, black background rotation
 // 320 * 25 = 8000
 void Network_state(int s_key)
 {
-    spr.createSprite(SCREEN_WIDTH, 25);
+    spr.createSprite(140, 25);
     spr.setFreeFont(FSSB9);
     spr.fillSprite(TFT_BLACK);
 

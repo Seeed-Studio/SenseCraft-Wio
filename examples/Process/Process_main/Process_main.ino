@@ -43,7 +43,9 @@ void Process_main(int page)
     // case 1  Proccsee首页
     // case 2  TinyML示例
     // case 3  TinyML已进入
-    //        page = 2;
+//    spr.createSprite(320, 70);
+//    spr.setFreeFont(FSSB9);
+            page = 2;
     switch (page)
     {
     case 0:
@@ -88,25 +90,11 @@ void Process_main(int page)
     spr.drawString("Filter (In ", 219, 96 + MOVE_PIXEL_y, GFXFF);
     spr.drawString("Develop", 219, 121 + MOVE_PIXEL_y, GFXFF);
     spr.drawString("ment)", 219, 146 + MOVE_PIXEL_y, GFXFF);
+
+//    spr.pushSprite(0, 0);
+//    spr.deleteSprite();
 }
 
-void Network_state(int s_key)
-{
-    switch (s_key)
-    {
-    case 0:
-        spr.setTextColor(TFT_RED);
-        spr.drawString("OFF", 80, 215, GFXFF);
-        break;
-    case 1:
-        spr.setTextColor(TFT_GREEN);
-        spr.drawString("ON", 80, 215, GFXFF);
-        break;
-    default:;
-    }
-    spr.setTextColor(TFT_WHITE);
-    spr.drawString("Network:", 7, 215, GFXFF);
-}
 
 void Process_TinyML_ENTER(void)
 {
@@ -135,6 +123,125 @@ void Process_TinyML_ENTER(void)
 
     free(qrcodeData);
 }
+
+//320*70 = 22400
+void Sense_Display(int CHOOSE_PAGE) // Sense interface display
+{
+    spr.createSprite(320, 70);
+    spr.setFreeFont(FSSB9);
+    switch (CHOOSE_PAGE)
+    {
+    case 0:
+        spr.fillRect(4 * PIXEL, 0, 21 * PIXEL, FONT_ROW_HEIGHT + 15, tft.color565(135, 206, 235));
+        spr.fillRect(30 * PIXEL, 0, 21 * PIXEL, FONT_ROW_HEIGHT + 15, TFT_WHITE);
+        spr.fillRect(56 * PIXEL, 0, 21 * PIXEL, FONT_ROW_HEIGHT + 15, TFT_WHITE);
+        break;
+    case 1:
+        spr.fillRect(4 * PIXEL, 0, 21 * PIXEL, FONT_ROW_HEIGHT + 15, TFT_WHITE);
+        spr.fillRect(30 * PIXEL, 0, 21 * PIXEL, FONT_ROW_HEIGHT + 15, tft.color565(135, 206, 235));
+        spr.fillRect(56 * PIXEL, 0, 21 * PIXEL, FONT_ROW_HEIGHT + 15, TFT_WHITE);
+        break;
+    case 2:
+        spr.fillRect(4 * PIXEL, 0, 21 * PIXEL, FONT_ROW_HEIGHT + 15, TFT_WHITE);
+        spr.fillRect(30 * PIXEL, 0, 21 * PIXEL, FONT_ROW_HEIGHT + 15, TFT_WHITE);
+        spr.fillRect(56 * PIXEL, 0, 21 * PIXEL, FONT_ROW_HEIGHT + 15, tft.color565(135, 206, 235));
+        break;
+    default:
+        break;
+    }
+
+    spr.setFreeFont(FSSB9);
+    spr.setTextColor(TFT_BLACK);
+    spr.drawString("Sense", 32, 11, GFXFF);
+    spr.drawString("Process", 127, 11, GFXFF);
+    spr.drawString("Network", 231, 11, GFXFF);
+    spr.drawLine(0, 2 * FONT_ROW_HEIGHT, SCREEN_WIDTH, 2 * FONT_ROW_HEIGHT, TFT_WHITE);
+
+    spr.pushSprite(0, 0);
+    spr.deleteSprite();
+}
+
+void Below_Right_State_Content(int gg_state)  // SD 插拔状态 Grove 插拔状态
+{
+    
+    spr.createSprite(320, 25);
+    spr.setFreeFont(FSSB9);
+    spr.fillSprite(TFT_BLACK);
+    // int s_key = 1;
+    switch (gg_state)
+    {
+    case 0:
+        spr.setFreeFont(FSS9);
+        spr.setTextColor(TFT_YELLOW);
+        spr.drawString("Plug in a Grove sensor", 0, 0, 2);
+        spr.pushSprite(170, 215);
+        break;
+    case 1:
+        spr.setFreeFont(FSS9);
+        spr.drawTriangle(0, 18, 11, 0, 22, 18, TFT_YELLOW);
+        spr.setTextColor(TFT_YELLOW);
+        spr.drawString("! ", 10, 4, 2);
+        spr.drawString("TF card storage is full", 28, 0, 2);
+        spr.pushSprite(140, 215);
+        break;
+    case 2:
+        spr.setFreeFont(FSS9);
+        spr.setTextColor(TFT_GREEN);
+        spr.drawString("Vision AI Sensor connected", 22, 0, 2);
+        spr.pushSprite(120, 215);
+        break;
+    case 3:
+        spr.setFreeFont(FSS9);
+        spr.setTextColor(TFT_GREEN);
+        spr.drawString("Saving has been started", 22, 0, 2);
+        spr.pushSprite(140, 215);
+        break;
+    case 4:
+        spr.setFreeFont(FSS9);
+        spr.setTextColor(TFT_YELLOW);
+        spr.drawString("Please insert TF card", 22, 0, 2);
+        spr.pushSprite(148, 215);
+        break;
+    
+    default:;
+    }
+    spr.setTextColor(TFT_WHITE);
+    spr.drawString("Network :", 5, 0, GFXFF);
+    
+    spr.deleteSprite();
+}
+
+// 320 * 25 = 8000
+void Network_state(int s_key)
+{
+    spr.createSprite(SCREEN_WIDTH, 25);
+    spr.setFreeFont(FSSB9);
+    spr.fillSprite(TFT_BLACK);
+
+    switch (s_key)
+    {
+    case 0:
+        spr.setTextColor(TFT_RED);
+        spr.drawString("OFF", 60, 0, 2);
+        break;
+    case 1:
+        spr.setTextColor(TFT_GREEN, TFT_BLACK);           // Networking status indication：ON
+        spr.drawString("LoRa", 60, 0, 2); // Show the network you are in
+        break;
+    case 2:
+        spr.setTextColor(TFT_GREEN, TFT_BLACK);          // Networking status indication：ON
+        spr.drawString("WiFi", 60, 0, 2); // Show the network you are in
+        break;
+    default:;
+    }
+    spr.setTextColor(TFT_WHITE);
+    spr.drawString("Network:", 5, 0, 2);
+    spr.setFreeFont(FSS9);
+    
+    spr.pushSprite(0, 215);
+    spr.deleteSprite();
+}
+
 
 int i = 0;
 char buf_T[4][20];
@@ -202,8 +309,8 @@ void Vision_AI_real_time_analysis(int i_data) // todo
 
 void Process_Display(int G, int G_network) // Sense interface display
 {
-    spr.createSprite(SCREEN_WIDTH, SCREEN_HIGH);
-
+//    spr.createSprite(SCREEN_WIDTH, SCREEN_HIGH);
+    
     //  choose func  here
     Process_main(G);
     //    Process_TinyML_ENTER();
@@ -223,10 +330,10 @@ void Process_Display(int G, int G_network) // Sense interface display
 
     spr.drawLine(0, 2 * FONT_ROW_HEIGHT, SCREEN_WIDTH, 2 * FONT_ROW_HEIGHT, TFT_WHITE);
 
-    Network_state(G_network);
+//    Network_state(G_network);
 
-    spr.pushSprite(0, 0);
-    spr.deleteSprite();
+//    spr.pushSprite(0, 0);
+//    spr.deleteSprite();
 }
 
 void setup()
@@ -261,5 +368,10 @@ void loop()
         delay(200);
     }
 
-    Process_Display(gg_switch % 5, gg_network_flag % 2);
+    Sense_Display(gg_switch % 3);
+//    Process_main(gg_switch % 5);
+//    Process_Display(gg_switch % 5, gg_network_flag % 2);
+    Network_state(gg_network_flag % 3);
+    Below_Right_State_Content(gg_switch%5);  // 修改 右下角 状态 
+    
 }
