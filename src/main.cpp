@@ -9,213 +9,223 @@ TFT_eSprite spr = TFT_eSprite(&tft);
 #define PIXEL 4                                 // Width of one letter
 const static unsigned int FONT_ROW_HEIGHT = 22; // The height of a letter
 
+// Key
+int key_status = 0;
+
+void key() //设置按键
+{
+    if (digitalRead(WIO_KEY_C) == LOW)
+    {
+        Serial.println("A Key pressed");
+        key_status = 1;
+    }
+    else if (digitalRead(WIO_KEY_B) == LOW)
+    {
+        Serial.println("B Key pressed");
+        key_status = 2;
+    }
+    else if (digitalRead(WIO_KEY_A) == LOW)
+    {
+        Serial.println("C Key pressed");
+        key_status = 3;
+    }
+}
+
 void DISPLAY_INIT() // Display initialization, black background rotation
 {
-    pinMode(A0, INPUT);
-    pinMode(WIO_LIGHT, INPUT);
-    pinMode(WIO_KEY_A, INPUT_PULLUP);
-    pinMode(WIO_KEY_B, INPUT_PULLUP);
-    pinMode(WIO_KEY_C, INPUT_PULLUP);
     tft.begin();
     tft.setRotation(3);
     tft.fillScreen(TFT_BLACK);
 }
-// 320 * 25 = 8000
-void Network_state(int s_key)
-{
-    spr.createSprite(140, 25);
-    spr.setFreeFont(FSSB9);
-    spr.fillSprite(TFT_BLACK);
 
-    switch (s_key)
+void NetworkHome_Display(int network_select_status) // Select network interface 1 Lora 2 wifi 0 未选择状态
+{
+    spr.createSprite(SCREEN_WIDTH, SCREEN_HIGH);
+
+    // put your main code here
+    spr.setFreeFont(FSSB9);
+    spr.setTextColor(TFT_BLACK, TFT_WHITE);
+
+    spr.fillRect(4 * PIXEL, 0, 21 * PIXEL, FONT_ROW_HEIGHT + 15, TFT_WHITE);
+    spr.fillRect(30 * PIXEL, 0, 21 * PIXEL, FONT_ROW_HEIGHT + 15, TFT_WHITE);
+    spr.fillRect(56 * PIXEL, 0, 21 * PIXEL, FONT_ROW_HEIGHT + 15, tft.color565(135, 206, 235));
+
+    spr.drawString("Sense", 32, 11, GFXFF);
+    spr.drawString("Process", 127, 11, GFXFF);
+
+    spr.setTextColor(TFT_BLACK);
+    spr.drawString("Network", 231, 11, GFXFF);
+
+    spr.drawLine(0, 2 * FONT_ROW_HEIGHT, SCREEN_WIDTH, 2 * FONT_ROW_HEIGHT, TFT_WHITE);
+    // spr.drawLine(0, 3.5 * FONT_ROW_HEIGHT, SCREEN_WIDTH, 3.5 * FONT_ROW_HEIGHT, TFT_WHITE);
+    //    int network_select_status=0; //For debug
+    switch (network_select_status)
     {
-    case 0:
-        spr.setTextColor(TFT_RED);
-        spr.drawString("OFF", 60, 0, 2);
-        break;
     case 1:
-        spr.setTextColor(TFT_GREEN, TFT_BLACK); // Networking status indication：ON
-        spr.drawString("LoRa", 60, 0, 2);       // Show the network you are in
+        spr.setTextColor(TFT_WHITE, tft.color565(112, 112, 112));
+        spr.drawString("LoRa(SenseCAP)", 92, 48, GFXFF);
+        spr.fillRect(30, 85, 145, 45, TFT_GREEN);
+        spr.setTextColor(TFT_WHITE, TFT_BLACK);
+        spr.drawString("Please toggle the bottom right", 30, 95 + FONT_ROW_HEIGHT + 20, GFXFF);
+        spr.drawString("button left and right to select", 30, 95 + 2 * FONT_ROW_HEIGHT + 20, GFXFF);
+        spr.drawString("the network.", 30, 95 + 3 * FONT_ROW_HEIGHT + 20, GFXFF);
+
         break;
     case 2:
-        spr.setTextColor(TFT_GREEN, TFT_BLACK); // Networking status indication：ON
-        spr.drawString("WiFi", 60, 0, 2);       // Show the network you are in
-        break;
-    default:;
-    }
-    spr.setTextColor(TFT_WHITE);
-    spr.drawString("Network:", 5, 0, 2);
-    spr.setFreeFont(FSS9);
 
-    spr.pushSprite(0, 215);
-    spr.deleteSprite();
-}
+        spr.setTextColor(TFT_WHITE, tft.color565(112, 112, 112));
+        spr.drawString("WIFI(Ubidots)", 102, 48, GFXFF);
+        spr.fillRect(206, 85, 78, 45, TFT_GREEN);
 
-int GG;
+        spr.setTextColor(TFT_WHITE, TFT_BLACK);
+        spr.drawString("Please refer to the wiki to", 30, 95 + FONT_ROW_HEIGHT + 20, GFXFF);
+        spr.drawString("modify the configuration file", 30, 95 + 2 * FONT_ROW_HEIGHT + 20, GFXFF);
+        spr.drawString("and send it to this device.", 30, 95 + 3 * FONT_ROW_HEIGHT + 20, GFXFF);
 
-// 320*70 = 22400
-void Sense_Display(int CHOOSE_PAGE) // Sense interface display
-{
-    spr.createSprite(320, 50);
-    spr.setFreeFont(FSSB9);
-    switch (CHOOSE_PAGE)
-    {
-    case 0:
-        spr.fillRect(4 * PIXEL, 0, 21 * PIXEL, FONT_ROW_HEIGHT + 15, tft.color565(135, 206, 235));
-        spr.fillRect(30 * PIXEL, 0, 21 * PIXEL, FONT_ROW_HEIGHT + 15, TFT_WHITE);
-        spr.fillRect(56 * PIXEL, 0, 21 * PIXEL, FONT_ROW_HEIGHT + 15, TFT_WHITE);
-        break;
-    case 1:
-        spr.fillRect(4 * PIXEL, 0, 21 * PIXEL, FONT_ROW_HEIGHT + 15, TFT_WHITE);
-        spr.fillRect(30 * PIXEL, 0, 21 * PIXEL, FONT_ROW_HEIGHT + 15, tft.color565(135, 206, 235));
-        spr.fillRect(56 * PIXEL, 0, 21 * PIXEL, FONT_ROW_HEIGHT + 15, TFT_WHITE);
-        break;
-    case 2:
-        spr.fillRect(4 * PIXEL, 0, 21 * PIXEL, FONT_ROW_HEIGHT + 15, TFT_WHITE);
-        spr.fillRect(30 * PIXEL, 0, 21 * PIXEL, FONT_ROW_HEIGHT + 15, TFT_WHITE);
-        spr.fillRect(56 * PIXEL, 0, 21 * PIXEL, FONT_ROW_HEIGHT + 15, tft.color565(135, 206, 235));
         break;
     default:
         break;
     }
 
-    spr.setFreeFont(FSSB9);
-    spr.setTextColor(TFT_BLACK);
-    spr.drawString("Sense", 32, 11, GFXFF);
-    spr.drawString("Process", 127, 11, GFXFF);
-    spr.drawString("Network", 231, 11, GFXFF);
-    spr.drawLine(0, 2 * FONT_ROW_HEIGHT, SCREEN_WIDTH, 2 * FONT_ROW_HEIGHT, TFT_WHITE);
+    spr.setFreeFont(FSS9);
+    spr.setTextColor(TFT_WHITE);
+    spr.drawString("LoRa", 32, 88, GFXFF);
+    spr.drawString("LoRa(SenseCAP)", 32, 108, GFXFF);
+    spr.drawString("WIFI", 208, 88, GFXFF);
+    spr.drawString("(Ubidots)", 208, 108, GFXFF);
+
+    //    spr.setTextColor(TFT_WHITE, TFT_BLACK);
+    //    spr.drawString("Please toggle the bottom right", 30, 95 + FONT_ROW_HEIGHT + 20, GFXFF);
+    //    spr.drawString("button left and right to select", 30, 95 + 2 * FONT_ROW_HEIGHT + 20, GFXFF);
+    //    spr.drawString("the network.", 30, 95 + 3 * FONT_ROW_HEIGHT + 20, GFXFF);
+
+    spr.drawString("Network :", 5, 218, GFXFF);
+
+    spr.setTextColor(TFT_RED, TFT_BLACK); // Networking status indication：OFF
+    spr.drawString("OFF", 82, 218, GFXFF);
 
     spr.pushSprite(0, 0);
     spr.deleteSprite();
 }
 
-void Below_Right_State_Content(int gg_state) // SD 插拔状态 Grove 插拔状态
+void NetSelection(int key)
 {
+    spr.createSprite(SCREEN_WIDTH, SCREEN_HIGH);
 
-    spr.createSprite(320, 25);
+    // put your main code here
     spr.setFreeFont(FSSB9);
-    spr.fillSprite(TFT_BLACK);
-    // int s_key = 1;
-    switch (gg_state)
-    {
-    case 0:
-        spr.setFreeFont(FSS9);
-        spr.setTextColor(TFT_YELLOW);
-        spr.drawString("Plug in a Grove sensor", 0, 0, 2);
-        spr.pushSprite(170, 215);
-        break;
-    case 1:
-        spr.setFreeFont(FSS9);
-        spr.drawTriangle(0, 18, 11, 0, 22, 18, TFT_YELLOW);
-        spr.setTextColor(TFT_YELLOW);
-        spr.drawString("! ", 10, 4, 2);
-        spr.drawString("TF card storage is full", 28, 0, 2);
-        spr.pushSprite(140, 215);
-        break;
-    case 2:
-        spr.setFreeFont(FSS9);
-        spr.setTextColor(TFT_GREEN);
-        spr.drawString("Vision AI Sensor connected", 22, 0, 2);
-        spr.pushSprite(120, 215);
-        break;
-    case 3:
-        spr.setFreeFont(FSS9);
-        spr.setTextColor(TFT_GREEN);
-        spr.drawString("Saving has been started", 22, 0, 2);
-        spr.pushSprite(140, 215);
-        break;
-    case 4:
-        spr.setFreeFont(FSS9);
-        spr.setTextColor(TFT_YELLOW);
-        spr.drawString("Please insert TF card", 22, 0, 2);
-        spr.pushSprite(148, 215);
-        break;
+    spr.setTextColor(TFT_BLACK, TFT_WHITE);
 
-    default:;
-    }
-    spr.setTextColor(TFT_WHITE);
-    spr.drawString("Network :", 5, 0, GFXFF);
+    spr.fillRect(4 * PIXEL, 0, 21 * PIXEL, FONT_ROW_HEIGHT + 15, TFT_WHITE);
+    spr.fillRect(30 * PIXEL, 0, 21 * PIXEL, FONT_ROW_HEIGHT + 15, TFT_WHITE);
+    spr.fillRect(56 * PIXEL, 0, 21 * PIXEL, FONT_ROW_HEIGHT + 15, tft.color565(135, 206, 235));
+    spr.fillRect(30 * PIXEL, 8.0 * FONT_ROW_HEIGHT, 21 * PIXEL, FONT_ROW_HEIGHT + 15, tft.color565(70, 130, 160));
 
-    spr.deleteSprite();
-}
+    spr.fillRect(156, 54, 40, 4, tft.color565(220, 220, 220));
 
-void Lora_Banner()  //Lora title
-{
-    spr.createSprite(148, 19);
+    spr.drawString("Sense", 32, 11, GFXFF);
+    spr.drawString("Process", 127, 11, GFXFF);
+
+    spr.setTextColor(TFT_BLACK);
+    spr.drawString("Network", 231, 11, GFXFF);
+
+    spr.drawLine(0, 2 * FONT_ROW_HEIGHT, SCREEN_WIDTH, 2 * FONT_ROW_HEIGHT, TFT_WHITE);
+    // spr.drawLine(0, 3.5 * FONT_ROW_HEIGHT, SCREEN_WIDTH, 3.5 * FONT_ROW_HEIGHT, TFT_WHITE);
 
     spr.setFreeFont(FSS9);
+
     spr.setTextColor(TFT_WHITE, tft.color565(112, 112, 112));
-    spr.drawString("LoRa(SenseCAP)", 3, 0, GFXFF);
+    spr.drawString("LoRa(SenseCAP)", 92, 48, GFXFF);
 
-    spr.pushSprite(85, 50);
+    spr.setTextColor(TFT_WHITE);
+    spr.drawString("Please press the bottom right", 35, 75 + FONT_ROW_HEIGHT, GFXFF);
+    spr.drawString("button to confirm your network", 35, 75 + 2 * FONT_ROW_HEIGHT, GFXFF);
+    spr.drawString("selection.", 35, 75 + 3 * FONT_ROW_HEIGHT, GFXFF);
+
+    spr.setFreeFont(FSS12);
+    spr.drawString("OK", 36 * PIXEL, 8.4 * FONT_ROW_HEIGHT, GFXFF);
+
+    spr.setFreeFont(FSS9);
+    spr.drawString("Network :", 5, 218, GFXFF);
+
+    spr.setTextColor(TFT_RED, TFT_BLACK); // Networking status indication：OFF
+    spr.drawString("OFF", 82, 218, GFXFF);
+
+    //    spr.setTextColor(TFT_GREEN, TFT_BLACK);             //Networking status indication：ON
+    //    spr.drawString("LoRa(SenseCAP)", 82, 218 , GFXFF);  //Show the network you are in
+
+    spr.pushSprite(0, 0);
     spr.deleteSprite();
 }
 
-void Bandselect_Display(int SELECTION) // Select Frequency band interface
+void WioE5connect_Display()
 {
-    //first line of information
-    spr.createSprite(290, 20);
+    spr.createSprite(SCREEN_WIDTH, SCREEN_HIGH);
+
+    // put your main code here
+    spr.setFreeFont(FSSB9);
+    spr.setTextColor(TFT_BLACK, TFT_WHITE);
+
+    spr.fillRect(4 * PIXEL, 0, 21 * PIXEL, FONT_ROW_HEIGHT + 15, TFT_WHITE);
+    spr.fillRect(30 * PIXEL, 0, 21 * PIXEL, FONT_ROW_HEIGHT + 15, TFT_WHITE);
+    spr.fillRect(56 * PIXEL, 0, 21 * PIXEL, FONT_ROW_HEIGHT + 15, tft.color565(135, 206, 235));
+    spr.fillRect(30 * PIXEL, 8.0 * FONT_ROW_HEIGHT, 21 * PIXEL, FONT_ROW_HEIGHT + 15, tft.color565(70, 130, 160));
+
+    spr.fillRect(156, 54, 40, 4, tft.color565(220, 220, 220));
+
+    spr.drawString("Sense", 32, 11, GFXFF);
+    spr.drawString("Process", 127, 11, GFXFF);
+
+    spr.setTextColor(TFT_BLACK, tft.color565(135, 206, 235));
+    spr.drawString("Network", 231, 11, GFXFF);
+
+    spr.drawLine(0, 2 * FONT_ROW_HEIGHT, SCREEN_WIDTH, 2 * FONT_ROW_HEIGHT, TFT_WHITE);
 
     spr.setFreeFont(FSS9);
+
+    spr.setTextColor(TFT_WHITE, tft.color565(112, 112, 112));
+    spr.drawString("LoRa(SenseCAP)", 92, 48, GFXFF);
+
+    //    spr.fillCircle(175, 56, 10, tft.color565(190, 190, 190));                 //Default in no network state selected
+
     spr.setTextColor(TFT_WHITE);
-    spr.drawString("Select and confirm LoRaWAN frequency band", 5, 5, 2);
+    spr.drawString("Please connect the Grove-Wio E5", 25, 75 + FONT_ROW_HEIGHT, GFXFF);
+    spr.drawString("to the Grove connector on the", 25, 75 + 2 * FONT_ROW_HEIGHT, GFXFF);
+    spr.drawString("bottom right side of the screen.", 25, 75 + 3 * FONT_ROW_HEIGHT, GFXFF);
 
-    spr.pushSprite(15, 80);
-    spr.deleteSprite();
-
-    //
-    spr.createSprite(290, 90);
-
-    spr.setFreeFont(FSS9);
-    spr.setTextColor(TFT_WHITE);
-    switch (SELECTION)
-    {
-    case 0:
-        spr.fillRect(5, 0, 80, 60, tft.color565(0, 139, 0));
-        spr.drawString("The US915 band is commonly used in the", 5, 60, 2);
-        spr.drawString("North America.", 5, 73, 2);
-        break;
-    case 1:  
-        spr.fillRect(103, 0, 80, 60, tft.color565(0, 139, 0));
-        spr.drawString("The EU868 band is commonly used in the", 5, 60, 2);
-        spr.drawString("European region.", 5, 73, 2);
-        break;
-    case 2:
-        spr.fillRect(203, 0, 80, 60, tft.color565(0, 139, 0));
-        spr.drawString("The AU915 band is commonly used in the", 5, 60, 2);
-        spr.drawString("Australia region.", 5, 73, 2);
-    default:;
-    }
+    spr.setFreeFont(FSS12);
+    spr.drawString("OK", 36 * PIXEL, 8.4 * FONT_ROW_HEIGHT, GFXFF);
 
     spr.setFreeFont(FSS9);
-    spr.drawString("US", 5, 0, GFXFF);
-    spr.drawString("EU", 105, 0, GFXFF);
-    spr.drawString("AU", 205, 0, GFXFF);
+    spr.drawString("Network :", 5, 218, GFXFF);
 
-    spr.setFreeFont(FSS24);
-    spr.drawString("915", 5, 20, GFXFF);
-    spr.drawString("868", 105, 20, GFXFF);
-    spr.drawString("915", 205, 20, GFXFF);
+    spr.setTextColor(TFT_RED, TFT_BLACK); // Networking status indication：OFF
+    spr.drawString("OFF", 82, 218, GFXFF);
 
-    spr.pushSprite(15, 110);
+    //    spr.setTextColor(TFT_GREEN, TFT_BLACK);             //Networking status indication：ON
+    //    spr.drawString("LoRa(SenseCAP)", 82, 218 , GFXFF);  //Show the network you are in
+
+    spr.pushSprite(0, 0);
     spr.deleteSprite();
 }
 
 void setup()
 {
     DISPLAY_INIT();
-
+    pinMode(WIO_KEY_C, INPUT_PULLUP);
+    pinMode(WIO_KEY_B, INPUT_PULLUP);
+    pinMode(WIO_KEY_A, INPUT_PULLUP);
 }
 
-int test_flag_1 = 0;
-
+int gg = 0;
 void loop()
-{    
-    Sense_Display(2);
-    Network_state(1);
-    Lora_Banner();
-    Bandselect_Display(test_flag_1 % 3);
-    test_flag_1++;
+{
+    //    key();  //ABC button to select network
+    gg++;
+    NetworkHome_Display(gg % 3); // Select network interface 1 Lora 2 wifi 0 未选择状态
     delay(1000);
+    //    NetSelection(key_status);
+    //    delay(2000);
+    //    WioE5connect_Display();
+    //    delay(2000);
 }

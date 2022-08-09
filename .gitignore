@@ -6,4 +6,4 @@
 *.pio
 .pio/
 .vscode/
-.main.cpp
+.src/main.cpp
