@@ -6,6 +6,7 @@
 #include <Seeed_Arduino_FS.h>
 #include <Seeed_SFUD.h>
 #include <sfud.h>
+#include "utils.h"
 
 
 #include <stdint.h>

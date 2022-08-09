@@ -31,9 +31,9 @@ void setup()
     SysConfig *cfg = new SysConfig(); 
     cfg->init();
     // put your setup code here, to run once:
-    Serial.begin(9600);
+    LOGSS.begin(115200);
     uint32_t start = millis();
-    while (!Serial && (millis() - start) < 1500)
+    while (!LOGSS && (millis() - start) < 1500)
         ; // Open the Serial Monitor to get started or wait for 1.5"
 
     display_init();
@@ -55,7 +55,6 @@ int freeMemory() {
 
 void loop()
 {
-    Serial.print(F("\r\nFree RAM = ")); //F function does the same and is now a built in library, in IDE > 1.0.0
-    Serial.println(freeMemory());  // print how much RAM is available in bytes.
+    LOGSS.printf("Main Stacks Free Bytes Remaining %d\r\n", uxTaskGetStackHighWaterMark(NULL));
     delay(1000);
 }

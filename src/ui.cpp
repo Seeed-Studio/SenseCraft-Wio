@@ -24,21 +24,21 @@ void UI::Run() {
     while (true) {
         nums = btnMail.Receive(&buff, 256, 0);
         if (nums > 0) {
-            Serial.printf("btn Receive: %d ", nums);
-            Serial.println(buff[0]);
+            LOGSS.printf("btn Receive: %d ", nums);
+            LOGSS.println(buff[0]);
         }
 
         nums = sensorMail.Receive(&sdata, 256, 0);
         if (nums > 0) {
             // for (size_t i = 0; i < sdata.size; i = i + 4) {
-            //     Serial.printf("%d ", ((int32_t *)sdata.data)[i]);
+            //     LOGSS.printf("%d ", ((int32_t *)sdata.data)[i]);
             // }
             // temp_light = sdata.size;
             // temp_mic   = ((int32_t *)sdata.data)[sdata.size - 5];
-            // Serial.printf("sensor Receive: %s %d %d\r\n", sdata.name, sdata.id, sdata.size);
-            // Serial.printf("UI thread free memory: %d\r", xPortGetFreeHeapSize());
+            // LOGSS.printf("sensor Receive: %s %d %d\r\n", sdata.name, sdata.id, sdata.size);
+            // LOGSS.printf("UI thread free memory: %d\r", xPortGetFreeHeapSize());
         }
-
+        LOGSS.printf("UI Stacks Free Bytes Remaining %d\r\n", uxTaskGetStackHighWaterMark(GetHandle()));
         for (int i = 0; i < 3; i++) {
             (this->*page[i])();
             Delay(Ticks::MsToTicks(100));

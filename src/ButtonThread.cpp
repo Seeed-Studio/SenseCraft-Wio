@@ -9,7 +9,7 @@ ButtonThread::ButtonThread(Message &m)
 
 void ButtonThread::Run()
 {
-    Serial.print("Starting ButtonThread ");
+    LOGSS.print("Starting ButtonThread ");
     for (uint8_t i = 0; i < 8; i++)
     {
         pinMode(btn[i], INPUT_PULLUP);

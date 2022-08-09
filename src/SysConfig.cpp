@@ -5,7 +5,7 @@ using namespace cpp_freertos;
 SemaphoreHandle_t SysConfig::lock = NULL;
 
 static int32_t msc_read_cb(uint32_t lba, void *buffer, uint32_t bufsize, uint32_t offset) {
-    // Serial.printf("read: lba:%d, bufsize:%d, offset: %d\n", lba, bufsize, offset);
+    // LOGSS.printf("read: lba:%d, bufsize:%d, offset: %d\n", lba, bufsize, offset);
     uint32_t ret_size = -1;
 
     xSemaphoreTake(SysConfig::lock, portMAX_DELAY);
@@ -21,7 +21,7 @@ static int32_t msc_read_cb(uint32_t lba, void *buffer, uint32_t bufsize, uint32_
 }
 
 static int32_t msc_write_cb(uint32_t lba, uint8_t *buffer, uint32_t bufsize, uint32_t offset) {
-    // Serial.printf("write: lba:%d, bufsize:%d, offset:%d\n", lba, bufsize, offset);
+    // LOGSS.printf("write: lba:%d, bufsize:%d, offset:%d\n", lba, bufsize, offset);
     uint32_t          ret_size = -1;
     const sfud_flash *_flash   = sfud_get_device_table() + 0;
     uint8_t           result   = SFUD_SUCCESS;
@@ -73,14 +73,12 @@ void SysConfig::init() {
         usb_msc.setUnitReady(true);
 
         usb_msc.begin();
-    } else
-        Serial.println("spi flash mount failed");
-
+    } 
     // pinMode(SDCARD_DET_PIN, INPUT);
     // if (digitalRead(SDCARD_DET_PIN) == LOW) {
     //     sd_mount = SD.begin(SDCARD_SS_PIN, SDCARD_SPI, 4000000UL);
     // }else
-    // 	Serial.println("sd card not insert");
+    // 	LOGSS.println("sd card not insert");
     ReadAllConfig();
 }
 

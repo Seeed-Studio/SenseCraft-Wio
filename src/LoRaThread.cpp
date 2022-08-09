@@ -9,30 +9,31 @@ void LoRaThread::Run() {
     // init the library, search the LORAE5 over the different WIO port available
     lorae5 = new Disk91_LoRaE5(false);
     if (!lorae5->begin(DSKLORAE5_SWSERIAL_WIO_P2)) {
-        Serial.println("LoRa E5 Init Failed");
+        LOGSS.println("LoRa E5 Init Failed");
         is_e5_connected = false;
     }
 
     while (true) {
         if (!lorae5->begin(DSKLORAE5_SWSERIAL_WIO_P2)) {
             is_e5_connected = false;
-            Serial.println("LoRa E5 Init Failed");
+            LOGSS.println("LoRa E5 Init Failed");
         } else {
             is_e5_connected = true;
-            Serial.println("LoRa E5 Init OK");
+            LOGSS.println("LoRa E5 Init OK");
         }
 
         //print all data in the lora_data queue and pop it
         while (!lora_data.empty()) {
-            Serial.println("LoRa E5 Sending Data");
+            LOGSS.println("LoRa E5 Sending Data");
             sensor_data data = lora_data.front();
             lora_data.pop();
             for (size_t i = 0; i < data.size; i = i + 4) {
-                Serial.printf("%d ", ((int32_t *)data.data)[i]);
+                LOGSS.printf("%d ", ((int32_t *)data.data)[i]);
             }
-            Serial.printf("sensor Receive: %s %d %d %d\r\n", data.name, data.id, data.size, lora_data.size());
+            LOGSS.printf("sensor Receive: %s %d %d %d\r\n", data.name, data.id, data.size, lora_data.size());
         }
-        Serial.printf("lora thread %s\r\n", cfg.lora_frequency.c_str());
+        LOGSS.printf("lora thread %s\r\n", cfg.lora_frequency.c_str());
+        LOGSS.printf("Lora Stacks Free Bytes Remaining %d\r\n", uxTaskGetStackHighWaterMark(GetHandle()));
         Delay(Ticks::MsToTicks(1000));
     }
 }
