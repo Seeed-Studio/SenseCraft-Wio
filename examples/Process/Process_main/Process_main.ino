@@ -215,10 +215,6 @@ void Process_TinyML_ENTER(void)
     spr.pushSprite(20, 80);
     spr.deleteSprite();
 
-    //    spr.createSprite(20, 110);
-    //    spr.pushSprite(130, 90);
-    //    spr.deleteSprite();
-
     spr.createSprite(130, 130);
     spr.setFreeFont(FSS9);
     // code to view the tutorial
@@ -231,7 +227,7 @@ void Process_TinyML_ENTER(void)
 }
 
 int i = 0;
-char buf_T[4][20];
+char buf_T[4][22];
 int time_flag = 4;
 
 void Vision_AI_real_time_analysis(int i_data) // todo
@@ -241,7 +237,7 @@ void Vision_AI_real_time_analysis(int i_data) // todo
     spr.setFreeFont(FSSB9);
     spr.setTextColor(TFT_WHITE);
 
-    spr.fillRect(0, 0, 230, 94, tft.color565(128, 128, 128));
+    spr.fillRect(0, 0, 230, 94, tft.color565(100, 100, 100));
     DateTime now = rtc.now();
 
     uint8_t HH = now.hour();
@@ -266,18 +262,18 @@ void Vision_AI_real_time_analysis(int i_data) // todo
         ;
     }
 
-    sprintf(buf_T[3], " %02d:%02d:%02d      %d", now.hour(), now.minute(), now.second(), i_data);
+    sprintf(buf_T[3], " %02d:%02d:%02d        %d", now.hour(), now.minute(), now.second(), i_data);
 
     for (int gg = 0; gg < 4; gg++)
     {
         spr.setFreeFont(FSSB9);
-        spr.drawString(buf_T[gg], 45, 103 + gg * 23 - 100, GFXFF);
+        spr.drawString(buf_T[gg], 40, 103 + gg * 23 - 100, GFXFF);
     }
 
     for (int i = 0; i < time_flag - 1; i++)
     {
         spr.setFreeFont(FSSB9);
-        spr.drawString(" 00:00:00      00", 45, 103 + i * 23 - 100, GFXFF);
+        spr.drawString(" 00:00:00      00", 40, 103 + i * 23 - 100, GFXFF);
     }
 
     if (time_flag < 0)
@@ -289,8 +285,18 @@ void Vision_AI_real_time_analysis(int i_data) // todo
         time_flag--;
     }
 
-    spr.pushSprite(40, 90);
+    spr.pushSprite(50, 90);
     spr.deleteSprite();
+
+    spr.createSprite(360, 20);
+    spr.setFreeFont(FSSB9);
+    spr.setTextColor(TFT_WHITE);
+    spr.fillRect(40, 0, 230, 20, tft.color565(128, 128, 128));
+    spr.drawString("Time", 90, 0, GFXFF);
+    spr.drawString("Data", 180, 0, GFXFF);
+    spr.pushSprite(10, 70);
+    spr.deleteSprite();
+
     delay(1000);
 }
 
@@ -346,15 +352,24 @@ void Below_Right_State_Content(int gg_state) // SD 插拔状态 Grove 插拔状�
 
 void draw_title(int _title)
 {
-    _title = 0;
+    _title = 1;
     switch (_title)
     {
     case 0:
-        spr.createSprite(320, 20);
+        spr.createSprite(320, 18);
         spr.setTextColor(TFT_WHITE);
-        spr.drawString("Vision AI real-time analysis", 45, 0, GFXFF);
+        spr.fillRect(50, 0, 234, 94, tft.color565(100, 100, 100));
+        spr.drawString("Vision AI real-time analysis", 50, 0, GFXFF);
         spr.pushSprite(0, 50);
         spr.deleteSprite();
+    case 1:
+        spr.createSprite(320, 18);
+        spr.setTextColor(TFT_WHITE);
+        spr.fillRect(90, 0, 145, 94, tft.color565(100, 100, 100));
+        spr.drawString("TinyML Example", 90, 0, GFXFF);
+        spr.pushSprite(0, 50);
+        spr.deleteSprite();
+    
     }
 }
 void setup()
@@ -376,25 +391,30 @@ int gg_network_flag = 0;
 void loop()
 {
     // test block begin
+    
     if (digitalRead(WIO_KEY_B) == LOW)
     {
         Serial.println("B Key pressed");
         gg_switch++;
+        tft.fillScreen(TFT_BLACK);
         delay(200);
     }
     if (digitalRead(WIO_KEY_C) == LOW)
     {
         Serial.println("C Key pressed");
         gg_network_flag++;
+        tft.fillScreen(TFT_BLACK);
         delay(200);
     }
 
-    Sense_Display(gg_switch % 3);
+    Sense_Display(gg_switch % 3); // 最底层画布 包含 Sense Process Networks 选择
 
-    draw_title(gg_switch % 3);
+    draw_title(gg_switch % 3);   // 绘制 Tinyml Example  Vision AI real-time analysis 标题
 
-    Process_main(gg_switch % 5);
+    Process_main(gg_switch % 5); // 中间部分对应文字实现 需要通过 tft.fillScreen(TFT_BLACK); 来确保 背景重新填充为黑色 否则 spr 会有上册颜色显示的残留
 
-    Network_state(gg_switch % 3);
-    Below_Right_State_Content(gg_switch % 5);
+    Network_state(gg_switch % 3);  // 底部网络状态显示函数 传入 0 1 2 分别对应 OFF WIFI LORA 
+    
+    Below_Right_State_Content(gg_switch % 5); // 右下角 文字 插入TF卡 TF卡满 等提示
+    
 }
