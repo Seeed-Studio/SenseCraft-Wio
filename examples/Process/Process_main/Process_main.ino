@@ -62,13 +62,19 @@ void Sense_Display(int CHOOSE_PAGE) // Sense interface display
 
 void Please_connect_to_Vision_AI_sensor(void)
 {
-
+    spr.createSprite(340,50);
+    
     spr.setFreeFont(FSSB9);
     spr.setTextColor(TFT_WHITE);
-    spr.fillRect(42, 50, 240, 20, tft.color565(118, 118, 118));
-    spr.drawString("Vision AI real-time analysis", 45, 52, GFXFF);
 
-    spr.drawString("Please connect to Vision AI Sensor", 9, 120, GFXFF);
+    spr.drawString("Please connect to Vision AI Sensor", 9, 20, GFXFF);
+    
+    spr.pushSprite(0, 100);
+    spr.deleteSprite();
+
+    spr.createSprite(340,50);
+    spr.pushSprite(0, 150);
+    spr.deleteSprite();
 }
 
 int test_Vision_AI_real_time_data = 0;
@@ -79,7 +85,7 @@ void Process_main(int page)
     // case 1  Proccsee首页
     // case 2  TinyML示例
     // case 3  TinyML已进入
-//            page = 2;
+            page = 0;
 //        spr.createSprite(320, 70);
 
 //        spr.fillRect(95, 50, 135, 20, tft.color565(118, 118, 118));
@@ -94,32 +100,33 @@ void Process_main(int page)
         test_Vision_AI_real_time_data++;
         return;
     case 1:
-        spr.createSprite(320, 70);
+    // 270*80 = 21600
+        spr.createSprite(270, 80);
         spr.setFreeFont(FSSB9);
         spr.setTextColor(TFT_WHITE);
         
         spr.setFreeFont(FSS9);
         spr.setTextColor(TFT_WHITE);
 
-        spr.fillRect(22, 0, 75, 90, tft.color565(0, 139, 0));  // Green
+        spr.fillRect(22, 0, 75, 60, tft.color565(0, 139, 0));  // Green
         spr.drawString("Vision AI", 24, 0, GFXFF);
-        spr.drawString("real-time", 24, 25, GFXFF);
-        spr.drawString("analysis", 24, 50, GFXFF);
+        spr.drawString("real-time", 24, 22, GFXFF);
+        spr.drawString("analysis", 24, 44, GFXFF);
     
-        spr.drawString("TinyML", 127, 0, GFXFF);
-        spr.drawString("Example", 127, 25, GFXFF);
+        spr.drawString("TinyML", 120, 0, GFXFF);
+        spr.drawString("Example", 120, 22, GFXFF);
 
-        spr.drawString("Data", 219, 0, GFXFF);
-        spr.drawString("Filter (In ", 219, 25, GFXFF);
-        spr.drawString("Develop", 219, 50, GFXFF);
-        spr.drawString("ment)", 219, 75, GFXFF);
+        spr.drawString("Data", 205, 0, GFXFF);
+        spr.drawString("Filter (In ", 205, 20, GFXFF);
+        spr.drawString("Develop", 205, 40, GFXFF);
+        spr.drawString("ment)", 205, 60, GFXFF);
         
-        spr.pushSprite(0, 100);
+        spr.pushSprite(5, 100);
         
         spr.deleteSprite();
         break;
     case 2:
-        spr.createSprite(320, 70);
+        spr.createSprite(270, 80);
         spr.setFreeFont(FSSB9);
         spr.setTextColor(TFT_WHITE);
         
@@ -127,19 +134,19 @@ void Process_main(int page)
         spr.setTextColor(TFT_WHITE);
         
         spr.drawString("Vision AI", 24, 0, GFXFF);
-        spr.drawString("real-time", 24, 25, GFXFF);
-        spr.drawString("analysis", 24, 50, GFXFF);
+        spr.drawString("real-time", 24, 22, GFXFF);
+        spr.drawString("analysis", 24, 44, GFXFF);
 
-        spr.fillRect(125, 0, 75, 40, tft.color565(0, 139,0));
-        spr.drawString("TinyML", 127, 0, GFXFF);
-        spr.drawString("Example", 127, 25, GFXFF);
+        spr.fillRect(118, 0, 75, 40, tft.color565(0, 139,0));
+        spr.drawString("TinyML", 120, 0, GFXFF);
+        spr.drawString("Example", 120, 25, GFXFF);
     
-        spr.drawString("Data", 219, 0, GFXFF);
-        spr.drawString("Filter (In ", 219, 25, GFXFF);
-        spr.drawString("Develop", 219, 50, GFXFF);
-        spr.drawString("ment)", 219, 75, GFXFF);
+        spr.drawString("Data", 205, 0, GFXFF);
+        spr.drawString("Filter (In ", 205, 20, GFXFF);
+        spr.drawString("Develop", 205, 40, GFXFF);
+        spr.drawString("ment)", 205, 60, GFXFF);
         
-        spr.pushSprite(0, 100);     
+        spr.pushSprite(5, 100);     
         spr.deleteSprite();
         break;
     case 3:
@@ -150,22 +157,6 @@ void Process_main(int page)
         return;
     default:;
     }
-//    spr.setFreeFont(FSS9);
-//    spr.setTextColor(TFT_WHITE);
-//
-//    spr.drawString("Vision AI", 24, 71 + MOVE_PIXEL_y, GFXFF);
-//    spr.drawString("real-time", 24, 96 + MOVE_PIXEL_y, GFXFF);
-//    spr.drawString("analysis", 24, 121 + MOVE_PIXEL_y, GFXFF);
-//
-//    spr.drawString("TinyML", 127, 71 + MOVE_PIXEL_y, GFXFF);
-//    spr.drawString("Example", 127, 96 + MOVE_PIXEL_y, GFXFF);
-//    spr.drawString("analysis", 24, 121 + MOVE_PIXEL_y, GFXFF);
-//
-//    spr.setTextColor(tft.color565(169, 169, 169));
-//    spr.drawString("Data", 219, 71 + MOVE_PIXEL_y, GFXFF);
-//    spr.drawString("Filter (In ", 219, 96 + MOVE_PIXEL_y, GFXFF);
-//    spr.drawString("Develop", 219, 121 + MOVE_PIXEL_y, GFXFF);
-//    spr.drawString("ment)", 219, 146 + MOVE_PIXEL_y, GFXFF);
 }
 
 // 320 * 25 = 8000
@@ -202,16 +193,17 @@ void Network_state(int s_key)
 
 void Process_TinyML_ENTER(void)
 {
+    spr.createSprite(130, 130);
     spr.setTextColor(TFT_WHITE);
-    spr.fillRect(95, 50, 135, 20, tft.color565(118, 118, 118));
-    spr.drawString("TinyML Example", 95, 52, GFXFF);
-    spr.drawString("Please scan the QR ", 135, 106, GFXFF);
-    spr.drawString("code on the screen ", 135, 126, GFXFF);
-    spr.drawString("to view the Github", 135, 146, GFXFF);
-    spr.drawString("sample tutorial ", 135, 166, GFXFF);
+//    spr.fillRect(95, 50, 135, 20, tft.color565(118, 118, 118));
+//    spr.drawString("TinyML Example", 95, 52, GFXFF);
+//    spr.drawString("Please scan the QR ", 135, 106, GFXFF);
+//    spr.drawString("code on the screen ", 135, 126, GFXFF);
+//    spr.drawString("to view the Github", 135, 146, GFXFF);
+//    spr.drawString("sample tutorial ", 135, 166, GFXFF);
     double PIXELL = 3;
 
-    spr.fillRect(13, 86, 115, 115, TFT_WHITE);
+    spr.fillRect(15, 0, 113, 113, TFT_WHITE);
     QRCode qrcode;
     uint8_t *qrcodeData = (uint8_t *)malloc(qrcode_getBufferSize(5));
     qrcode_initText(&qrcode, qrcodeData, 5, 0, "https://wiki.seeedstudio.com/K1100-Getting-Started/#tinyml-section");
@@ -221,11 +213,24 @@ void Process_TinyML_ENTER(void)
         for (uint8_t x = 0; x < qrcode.size; x++)
         {
             if (qrcode_getModule(&qrcode, x, y))
-                spr.fillRect(x * PIXELL + 15, y * PIXELL + 86 + 2, PIXELL, PIXELL, TFT_BLACK);
+                spr.fillRect(x * PIXELL + 15+1 , y * PIXELL+1 , PIXELL, PIXELL, TFT_BLACK);
         }
     }
 
     free(qrcodeData);
+    spr.pushSprite(20, 80);
+    spr.deleteSprite();
+
+    spr.createSprite(130, 130);
+    spr.setFreeFont(FSS9); 
+    // code to view the tutorial
+    spr.drawString("Scan the QR ", 0, 26, GFXFF);
+    spr.drawString("code to view ", 0, 46, GFXFF);
+    spr.drawString("the tutorial ", 0, 66, GFXFF);
+
+    spr.pushSprite(160, 80);
+    spr.deleteSprite();
+
 }
 
 int i = 0;
@@ -234,15 +239,13 @@ int time_flag = 4;
 
 void Vision_AI_real_time_analysis(int i_data) // todo
 {
+    spr.createSprite(230, 95);
+    
     spr.setFreeFont(FSSB9);
     spr.setTextColor(TFT_WHITE);
-    spr.fillRect(42, 50, 240, 20, tft.color565(118, 118, 118));
-    spr.drawString("Vision AI real-time analysis", 45, 52, GFXFF);
-    spr.fillRect(36, 73, 216 + 35, 117 + 15, tft.color565(128, 128, 128));
-    DateTime now = rtc.now();
     
-    spr.drawString("Time", 52, 80, GFXFF);
-    spr.drawString("Data", 140, 80, GFXFF);
+    spr.fillRect(0, 0, 230, 94, tft.color565(128, 128, 128));
+    DateTime now = rtc.now();
 
     uint8_t HH = now.hour();
     uint8_t MM = now.minute();
@@ -271,13 +274,13 @@ void Vision_AI_real_time_analysis(int i_data) // todo
     for (int gg = 0; gg < 4; gg++)
     {
         spr.setFreeFont(FSSB9);
-        spr.drawString(buf_T[gg], 45, 103 + gg * 26, GFXFF);
+        spr.drawString(buf_T[gg], 45, 103 + gg * 23 - 100 , GFXFF);
     }
 
     for (int i = 0; i < time_flag - 1; i++)
     {
         spr.setFreeFont(FSSB9);
-        spr.drawString(" 00:00:00      00", 45, 103 + i * 26, GFXFF);
+        spr.drawString(" 00:00:00      00", 45, 103 + i * 23 - 100, GFXFF);
     }
 
     if (time_flag < 0)
@@ -289,6 +292,8 @@ void Vision_AI_real_time_analysis(int i_data) // todo
         time_flag--;
     }
 
+    spr.pushSprite(40, 90);
+    spr.deleteSprite();
     delay(1000);
 }
 
@@ -349,6 +354,10 @@ void Below_Right_State_Content(int gg_state)  // SD 插拔状态 Grove 插拔状
     spr.deleteSprite();
 }
 
+void title(){
+    ;
+}
+
 void setup()
 {
     DISPLAY_INIT();
@@ -381,10 +390,9 @@ void loop()
         delay(200);
     }
 
-//    Process_Display(gg_switch % 5, gg_network_flag % 2);
     Sense_Display(gg_switch % 3);
 
-    Process_main(gg_switch % 3);
+    Process_main(gg_switch % 5);
     
     Network_state(gg_switch % 3);
     Below_Right_State_Content(gg_switch % 5);
