@@ -22,13 +22,14 @@ void SamplerThread::Run() {
     sensors.push_back(new LIS3DHTRSensor());
     sensors.push_back(new FakeSensor());
 
-    std::vector<sensor_data *> datas;
+   
 
     for (auto sensor : sensors) {
         sensor->init();
     }
 
     while (true) {
+        std::vector<sensor_data *> datas;
         for (auto sensor : sensors) {
             if (sensor->read(&sdata)) {
                 LOGSS.printf("Sampling %s\n", sdata.name);

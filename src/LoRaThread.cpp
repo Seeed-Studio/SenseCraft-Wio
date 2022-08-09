@@ -27,6 +27,7 @@ void LoRaThread::Run() {
             LOGSS.println("LoRa E5 Sending Data");
             sensor_data data = lora_data.front();
             lora_data.pop();
+            lora_data_ready = true;
             for (size_t i = 0; i < data.size; i = i + 4) {
                 LOGSS.printf("%d ", ((int32_t *)data.data)[i]);
             }
@@ -34,7 +35,7 @@ void LoRaThread::Run() {
         }
         LOGSS.printf("lora thread %s\r\n", cfg.lora_frequency.c_str());
         LOGSS.printf("Lora Stacks Free Bytes Remaining %d\r\n", uxTaskGetStackHighWaterMark(GetHandle()));
-        Delay(Ticks::MsToTicks(1000));
+        Delay(Ticks::MsToTicks(10));
     }
 }
 
@@ -42,8 +43,11 @@ void LoRaThread::Run() {
 void LoRaThread::LoRaPushData(std::vector<sensor_data *> d) {
     // A loop to deep copy param of d vector into new lora_data queue 
     // by Iterative method
-    for (auto data : d) {
-        sensor_data *new_data = new sensor_data(*data);
-        lora_data.push(*new_data);
-    }
+    if(lora_data_ready)
+        for (auto data : d) {
+            // sensor_data *new_data = new sensor_data(*data);
+            lora_data.push(*data);
+    //        delete new_data;
+            lora_data_ready = false;
+        }
 }

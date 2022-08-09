@@ -29,7 +29,7 @@ private:
 
     bool is_e5_connected;
     std::queue<sensor_data>  lora_data;
-    bool lora_data_ready;
+    bool lora_data_ready = true;
 
 };
 
