@@ -11,7 +11,7 @@ Status: ✅✅ finished ✅ doing  ❌ todo
 
 | Code | Content | Status| Coder|
 | :------------ |:---------------:| -----:| -----:|
-|New_Network| 是纯的单独界面（spr create delete 分块实现  每个ino 为一页） |✅ |0|
+|New_Network| 是纯的单独界面（spr create delete 分块实现  每个ino 为一页） |✅✅ |0|
 |New_Sense| 是纯的单独界面（spr create delete 分块实现  每个ino 为一页） |✅✅ |0|
 |Process| 已做出单独函数 完全解耦 直接依次调用就可以完成 Process 界面绘制 title 处轻微闪烁 因为视窗有部分重叠的地方  对于刷新背景为黑色 可以直接可以 tft.fillScreen(TFT_BLACK);|✅✅|1|
 |...| ...| ...|
