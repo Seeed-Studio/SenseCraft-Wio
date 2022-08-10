@@ -142,19 +142,19 @@ void Below_Right_State_Content(int gg_state)  // SD 插拔状态 Grove 插拔状
 }
 
 
-void Banner()
+void Lora_Banner()  //Lora title
 {
     spr.createSprite(148, 19);
 
     spr.setFreeFont(FSS9);
     spr.setTextColor(TFT_WHITE, tft.color565(112, 112, 112));
-    spr.drawString("LoRa(SenseCAP)", 0, 0, GFXFF);
-    
+    spr.drawString("LoRa(SenseCAP)", 3, 0, GFXFF);
+
     spr.pushSprite(85, 50);
     spr.deleteSprite();
 }
 
-void button_OK()
+void Button_OK()
 {
     spr.createSprite(85, 40);
     
@@ -196,7 +196,7 @@ void loop()
 {
     Sense_Display(2);
     Network_state(1); 
-    Banner();
-    button_OK();
+    Lora_Banner();
+    Button_OK();
     BindDev_Display();
 }

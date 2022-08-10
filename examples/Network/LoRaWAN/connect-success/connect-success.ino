@@ -264,9 +264,8 @@ void Disconnect_Tip(int _YES_NO_SELECTION) // Pop-up prompt for sensor insertion
     spr.deleteSprite();
 }
 
-void Disconnect_button()
+void Disconnect_Button()
 {
-
     spr.createSprite(100, 30);
     spr.fillRect( 0, 0, 100, 30,  tft.color565(160, 34, 34));
     spr.setFreeFont(FSS9);
@@ -295,6 +294,6 @@ void loop()
     Lora_Connection_State(test_flag_1 % 2);
     test_flag_1++;
     ConnectSuc_Display(test_flag_1 % 4);
-    Disconnect_button();
+    Disconnect_Button();
     delay(1000);
 }
