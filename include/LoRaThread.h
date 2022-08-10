@@ -4,33 +4,46 @@
 
 #include "Arduino.h"
 #include "Seeed_Arduino_ooFreeRTOS.h"
-#include "utils.h"
 #include "SysConfig.h"
 #include "disk91_LoRaE5.h"
-#include <queue>
-
+#include "utils.h"
+#include <vector>
 
 // create a buttion class use ooFreeRTOS task
 
 using namespace cpp_freertos;
 
-class LoRaThread : public Thread
-{
-public:
+class LoRaThread : public Thread {
+  public:
     LoRaThread(SysConfig &config);
     void LoRaPushData(std::vector<sensor_data *> d);
 
-protected:
+  private:
+    void Init();
+    void Join();
+    bool SendDeviceInfo();
+    bool SendBuildinSensorData();
+    bool SendGroveSensorData();
+    bool SendData(uint8_t *data, uint8_t len, uint8_t ver);
+
+  protected:
     virtual void Run();
 
-private:
-	SysConfig &cfg;
+  private:
+    SysConfig     &cfg;
     Disk91_LoRaE5 *lorae5;
+    const uint8_t  v1 = 2;
+    const uint8_t  v2 = 3;
+    uint8_t        downlink_rxBuff[16];
+    uint8_t        downlink_rxSize = 16;
+    uint8_t        downlink_rxPort;
+    uint8_t        frequency;
 
-    bool is_e5_connected;
-    std::queue<sensor_data>  lora_data;
-    bool lora_data_ready = true;
+    bool is_e5_init = false;
+    bool is_e5_join = false;
 
+    std::vector<sensor_data> lora_data;
+    bool                     lora_data_ready = true;
 };
 
 #endif // __LORATHREAD_H__
