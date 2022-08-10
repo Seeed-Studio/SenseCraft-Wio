@@ -2,7 +2,7 @@
 #define __UTILS_H__
 #include <stdint.h>
 
-#define LOGSS Serial1
+#define LOGSS Serial
 enum button_state {
     SENSE_PRESSED = 1,
     PROCESS_PRESSED,
@@ -23,6 +23,7 @@ struct sensor_data {
 };
 
 enum sensor_type {
+    //1-3, buildin sensor
     BUILDIN_LIGHT = 1,
     BUILDIN_MIC,
     LIS3DHTRSENSOR,
