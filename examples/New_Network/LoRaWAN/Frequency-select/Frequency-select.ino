@@ -164,7 +164,6 @@ void Bandselect_Display(int SELECTION) // Select Frequency band interface
     spr.pushSprite(15, 80);
     spr.deleteSprite();
 
-    //
     spr.createSprite(290, 90);
 
     spr.setFreeFont(FSS9);
@@ -217,5 +216,6 @@ void loop()
     Lora_Banner();
     Bandselect_Display(test_flag_1 % 3);
     test_flag_1++;
+    Below_Right_State_Content(5);
     delay(1000);
 }

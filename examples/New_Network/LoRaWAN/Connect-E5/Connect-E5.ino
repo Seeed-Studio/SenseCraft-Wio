@@ -18,7 +18,7 @@ void DISPLAY_INIT() // Display initialization, black background rotation
     pinMode(WIO_KEY_C, INPUT_PULLUP);
     tft.begin();
     tft.setRotation(3);
-    tft.fillScreen(TFT_WHITE);
+    tft.fillScreen(TFT_BLACK);
 }
 
 // 320 * 25 = 8000
@@ -191,7 +191,7 @@ void setup()
 // int test_flag_1 = 0;
 
 void loop()
-{
+{   
     Sense_Display(2);
     Network_state(1); 
     Lora_Banner();

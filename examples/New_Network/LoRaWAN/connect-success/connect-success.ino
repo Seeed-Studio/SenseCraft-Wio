@@ -290,7 +290,7 @@ void loop()
     Network_state(1);
     Lora_Banner();
     // Disconnect_Tip(test_flag_1 % 2);
-    // Below_Right_State_Content(1);
+     Below_Right_State_Content(5);
     Lora_Connection_State(test_flag_1 % 2);
     test_flag_1++;
     ConnectSuc_Display(test_flag_1 % 4);

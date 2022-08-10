@@ -56,13 +56,13 @@ void BindDev_Display() // Select Frequency band interface
     spr.drawString("OK", 146, 170, GFXFF);
 
     spr.setFreeFont(FSS9);
-    spr.drawString("Network :", 5, 218 , GFXFF);
-    
-    spr.setTextColor(TFT_RED);             //Networking status indication：OFF
-    spr.drawString("OFF", 82, 218 , GFXFF);
+    spr.drawString("Network :", 5, 218, GFXFF);
 
-//    spr.setTextColor(TFT_GREEN, TFT_BLACK);             //Networking status indication：ON
-//    spr.drawString("LoRa(SenseCAP)", 82, 218 , GFXFF);  //Show the network you are in
+    spr.setTextColor(TFT_RED); // Networking status indication：OFF
+    spr.drawString("OFF", 82, 218, GFXFF);
+
+    //    spr.setTextColor(TFT_GREEN, TFT_BLACK);             //Networking status indication：ON
+    //    spr.drawString("LoRa(SenseCAP)", 82, 218 , GFXFF);  //Show the network you are in
 
     spr.pushSprite(0, 0);
     spr.deleteSprite();

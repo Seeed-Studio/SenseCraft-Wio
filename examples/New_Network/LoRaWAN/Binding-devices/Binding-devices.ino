@@ -182,8 +182,6 @@ void BindDev_Display() // Select Frequency band interface
     spr.deleteSprite();
 }
 
-
-
 void setup()
 {
     DISPLAY_INIT();
@@ -199,4 +197,5 @@ void loop()
     Lora_Banner();
     Button_OK();
     BindDev_Display();
+    Below_Right_State_Content(5);  // 修改 右下角 状态 
 }
