@@ -66,7 +66,7 @@ void IMU_third_Display(float _x, float _y, float _z)  //
 void Sense_third_Display(int _peoplecount)
 {
   spr.createSprite(38 * PIXEL, 7 * FONT_ROW_HEIGHT);
-  
+  spr.fillRect(30, 35, 26 * PIXEL, 5 * FONT_ROW_HEIGHT, tft.color565(0, 139, 0));
   spr.setFreeFont(FSS9);
   spr.setTextColor(TFT_BLACK, tft.color565(220, 220, 220));
   spr.fillRect(12 * PIXEL, 0, 16 * PIXEL, FONT_ROW_HEIGHT, tft.color565(220, 220, 220));
@@ -74,7 +74,7 @@ void Sense_third_Display(int _peoplecount)
 
   spr.setFreeFont(FSS9);
   spr.setTextColor(TFT_WHITE);
-  spr.drawString("Gas (SGP30)", 7 * PIXEL , 12 + FONT_ROW_HEIGHT, GFXFF);
+  spr.drawString("T&H(SHT40)", 30 , 12 + FONT_ROW_HEIGHT, GFXFF);
   
   spr.setFreeFont(FSS18);
   spr.setTextColor(TFT_WHITE);
@@ -82,16 +82,13 @@ void Sense_third_Display(int _peoplecount)
 
   spr.setFreeFont(FSS9);
   spr.setTextColor(TFT_WHITE);
-  spr.drawString("ppb", 28 * PIXEL, 3 * FONT_ROW_HEIGHT, 2);
-  
+  spr.drawString("c", 28.5 * PIXEL, 3 * FONT_ROW_HEIGHT,GFXFF );
+  spr.fillCircle(27.5 * PIXEL, 3.2 * FONT_ROW_HEIGHT, 2, tft.color565(220, 220, 220));
+  spr.fillCircle(27.5 * PIXEL, 3.2 * FONT_ROW_HEIGHT, 1, tft.color565(0, 0, 0));
   
   spr.setFreeFont(FSS18);
   spr.setTextColor(TFT_WHITE);
   spr.drawNumber(_peoplecount, 8 * PIXEL + 17 , 4.5 * FONT_ROW_HEIGHT, GFXFF);
-
-  spr.setFreeFont(FSS9);
-  spr.setTextColor(TFT_WHITE);
-  spr.drawString("ppm", 28 * PIXEL, 5 * FONT_ROW_HEIGHT, 2);
   
 
   spr.fillCircle(17 * PIXEL + 17, 6.8 * FONT_ROW_HEIGHT, 3, tft.color565(0, 193, 255));
@@ -105,7 +102,7 @@ void Sense_third_Display(int _peoplecount)
 void Add_Display()
 {
   spr.createSprite(27 * PIXEL, 5 * FONT_ROW_HEIGHT);
-  spr.fillRect(0, 0, 20 * PIXEL, 5 * FONT_ROW_HEIGHT, tft.color565(0, 139, 0));
+ 
   spr.setFreeFont(FSSB9);
   spr.setTextColor(TFT_WHITE);
   spr.drawString("Add", 20, 0, GFXFF);
@@ -117,7 +114,6 @@ void Add_Display()
   spr.pushSprite(10 + 55 * PIXEL, 3.8 * FONT_ROW_HEIGHT);
   spr.deleteSprite();
 }
-
 
 void Network_state(int s_key)
 {

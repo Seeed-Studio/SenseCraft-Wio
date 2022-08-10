@@ -157,12 +157,15 @@ void wifi_info(){
     spr.fillSprite(TFT_BLACK);
     spr.setFreeFont(FSS9);
     spr.setTextColor(TFT_WHITE);
-    spr.drawString("Connected:", 6 , 6, 2);
-    spr.drawString("SSID:", 6 , 26, 2);
-    spr.drawString("Account:", 6 , 46, 2);
-    spr.drawString("depot0510", 74 , 6, 2);
-    spr.drawString("123456", 38 , 26, 2);
-    spr.drawString("user1", 60 , 46, 2);
+    spr.drawString("Connected:", 6, 6, 2);
+    spr.drawString("WIFI(Ubidots)", 74, 6, 2);
+
+    spr.drawString("SSID:", 6, 26, 2);
+    spr.drawString("123456", 38, 26, 2);
+
+    spr.drawString("Account:", 6, 46, 2);
+    spr.drawString("user1", 60, 46, 2);
+
     spr.pushSprite(20, 76);
     spr.deleteSprite();
   }
@@ -274,22 +277,24 @@ int test_flag_1 = 0;
 int joystick = 0;
 void loop()
 {
+    Sense_Display(2);
+    
     if (digitalRead(WIO_KEY_A) == LOW){
        test_flag_1++;
        delay(300);
+       tft.fillScreen(TFT_BLACK);
     }
-
-    Sense_Display(test_flag_1%3);
 
     if (digitalRead(WIO_KEY_B) == LOW){
        test_flag++;
        delay(300);
+       tft.fillScreen(TFT_BLACK);
     }
 
-    Network_state(test_flag%3); // 修改网络状态  左下角
+    Network_state(test_flag%2); // 修改网络状态  左下角
     wifi_head();
     wifi_info();
-    sig(0);
+    wifi_sig(test_flag%5);
     d_connect();
     Below_Right_State_Content(test_flag%5);  // 修改 右下角 状态 
     

@@ -1,20 +1,21 @@
-#include <TFT_eSPI.h>
+#include <TFT_eSPI.h> 
 #include "Free_Fonts.h"
-#include "LIS3DHTR.h"
+#include"LIS3DHTR.h"
 
 LIS3DHTR<TwoWire> lis;
 
 TFT_eSPI tft;
-TFT_eSprite spr = TFT_eSprite(&tft);
+TFT_eSprite spr = TFT_eSprite(&tft); 
 
-#define SCREEN_WIDTH 320 // Wio Terminal Maximum Width
-#define SCREEN_HIGH 240  // Wio Terminal Maximum Height
-#define PIXEL 4          // Width of one letter
+#define SCREEN_WIDTH 320                        // Wio Terminal Maximum Width
+#define SCREEN_HIGH 240                         // Wio Terminal Maximum Height
+#define PIXEL 4                                 // Width of one letter
 #define LEFT_SIDE 70
 #define HIGHT_SIDE 47
 const static unsigned int FONT_ROW_HEIGHT = 22; // The height of a letter
 
-void DISPLAY_INIT() // Display initialization, black background rotation
+
+void DISPLAY_INIT()            // Display initialization, black background rotation
 {
     tft.begin();
     tft.setRotation(3);
@@ -23,101 +24,96 @@ void DISPLAY_INIT() // Display initialization, black background rotation
 
 void top(int _CHOOSE)
 {
-    spr.createSprite(SCREEN_WIDTH, 2 * FONT_ROW_HEIGHT + 1);
+  spr.createSprite(SCREEN_WIDTH, 2 * FONT_ROW_HEIGHT + 1);
 
-    if (_CHOOSE == 1)
-        spr.fillRect(4 * PIXEL, 0, 21 * PIXEL, FONT_ROW_HEIGHT + 15, tft.color565(135, 206, 235));
-    else
-        spr.fillRect(4 * PIXEL, 0, 21 * PIXEL, FONT_ROW_HEIGHT + 15, TFT_WHITE);
-    if (_CHOOSE == 2)
-        spr.fillRect(30 * PIXEL, 0, 21 * PIXEL, FONT_ROW_HEIGHT + 15, tft.color565(135, 206, 235));
-    else
-        spr.fillRect(30 * PIXEL, 0, 21 * PIXEL, FONT_ROW_HEIGHT + 15, TFT_WHITE);
-    if (_CHOOSE == 3)
-        spr.fillRect(56 * PIXEL, 0, 21 * PIXEL, FONT_ROW_HEIGHT + 15, tft.color565(135, 206, 235));
-    else
-        spr.fillRect(56 * PIXEL, 0, 21 * PIXEL, FONT_ROW_HEIGHT + 15, TFT_WHITE);
+  if(_CHOOSE == 1)spr.fillRect(4 * PIXEL, 0, 21 * PIXEL, FONT_ROW_HEIGHT + 15, tft.color565(135, 206, 235));
+  else spr.fillRect(4 * PIXEL, 0, 21 * PIXEL, FONT_ROW_HEIGHT + 15, TFT_WHITE);
+  if(_CHOOSE == 2)spr.fillRect(30 * PIXEL, 0, 21 * PIXEL, FONT_ROW_HEIGHT + 15, tft.color565(135, 206, 235));
+  else spr.fillRect(30 * PIXEL, 0, 21 * PIXEL, FONT_ROW_HEIGHT + 15, TFT_WHITE);
+  if(_CHOOSE == 3)spr.fillRect(56 * PIXEL, 0, 21 * PIXEL, FONT_ROW_HEIGHT + 15, tft.color565(135, 206, 235));
+  else spr.fillRect(56 * PIXEL, 0, 21 * PIXEL, FONT_ROW_HEIGHT + 15, TFT_WHITE);
 
-    spr.setFreeFont(FSSB9);
-    spr.setTextColor(TFT_BLACK);
-    spr.drawString("Sense", 32, 11, GFXFF);
-    spr.drawString("Process", 127, 11, GFXFF);
-    spr.drawString("Network", 231, 11, GFXFF);
+  spr.setFreeFont(FSSB9);
+  spr.setTextColor(TFT_BLACK);
+  spr.drawString("Sense", 32, 11, GFXFF);
+  spr.drawString("Process", 127, 11, GFXFF);
+  spr.drawString("Network", 231, 11, GFXFF);
 
-    spr.drawLine(0, 2 * FONT_ROW_HEIGHT, SCREEN_WIDTH, 2 * FONT_ROW_HEIGHT, TFT_WHITE);
+  spr.drawLine(0, 2 * FONT_ROW_HEIGHT, SCREEN_WIDTH, 2 * FONT_ROW_HEIGHT, TFT_WHITE);
 
-    spr.pushSprite(0, 0);
-    spr.deleteSprite();
+  spr.pushSprite(0, 0);
+  spr.deleteSprite();
 }
 
-void IMU_third_Display(float _x, float _y, float _z) //
+void IMU_third_Display(float _x, float _y, float _z)  //
 {
-    spr.createSprite(27 * PIXEL, 6 * FONT_ROW_HEIGHT);
-
-    spr.setFreeFont(FSS9);
-    spr.setTextColor(TFT_WHITE);
-    spr.drawString("IMU", 2, 0, GFXFF);
-    spr.setFreeFont(FSS12);
-    spr.setTextColor(TFT_WHITE);
-    spr.drawFloat(_x, 2, 0, 1.5 * FONT_ROW_HEIGHT, GFXFF); // Display the value of IMU X-axis
-    spr.drawFloat(_y, 2, 0, 2.5 * FONT_ROW_HEIGHT, GFXFF); // Display the value of IMU Y-axis
-    spr.drawFloat(_z, 2, 0, 3.5 * FONT_ROW_HEIGHT, GFXFF); // Display the value of IMU Z-axis
-    spr.setFreeFont(FSS9);
-    spr.drawString("X,Y,Z", 0, 4.5 * FONT_ROW_HEIGHT, GFXFF);
-    spr.pushSprite(10, 3.8 * FONT_ROW_HEIGHT);
-    spr.deleteSprite();
+  spr.createSprite(27 * PIXEL, 6 * FONT_ROW_HEIGHT);
+  
+  spr.setFreeFont(FSS9);
+  spr.setTextColor(TFT_WHITE);
+  spr.drawString("IMU", 2, 0, GFXFF);
+  spr.setFreeFont(FSS12);
+  spr.setTextColor(TFT_WHITE);
+  spr.drawFloat(_x, 2, 0, 1.5 * FONT_ROW_HEIGHT, GFXFF);       //Display the value of IMU X-axis
+  spr.drawFloat(_y, 2, 0, 2.5 * FONT_ROW_HEIGHT, GFXFF);       //Display the value of IMU Y-axis
+  spr.drawFloat(_z, 2, 0, 3.5 * FONT_ROW_HEIGHT, GFXFF);       //Display the value of IMU Z-axis
+  spr.setFreeFont(FSS9);
+  spr.drawString("X,Y,Z", 0, 4.5 * FONT_ROW_HEIGHT, GFXFF);
+  spr.pushSprite(10, 3.8 * FONT_ROW_HEIGHT);
+  spr.deleteSprite();
 }
 
 void Sense_third_Display(int _peoplecount)
 {
-    spr.createSprite(38 * PIXEL, 7 * FONT_ROW_HEIGHT);
+  spr.createSprite(38 * PIXEL, 7 * FONT_ROW_HEIGHT);
+  
+  spr.setFreeFont(FSS9);
+  spr.setTextColor(TFT_BLACK, tft.color565(220, 220, 220));
+  spr.fillRect(12 * PIXEL, 0, 16 * PIXEL, FONT_ROW_HEIGHT, tft.color565(220, 220, 220));
+  spr.drawString("Sensor", 12 * PIXEL + 2 , 2, GFXFF);
 
-    spr.setFreeFont(FSS9);
-    spr.setTextColor(TFT_BLACK, tft.color565(220, 220, 220));
-    spr.fillRect(12 * PIXEL, 0, 16 * PIXEL, FONT_ROW_HEIGHT, tft.color565(220, 220, 220));
-    spr.drawString("Sensor", 12 * PIXEL + 2, 2, GFXFF);
+  spr.setFreeFont(FSS9);
+  spr.setTextColor(TFT_WHITE);
+  spr.drawString("Vision AI", 11 * PIXEL, 12 + FONT_ROW_HEIGHT, GFXFF);
+  
+  spr.setFreeFont(FSS12);
+  spr.setTextColor(TFT_WHITE);
+  spr.drawNumber(_peoplecount, 11 * PIXEL +17 , 2.5 * FONT_ROW_HEIGHT, GFXFF);
 
-    spr.setFreeFont(FSS9);
-    spr.setTextColor(TFT_WHITE);
-    spr.drawString("Vision AI", 11 * PIXEL, 12 + FONT_ROW_HEIGHT, GFXFF);
+  spr.setFreeFont(FSS9);
+  spr.setTextColor(TFT_WHITE);
+  spr.drawString("People Count", 11 * PIXEL, 12 + 3 * FONT_ROW_HEIGHT, 2);
+  
+  
+  spr.setFreeFont(FSS12);
+  spr.setTextColor(TFT_WHITE);
+  spr.drawNumber(_peoplecount, 11 * PIXEL + 17 , 4.5 * FONT_ROW_HEIGHT, GFXFF);
 
-    spr.setFreeFont(FSS12);
-    spr.setTextColor(TFT_WHITE);
-    spr.drawNumber(_peoplecount, 11 * PIXEL + 17, 2.5 * FONT_ROW_HEIGHT, GFXFF);
+  spr.setFreeFont(FSS9);
+  spr.setTextColor(TFT_WHITE);
+  spr.drawString("Accuracy(%)", 11 * PIXEL, 12 + 5 * FONT_ROW_HEIGHT, 2);
 
-    spr.setFreeFont(FSS9);
-    spr.setTextColor(TFT_WHITE);
-    spr.drawString("People Count", 11 * PIXEL, 12 + 3 * FONT_ROW_HEIGHT, 2);
-
-    spr.setFreeFont(FSS12);
-    spr.setTextColor(TFT_WHITE);
-    spr.drawNumber(_peoplecount, 11 * PIXEL + 17, 4.5 * FONT_ROW_HEIGHT, GFXFF);
-
-    spr.setFreeFont(FSS9);
-    spr.setTextColor(TFT_WHITE);
-    spr.drawString("Accuracy(%)", 11 * PIXEL, 12 + 5 * FONT_ROW_HEIGHT, 2);
-
-    spr.fillCircle(17 * PIXEL + 17, 6.8 * FONT_ROW_HEIGHT, 3, tft.color565(0, 193, 255));
-    spr.fillCircle(17 * PIXEL, 6.8 * FONT_ROW_HEIGHT, 3, tft.color565(220, 220, 220));
-
-    spr.pushSprite(20 * PIXEL, 2.2 * FONT_ROW_HEIGHT);
-    spr.deleteSprite();
+  spr.fillCircle(17 * PIXEL + 17, 6.8 * FONT_ROW_HEIGHT, 3, tft.color565(0, 193, 255));
+  spr.fillCircle(17 * PIXEL, 6.8 * FONT_ROW_HEIGHT, 3, tft.color565(220, 220, 220));
+  
+  spr.pushSprite(20 * PIXEL, 2.2 * FONT_ROW_HEIGHT);
+  spr.deleteSprite();
 }
 
 void Add_Display()
 {
-    spr.createSprite(27 * PIXEL, 5 * FONT_ROW_HEIGHT);
-    spr.fillRect(0, 0, 20 * PIXEL, 5 * FONT_ROW_HEIGHT, tft.color565(0, 139, 0));
-    spr.setFreeFont(FSSB9);
-    spr.setTextColor(TFT_WHITE);
-    spr.drawString("Add", 20, 0, GFXFF);
+  spr.createSprite(27 * PIXEL, 5 * FONT_ROW_HEIGHT);
+  spr.fillRect(0, 0, 20 * PIXEL, 5 * FONT_ROW_HEIGHT, tft.color565(0, 139, 0));
+  spr.setFreeFont(FSSB9);
+  spr.setTextColor(TFT_WHITE);
+  spr.drawString("Add", 20, 0, GFXFF);
+  
+  spr.fillRect(20, 1.5 * FONT_ROW_HEIGHT, 40, 40, TFT_WHITE);
+  spr.fillRect(38, 1.5 * FONT_ROW_HEIGHT + 6, 3, 26, TFT_BLACK);
+  spr.fillRect(27, 1.5 * FONT_ROW_HEIGHT + 18, 26, 3, TFT_BLACK);
 
-    spr.fillRect(20, 1.5 * FONT_ROW_HEIGHT, 40, 40, TFT_WHITE);
-    spr.fillRect(38, 1.5 * FONT_ROW_HEIGHT + 6, 3, 26, TFT_BLACK);
-    spr.fillRect(27, 1.5 * FONT_ROW_HEIGHT + 18, 26, 3, TFT_BLACK);
-
-    spr.pushSprite(10 + 55 * PIXEL, 3.8 * FONT_ROW_HEIGHT);
-    spr.deleteSprite();
+  spr.pushSprite(10 + 55 * PIXEL, 3.8 * FONT_ROW_HEIGHT);
+  spr.deleteSprite();
 }
 
 void Network_state(int s_key)
@@ -133,19 +129,19 @@ void Network_state(int s_key)
         spr.drawString("OFF", 90, 0, 2);
         break;
     case 1:
-        spr.setTextColor(TFT_GREEN, TFT_BLACK); // Networking status indication：ON
-        spr.drawString("LoRa", 60, 0, 2);       // Show the network you are in
+        spr.setTextColor(TFT_GREEN, TFT_BLACK);           // Networking status indication：ON
+        spr.drawString("LoRa", 60, 0, 2); // Show the network you are in
         break;
     case 2:
-        spr.setTextColor(TFT_GREEN, TFT_BLACK); // Networking status indication：ON
-        spr.drawString("WIFI", 60, 0, 2);       // Show the network you are in
+        spr.setTextColor(TFT_GREEN, TFT_BLACK);          // Networking status indication：ON
+        spr.drawString("WIFI", 60, 0, 2); // Show the network you are in
         break;
     default:;
     }
     spr.setTextColor(TFT_WHITE);
     spr.drawString("Network:", 5, 0, 2);
     spr.setFreeFont(FSS9);
-
+    
     spr.pushSprite(0, 215);
     spr.deleteSprite();
 }
@@ -165,31 +161,29 @@ void TFcard_Tip()
 {
     spr.createSprite(SCREEN_WIDTH, 25);
     spr.setFreeFont(FSS9);
-
+   
     spr.setTextColor(tft.color565(0, 139, 0));
     spr.drawString("Vison AI Sensor connected", 10, 2, 2);
     spr.pushSprite(140, 215);
     spr.deleteSprite();
 }
 
-void setup()
-{
-    DISPLAY_INIT();
-    pinMode(WIO_MIC, INPUT);
-    lis.begin(Wire1);
-    lis.setOutputDataRate(LIS3DHTR_DATARATE_25HZ);
-    lis.setFullScaleRange(LIS3DHTR_RANGE_2G);
+void setup() {
+  DISPLAY_INIT();
+  pinMode(WIO_MIC, INPUT);
+  lis.begin(Wire1);
+  lis.setOutputDataRate(LIS3DHTR_DATARATE_25HZ);
+  lis.setFullScaleRange(LIS3DHTR_RANGE_2G);
 }
 
-void loop()
-{
-    Network_state(1);
-    top(1);
-    // Sound_Display(analogRead(WIO_MIC));
-    IMU_third_Display(lis.getAccelerationX(), lis.getAccelerationY(), lis.getAccelerationZ());
-    Sense_third_Display(analogRead(WIO_MIC));
-    Add_Display();
-    // Grove_Tip();
-    TFcard_Tip();
-    delay(500);
+void loop() {
+  Network_state(1);
+  top(1);
+ // Sound_Display(analogRead(WIO_MIC));
+  IMU_third_Display(lis.getAccelerationX(), lis.getAccelerationY(), lis.getAccelerationZ());
+  Sense_third_Display(analogRead(WIO_MIC));
+  Add_Display();
+  //Grove_Tip();
+  TFcard_Tip();
+  delay(500);
 }

@@ -35,26 +35,26 @@ void Network_state(int s_key)
         spr.drawString("OFF", 60, 0, 2);
         break;
     case 1:
-        spr.setTextColor(TFT_GREEN, TFT_BLACK);           // Networking status indication：ON
-        spr.drawString("LoRa", 60, 0, 2); // Show the network you are in
+        spr.setTextColor(TFT_GREEN, TFT_BLACK); // Networking status indication：ON
+        spr.drawString("LoRa", 60, 0, 2);       // Show the network you are in
         break;
     case 2:
-        spr.setTextColor(TFT_GREEN, TFT_BLACK);          // Networking status indication：ON
-        spr.drawString("WiFi", 60, 0, 2); // Show the network you are in
+        spr.setTextColor(TFT_GREEN, TFT_BLACK); // Networking status indication：ON
+        spr.drawString("WiFi", 60, 0, 2);       // Show the network you are in
         break;
     default:;
     }
     spr.setTextColor(TFT_WHITE);
     spr.drawString("Network:", 5, 0, 2);
     spr.setFreeFont(FSS9);
-    
+
     spr.pushSprite(0, 215);
     spr.deleteSprite();
 }
 
 int GG;
 
-//320*70 = 22400
+// 320*70 = 22400
 void Sense_Display(int CHOOSE_PAGE) // Sense interface display
 {
     spr.createSprite(320, 50);
@@ -91,9 +91,9 @@ void Sense_Display(int CHOOSE_PAGE) // Sense interface display
     spr.deleteSprite();
 }
 
-void Below_Right_State_Content(int gg_state)  // SD 插拔状态 Grove 插拔状态
+void Below_Right_State_Content(int gg_state) // SD 插拔状态 Grove 插拔状态
 {
-    
+
     spr.createSprite(320, 25);
     spr.setFreeFont(FSSB9);
     spr.fillSprite(TFT_BLACK);
@@ -132,91 +132,95 @@ void Below_Right_State_Content(int gg_state)  // SD 插拔状态 Grove 插拔状
         spr.drawString("Please insert TF card", 22, 0, 2);
         spr.pushSprite(148, 215);
         break;
-    
+
     default:;
     }
-    
+
     spr.setTextColor(TFT_WHITE);
     spr.drawString("Network :", 5, 0, GFXFF);
-    
+
     spr.deleteSprite();
 }
-  
-void wifi_head(){
+
+void wifi_head()
+{
     spr.createSprite(120, 24);
     spr.fillSprite(tft.color565(100, 100, 100));
     spr.setFreeFont(FSS9);
     spr.setTextColor(TFT_WHITE);
-    spr.drawString("WiFi(Ubidots)", 6 , 3, GFXFF);
+    spr.drawString("WiFi(Ubidots)", 6, 3, GFXFF);
     spr.pushSprite(102, 50);
     spr.deleteSprite();
 }
 
-void wifi_info(){
+void wifi_info() ///
+{
     spr.createSprite(200, 60);
     spr.fillSprite(TFT_BLACK);
     spr.setFreeFont(FSS9);
     spr.setTextColor(TFT_WHITE);
-    spr.drawString("Connected:", 6 , 6, 2);
-    spr.drawString("SSID:", 6 , 26, 2);
-    spr.drawString("Account:", 6 , 46, 2);
-    spr.drawString("depot0510", 74 , 6, 2);
-    spr.drawString("123456", 38 , 26, 2);
-    spr.drawString("user1", 60 , 46, 2);
+    spr.drawString("Connected:", 6, 6, 2);
+    spr.drawString("WIFI(Ubidots)", 74, 6, 2);
+
+    spr.drawString("SSID:", 6, 26, 2);
+    spr.drawString("123456", 38, 26, 2);
+
+    spr.drawString("Account:", 6, 46, 2);
+    spr.drawString("user1", 60, 46, 2);
+
     spr.pushSprite(20, 76);
     spr.deleteSprite();
-  }
+}
 
-void disconnect_button(){
+void disconnect_button()
+{
     spr.createSprite(100, 34);
     spr.fillSprite(tft.color565(160, 34, 34));
     spr.setFreeFont(FSS9);
     spr.setTextColor(TFT_WHITE);
-    spr.drawString("Disconnect", 5 , 8, GFXFF);
+    spr.drawString("Disconnect", 5, 8, GFXFF);
     spr.pushSprite(115, 170);
     spr.deleteSprite();
-  
-  }
-  
-void wifi_sig(int key){
-  if (key == 2) // Press the A button to disconnect
+}
+
+void wifi_sig(int key)
+{
+    if (key == 2) // Press the A button to disconnect
     {
         spr.createSprite(80, 40);
         spr.setFreeFont(FSS9);
         spr.setTextColor(TFT_WHITE);
-        spr.drawString("Signal:", 6 ,15, 2);
+        spr.drawString("Signal:", 6, 15, 2);
         spr.fillRect(51, 16, 3, 11, tft.color565(0, 139, 0)); // No signal
         spr.fillRect(57, 13, 3, 14, tft.color565(0, 139, 0));
-        spr.fillRect(63, 10, 3, 17,tft.color565(100, 100, 100));
+        spr.fillRect(63, 10, 3, 17, tft.color565(100, 100, 100));
         spr.fillRect(69, 7, 3, 20, tft.color565(100, 100, 100));
         spr.pushSprite(20, 140);
         spr.deleteSprite();
-
     }
     if (key == 3) // Press the A button to disconnect
     {
         spr.createSprite(80, 40);
         spr.setFreeFont(FSS9);
         spr.setTextColor(TFT_WHITE);
-        spr.drawString("Signal:", 6 ,15, 2);
+        spr.drawString("Signal:", 6, 15, 2);
         spr.fillRect(51, 16, 3, 11, tft.color565(0, 139, 0)); // No signal
         spr.fillRect(57, 13, 3, 14, tft.color565(0, 139, 0));
-        spr.fillRect(63, 10, 3, 17,tft.color565(0, 139, 0));
+        spr.fillRect(63, 10, 3, 17, tft.color565(0, 139, 0));
         spr.fillRect(69, 7, 3, 20, tft.color565(100, 100, 100));
         spr.pushSprite(20, 140);
         spr.deleteSprite();
-
     }
     if (key == 4) // Press the A button to disconnect
-    {   
+    {
 
         spr.createSprite(80, 40);
         spr.setFreeFont(FSS9);
         spr.setTextColor(TFT_WHITE);
-        spr.drawString("Signal:", 6 ,15, 2);
+        spr.drawString("Signal:", 6, 15, 2);
         spr.fillRect(51, 16, 3, 11, tft.color565(0, 139, 0)); // No signal
         spr.fillRect(57, 13, 3, 14, tft.color565(0, 139, 0));
-        spr.fillRect(63, 10, 3, 17,tft.color565(0, 139, 0));
+        spr.fillRect(63, 10, 3, 17, tft.color565(0, 139, 0));
         spr.fillRect(69, 7, 3, 20, tft.color565(0, 139, 0));
         spr.pushSprite(20, 140);
         spr.deleteSprite();
@@ -226,19 +230,19 @@ void wifi_sig(int key){
         spr.createSprite(80, 40);
         spr.setFreeFont(FSS9);
         spr.setTextColor(TFT_WHITE);
-        spr.drawString("Signal:", 6 ,15, 2);
+        spr.drawString("Signal:", 6, 15, 2);
         spr.fillRect(51, 16, 3, 11, tft.color565(0, 139, 0)); // No signal
         spr.fillRect(57, 13, 3, 14, tft.color565(100, 100, 100));
-        spr.fillRect(63, 10, 3, 17,tft.color565(100, 100, 100));
+        spr.fillRect(63, 10, 3, 17, tft.color565(100, 100, 100));
         spr.fillRect(69, 7, 3, 20, tft.color565(100, 100, 100));
         spr.pushSprite(20, 140);
         spr.deleteSprite();
-        
+
         spr.createSprite(100, 100);
-        spr.fillCircle(28,35,10, TFT_YELLOW); // Data transmission status: join failed
+        spr.fillCircle(28, 35, 10, TFT_YELLOW); // Data transmission status: join failed
         spr.setTextColor(TFT_YELLOW);
-        spr.drawString("Low signal", 0,60,2);
-        spr.drawString("intensity", 4,85,2);
+        spr.drawString("Low signal", 0, 60, 2);
+        spr.drawString("intensity", 4, 85, 2);
         spr.pushSprite(240, 66);
         spr.deleteSprite();
     }
@@ -247,23 +251,23 @@ void wifi_sig(int key){
         spr.createSprite(80, 50);
         spr.setFreeFont(FSS9);
         spr.setTextColor(TFT_WHITE);
-        spr.drawString("Signal:", 6 ,15, 2);
+        spr.drawString("Signal:", 6, 15, 2);
         spr.fillRect(51, 16, 3, 11, tft.color565(140, 42, 42)); // No signal
         spr.fillRect(57, 13, 3, 14, tft.color565(140, 42, 42));
         spr.fillRect(63, 10, 3, 17, tft.color565(140, 42, 42));
         spr.fillRect(69, 7, 3, 20, tft.color565(140, 42, 42));
         spr.pushSprite(20, 140);
         spr.deleteSprite();
-        
+
         spr.createSprite(100, 100);
-        spr.fillCircle(28,35,10, TFT_RED); // Data transmission status: join failed
+        spr.fillCircle(28, 35, 10, TFT_RED); // Data transmission status: join failed
         spr.setTextColor(TFT_RED);
-        spr.drawString("Join WiFi", 0,60,2);
-        spr.drawString("Failed", 10,85,2);
+        spr.drawString("Join WiFi", 0, 60, 2);
+        spr.drawString("Failed", 10, 85, 2);
         spr.pushSprite(240, 66);
         spr.deleteSprite();
     }
-  }
+}
 
 void Disconnect_Tip(int _YES_NO_SELECTION) // Pop-up prompt for sensor insertion 0 NO 1 Yes
 {
@@ -296,7 +300,7 @@ void Disconnect_Tip(int _YES_NO_SELECTION) // Pop-up prompt for sensor insertion
     spr.pushSprite(60, 86);
     spr.deleteSprite();
 }
-  
+
 void setup()
 {
     DISPLAY_INIT();
@@ -307,25 +311,29 @@ int test_flag_1 = 0;
 int joystick = 0;
 void loop()
 {
-    if (digitalRead(WIO_KEY_A) == LOW){
-       test_flag_1++;
-       delay(300);
+    if (digitalRead(WIO_KEY_A) == LOW)
+    {
+        test_flag_1++;
+        delay(300);
+        tft.fillScreen(TFT_BLACK);
     }
 
-    Sense_Display(test_flag_1%3);
+    Sense_Display(test_flag_1 % 3);
 
-    if (digitalRead(WIO_KEY_B) == LOW){
-       test_flag++;
-       delay(300);
+    if (digitalRead(WIO_KEY_B) == LOW)
+    {
+        test_flag++;
+        delay(300);
+        tft.fillScreen(TFT_BLACK);
     }
 
-    Network_state(test_flag%3); // 修改网络状态  左下角
+    Network_state(test_flag % 3); // 修改网络状态  左下角
     wifi_head();
     wifi_info();
-    wifi_sig(0);
+    wifi_sig(test_flag % 5);
     disconnect_button();
-    Disconnect_Tip(1);
-    Below_Right_State_Content(test_flag%5);  // 修改 右下角 状态 
-    
+    //    Disconnect_Tip(test_flag % 2); // 弹窗确认
+    Below_Right_State_Content(test_flag % 5); // 修改 右下角 状态
+
     delay(1000);
 }

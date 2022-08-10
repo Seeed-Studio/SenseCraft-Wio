@@ -35,26 +35,26 @@ void Network_state(int s_key)
         spr.drawString("OFF", 60, 0, 2);
         break;
     case 1:
-        spr.setTextColor(TFT_GREEN, TFT_BLACK);           // Networking status indication：ON
-        spr.drawString("LoRa", 60, 0, 2); // Show the network you are in
+        spr.setTextColor(TFT_GREEN, TFT_BLACK); // Networking status indication：ON
+        spr.drawString("LoRa", 60, 0, 2);       // Show the network you are in
         break;
     case 2:
-        spr.setTextColor(TFT_GREEN, TFT_BLACK);          // Networking status indication：ON
-        spr.drawString("WiFi", 60, 0, 2); // Show the network you are in
+        spr.setTextColor(TFT_GREEN, TFT_BLACK); // Networking status indication：ON
+        spr.drawString("WiFi", 60, 0, 2);       // Show the network you are in
         break;
     default:;
     }
     spr.setTextColor(TFT_WHITE);
     spr.drawString("Network:", 5, 0, 2);
     spr.setFreeFont(FSS9);
-    
+
     spr.pushSprite(0, 215);
     spr.deleteSprite();
 }
 
 int GG;
 
-//320*70 = 22400
+// 320*70 = 22400
 void Sense_Display(int CHOOSE_PAGE) // Sense interface display
 {
     spr.createSprite(320, 50);
@@ -91,9 +91,9 @@ void Sense_Display(int CHOOSE_PAGE) // Sense interface display
     spr.deleteSprite();
 }
 
-void Below_Right_State_Content(int gg_state)  // SD 插拔状态 Grove 插拔状态
+void Below_Right_State_Content(int gg_state) // SD 插拔状态 Grove 插拔状态
 {
-    
+
     spr.createSprite(320, 25);
     spr.setFreeFont(FSSB9);
     spr.fillSprite(TFT_BLACK);
@@ -132,49 +132,49 @@ void Below_Right_State_Content(int gg_state)  // SD 插拔状态 Grove 插拔状
         spr.drawString("Please insert TF card", 22, 0, 2);
         spr.pushSprite(148, 215);
         break;
-    
+
     default:;
     }
     spr.setTextColor(TFT_WHITE);
     spr.drawString("Network :", 5, 0, GFXFF);
-    
+
     spr.deleteSprite();
 }
 
-
-void ubidots(){
+void title_ubidots()
+{
     spr.createSprite(120, 30);
     spr.fillSprite(tft.color565(100, 100, 100));
     spr.setFreeFont(FSS9);
     spr.setTextColor(TFT_WHITE);
-    spr.drawString("WiFi(Ubidots)", 6 , 6, GFXFF);
+    spr.drawString("WiFi(Ubidots)", 6, 6, GFXFF);
     spr.pushSprite(102, 50);
     spr.deleteSprite();
 }
 
-void successful(){
-  
+void successful()
+{
+
     spr.createSprite(120, 30);
     spr.fillSprite(TFT_BLACK);
     spr.setFreeFont(FSS9);
     spr.setTextColor(TFT_WHITE);
-    spr.drawString("Successful!",6 ,6, GFXFF);
-    spr.pushSprite(110,110);
+    spr.drawString("Successful!", 6, 6, GFXFF);
+    spr.pushSprite(110, 110);
     spr.deleteSprite();
-  
-  } 
+}
 
-void ok(){
-  
+void button_ok()
+{
+
     spr.createSprite(100, 50);
     spr.fillRect(4 * PIXEL, 0, 21 * PIXEL, FONT_ROW_HEIGHT + 15, tft.color565(135, 206, 235));
     spr.setFreeFont(FSS12);
     spr.setTextColor(TFT_WHITE);
-    spr.drawString("OK",40 ,10, GFXFF);
-    spr.pushSprite(103,150);
+    spr.drawString("OK", 40, 10, GFXFF);
+    spr.pushSprite(103, 150);
     spr.deleteSprite();
-  
-  }
+}
 
 void setup()
 {
@@ -186,23 +186,27 @@ int test_flag_1 = 0;
 
 void loop()
 {
-    if (digitalRead(WIO_KEY_A) == LOW){
-       test_flag_1++;
-       delay(300);
+    Sense_Display(2);
+
+    if (digitalRead(WIO_KEY_A) == LOW)
+    {
+        test_flag_1++;
+        delay(300);
+        tft.fillScreen(TFT_BLACK);
     }
 
-    Sense_Display(test_flag_1%3);
-
-    if (digitalRead(WIO_KEY_B) == LOW){
-       test_flag++;
-       delay(300);
+    if (digitalRead(WIO_KEY_B) == LOW)
+    {
+        test_flag++;
+        delay(300);
+        tft.fillScreen(TFT_BLACK);
     }
 
-    Network_state(test_flag%3); // 修改网络状态  左下角
-    ubidots();
+    Network_state(test_flag % 3); // 修改网络状态  左下角
+    title_ubidots();
     successful();
-    ok();
-    Below_Right_State_Content(test_flag%5);  // 修改 右下角 状态 
-    
+    button_ok();
+    Below_Right_State_Content(test_flag % 5); // 修改 右下角 状态
+
     delay(20);
 }

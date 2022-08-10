@@ -35,26 +35,26 @@ void Network_state(int s_key)
         spr.drawString("OFF", 60, 0, 2);
         break;
     case 1:
-        spr.setTextColor(TFT_GREEN, TFT_BLACK);           // Networking status indication：ON
-        spr.drawString("LoRa", 60, 0, 2); // Show the network you are in
+        spr.setTextColor(TFT_GREEN, TFT_BLACK); // Networking status indication：ON
+        spr.drawString("LoRa", 60, 0, 2);       // Show the network you are in
         break;
     case 2:
-        spr.setTextColor(TFT_GREEN, TFT_BLACK);          // Networking status indication：ON
-        spr.drawString("WiFi", 60, 0, 2); // Show the network you are in
+        spr.setTextColor(TFT_GREEN, TFT_BLACK); // Networking status indication：ON
+        spr.drawString("WiFi", 60, 0, 2);       // Show the network you are in
         break;
     default:;
     }
     spr.setTextColor(TFT_WHITE);
     spr.drawString("Network:", 5, 0, 2);
     spr.setFreeFont(FSS9);
-    
+
     spr.pushSprite(0, 215);
     spr.deleteSprite();
 }
 
 int GG;
 
-//320*70 = 22400
+// 320*70 = 22400
 void Sense_Display(int CHOOSE_PAGE) // Sense interface display
 {
     spr.createSprite(320, 50);
@@ -91,9 +91,9 @@ void Sense_Display(int CHOOSE_PAGE) // Sense interface display
     spr.deleteSprite();
 }
 
-void Below_Right_State_Content(int gg_state)  // SD 插拔状态 Grove 插拔状态
+void Below_Right_State_Content(int gg_state) // SD 插拔状态 Grove 插拔状态
 {
-    
+
     spr.createSprite(320, 25);
     spr.setFreeFont(FSSB9);
     spr.fillSprite(TFT_BLACK);
@@ -132,138 +132,141 @@ void Below_Right_State_Content(int gg_state)  // SD 插拔状态 Grove 插拔状
         spr.drawString("Please insert TF card", 22, 0, 2);
         spr.pushSprite(148, 215);
         break;
-    
+
     default:;
     }
-    
+
     spr.setTextColor(TFT_WHITE);
     spr.drawString("Network :", 5, 0, GFXFF);
-    
+
     spr.deleteSprite();
 }
-void network(){
+void network()
+{
     spr.createSprite(78, 30);
     spr.fillSprite(tft.color565(100, 100, 100));
     spr.setFreeFont(FSS9);
     spr.setTextColor(TFT_WHITE);
-    spr.drawString("Network", 6 , 6, GFXFF);
+    spr.drawString("Network", 6, 6, GFXFF);
     spr.pushSprite(122, 50);
     spr.deleteSprite();
-  }
-void lora(){
+}
+void lora()
+{
     spr.createSprite(155, 30);
     spr.fillSprite(tft.color565(100, 100, 100));
     spr.setFreeFont(FSS9);
     spr.setTextColor(TFT_WHITE);
-    spr.drawString("LoRa(SenseCAP)", 6 , 6, GFXFF);
+    spr.drawString("LoRa(SenseCAP)", 6, 6, GFXFF);
     spr.pushSprite(85, 50);
     spr.deleteSprite();
-  }
-  
-void wifi(){
+}
+
+void wifi()
+{
     spr.createSprite(120, 30);
     spr.fillSprite(tft.color565(100, 100, 100));
     spr.setFreeFont(FSS9);
     spr.setTextColor(TFT_WHITE);
-    spr.drawString("WiFi(Ubidots)", 6 , 6, GFXFF);
+    spr.drawString("WiFi(Ubidots)", 6, 6, GFXFF);
     spr.pushSprite(102, 50);
     spr.deleteSprite();
 }
 
+void network_select(int joystick)
+{
+    switch (joystick)
+    {
+    case 0:
+        network();
+        spr.createSprite(110, 60);
+        spr.fillSprite(TFT_BLACK);
+        spr.setFreeFont(FSS9);
+        spr.setTextColor(TFT_WHITE);
+        spr.drawString("LoRa", 6, 6, GFXFF);
+        spr.drawString("(SenseCAP)", 5, 36, GFXFF);
+        spr.pushSprite(30, 95);
+        spr.deleteSprite();
 
-void network_select(int joystick){
-  switch (joystick){
-  case 0:
-    network();
-    spr.createSprite(110, 60);
-    spr.fillSprite(TFT_BLACK);
-    spr.setFreeFont(FSS9);
-    spr.setTextColor(TFT_WHITE);
-    spr.drawString("LoRa",6 ,6, GFXFF);
-    spr.drawString("(SenseCAP)",5 ,36, GFXFF);
-    spr.pushSprite(30,95);
-    spr.deleteSprite();
+        spr.createSprite(110, 60);
+        spr.fillSprite(TFT_BLACK);
+        spr.setFreeFont(FSS9);
+        spr.setTextColor(TFT_WHITE);
+        spr.drawString("WIFI", 6, 6, GFXFF);
+        spr.drawString("(Ubidots)", 6, 36, GFXFF);
+        spr.pushSprite(200, 95);
+        spr.deleteSprite();
 
-    spr.createSprite(110, 60);
-    spr.fillSprite(TFT_BLACK);
-    spr.setFreeFont(FSS9);
-    spr.setTextColor(TFT_WHITE);
-    spr.drawString("WIFI",6 ,6, GFXFF);
-    spr.drawString("(Ubidots)",6 ,36, GFXFF);
-    spr.pushSprite(200,95);
-    spr.deleteSprite();
+        spr.createSprite(240, 50);
+        spr.fillSprite(TFT_BLACK);
+        spr.setFreeFont(FSS9);
+        spr.setTextColor(TFT_WHITE);
+        spr.drawString("Please toggle the bottom right button", 6, 6, 2);
+        spr.drawString("left and right to select the network.", 6, 26, 2);
+        spr.pushSprite(35, 160);
+        spr.deleteSprite();
+        break;
 
-    spr.createSprite(240, 50);
-    spr.fillSprite(TFT_BLACK);
-    spr.setFreeFont(FSS9);
-    spr.setTextColor(TFT_WHITE);
-    spr.drawString("Please toggle the bottom right button", 6,6,2);
-    spr.drawString("left and right to select the network.", 6,26,2);
-    spr.pushSprite(35,160);
-    spr.deleteSprite();
-    break;
+    case 1:
+        lora();
+        spr.createSprite(110, 60);
+        spr.fillSprite(tft.color565(0, 139, 0));
+        spr.setFreeFont(FSS9);
+        spr.setTextColor(TFT_WHITE);
+        spr.drawString("LoRa", 6, 6, GFXFF);
+        spr.drawString("(SenseCAP)", 5, 36, GFXFF);
+        spr.pushSprite(30, 95);
+        spr.deleteSprite();
 
-  case 1:
-    lora();
-    spr.createSprite(110, 60);
-    spr.fillSprite(tft.color565(0, 139, 0));
-    spr.setFreeFont(FSS9);
-    spr.setTextColor(TFT_WHITE);
-    spr.drawString("LoRa",6 ,6, GFXFF);
-    spr.drawString("(SenseCAP)",5 ,36, GFXFF);
-    spr.pushSprite(30,95);
-    spr.deleteSprite();
+        spr.createSprite(110, 60);
+        spr.fillSprite(TFT_BLACK);
+        spr.setFreeFont(FSS9);
+        spr.setTextColor(TFT_WHITE);
+        spr.drawString("WIFI", 6, 6, GFXFF);
+        spr.drawString("(Ubidots)", 6, 36, GFXFF);
+        spr.pushSprite(200, 95);
+        spr.deleteSprite();
 
-    spr.createSprite(110, 60);
-    spr.fillSprite(TFT_BLACK);
-    spr.setFreeFont(FSS9);
-    spr.setTextColor(TFT_WHITE);
-    spr.drawString("WIFI",6 ,6, GFXFF);
-    spr.drawString("(Ubidots)",6 ,36, GFXFF);
-    spr.pushSprite(200,95);
-    spr.deleteSprite();
-
-    spr.createSprite(240, 50);
-    spr.fillSprite(TFT_BLACK);
-    spr.setFreeFont(FSS9);
-    spr.setTextColor(TFT_WHITE);
-    spr.drawString("Please press the bottom right button", 6,6,2);
-    spr.drawString("to confirm your network selection.", 6,26,2);
-    spr.pushSprite(35,160);
-    spr.deleteSprite();
-    break;
+        spr.createSprite(240, 50);
+        spr.fillSprite(TFT_BLACK);
+        spr.setFreeFont(FSS9);
+        spr.setTextColor(TFT_WHITE);
+        spr.drawString("Please press the bottom right button", 6, 6, 2);
+        spr.drawString("to confirm your network selection.", 6, 26, 2);
+        spr.pushSprite(35, 160);
+        spr.deleteSprite();
+        break;
 
     case 2:
-    wifi();
-    spr.createSprite(110, 60);
-    spr.fillSprite(TFT_BLACK);
-    spr.setFreeFont(FSS9);
-    spr.setTextColor(TFT_WHITE);
-    spr.drawString("LoRa",6 ,6, GFXFF);
-    spr.drawString("(SenseCAP)",5 ,36, GFXFF);
-    spr.pushSprite(30,95);
-    spr.deleteSprite();
+        wifi();
+        spr.createSprite(110, 60);
+        spr.fillSprite(TFT_BLACK);
+        spr.setFreeFont(FSS9);
+        spr.setTextColor(TFT_WHITE);
+        spr.drawString("LoRa", 6, 6, GFXFF);
+        spr.drawString("(SenseCAP)", 5, 36, GFXFF);
+        spr.pushSprite(30, 95);
+        spr.deleteSprite();
 
-    spr.createSprite(110, 60);
-    spr.fillSprite(tft.color565(0, 139, 0));
-    spr.setFreeFont(FSS9);
-    spr.setTextColor(TFT_WHITE);
-    spr.drawString("WIFI",6 ,6, GFXFF);
-    spr.drawString("(Ubidots)",6 ,36, GFXFF);
-    spr.pushSprite(200,95);
-    spr.deleteSprite();
+        spr.createSprite(110, 60);
+        spr.fillSprite(tft.color565(0, 139, 0));
+        spr.setFreeFont(FSS9);
+        spr.setTextColor(TFT_WHITE);
+        spr.drawString("WIFI", 6, 6, GFXFF);
+        spr.drawString("(Ubidots)", 6, 36, GFXFF);
+        spr.pushSprite(200, 95);
+        spr.deleteSprite();
 
-    spr.createSprite(300, 50);
-    spr.fillSprite(TFT_BLACK);
-    spr.setFreeFont(FSS9);
-    spr.setTextColor(TFT_WHITE);
-    spr.drawString("Please refer to the wikito modify the", 6,6,2);
-    spr.drawString("configuration file and send it to this device.", 6,26,2);
-    spr.pushSprite(15,160);
-    spr.deleteSprite();
-    break;
-    
-  }
+        spr.createSprite(300, 50);
+        spr.fillSprite(TFT_BLACK);
+        spr.setFreeFont(FSS9);
+        spr.setTextColor(TFT_WHITE);
+        spr.drawString("Please refer to the wikito modify the", 6, 6, 2);
+        spr.drawString("configuration file and send it to this device.", 6, 26, 2);
+        spr.pushSprite(15, 160);
+        spr.deleteSprite();
+        break;
+    }
 }
 
 void setup()
@@ -276,21 +279,25 @@ int test_flag_1 = 0;
 int joystick = 0;
 void loop()
 {
-    if (digitalRead(WIO_KEY_A) == LOW){
-       test_flag_1++;
-       delay(300);
+    if (digitalRead(WIO_KEY_A) == LOW)
+    {
+        test_flag_1++;
+        tft.fillScreen(TFT_BLACK);
+        delay(300);
     }
 
-    Sense_Display(test_flag_1%3);
+    Sense_Display(test_flag % 3);
 
-    if (digitalRead(WIO_KEY_B) == LOW){
-       test_flag++;
-       delay(300);
+    if (digitalRead(WIO_KEY_B) == LOW)
+    {
+        test_flag++;
+        tft.fillScreen(TFT_BLACK);
+        delay(300);
     }
 
-    Network_state(test_flag%3); // 修改网络状态  左下角
-    network_select(2);
-    Below_Right_State_Content(test_flag%5);  // 修改 右下角 状态 
-    
+    Network_state(test_flag % 3); // 修改网络状态  左下角
+    network_select(test_flag % 3);
+    Below_Right_State_Content(test_flag % 5); // 修改 右下角 状态
+
     delay(20);
 }

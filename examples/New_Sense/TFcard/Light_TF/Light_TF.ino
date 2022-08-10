@@ -142,7 +142,7 @@ void loop()
     top(1);
 
     TFCard_Light_Display();
-    // Grove_Tip();
-    TFcard_Tip();
+     Grove_Tip();
+//    TFcard_Tip();
     delay(500);
 }
