@@ -64,8 +64,6 @@ struct grove_sensor_data {
 
 LoRaThread::LoRaThread(SysConfig &config) : Thread("LoRaThread", 256, 1), cfg(config) {
     Start();
-    Serial.begin(9600);
-    lorae5 = new Disk91_LoRaE5(&Serial);
 };
 
 void LoRaThread::Init() {
@@ -209,9 +207,6 @@ bool LoRaThread::SendGroveSensorData() {
 void LoRaThread::Run() {
     // init the library, search the LORAE5 over the different WIO port available
     Serial.begin(9600);
-    while (!Serial) {
-        Delay(Ticks::MsToTicks(1));
-    }
     Serial.println("LoRa E5 Run..");
     lorae5 = new Disk91_LoRaE5(&Serial);
     Init();
