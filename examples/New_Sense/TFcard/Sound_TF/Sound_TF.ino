@@ -66,10 +66,6 @@ void TFCard_Sound_Display()
     spr.fillRect(210, 59, 28, 9, tft.color565(211, 211, 211));
     spr.fillCircle(236, 63, 8, tft.color565(65, 105, 235));
 
-    //        spr.fillCircle(52 * PIXEL, 63, 8, tft.color565(211, 211, 211));
-    //        spr.fillCircle(236 , 63    , 4, tft.color565(211, 211, 211));
-    //        spr.fillRect(210, 59, 28, 9, tft.color565(211, 211, 211));
-
     spr.pushSprite(2 * PIXEL, 2.2 * FONT_ROW_HEIGHT);
     spr.deleteSprite();
 }
@@ -127,6 +123,57 @@ void TFcard_Tip()
     spr.deleteSprite();
 }
 
+void Below_Right_State_Content(int gg_state) // SD 插拔状态 Grove 插拔状态
+{
+
+    spr.createSprite(320, 25);
+
+    spr.setFreeFont(FSSB9);
+    spr.fillSprite(TFT_BLACK);
+    // int s_key = 1;
+    switch (gg_state)
+    {
+    case 0:
+        spr.setFreeFont(FSS9);
+        spr.setTextColor(TFT_YELLOW);
+        spr.drawString("Plug in a Grove sensor", 0, 0, 2);
+        spr.pushSprite(170, 215);
+        break;
+    case 1:
+        spr.setFreeFont(FSS9);
+        spr.drawTriangle(0, 18, 11, 0, 22, 18, TFT_YELLOW);
+        spr.setTextColor(TFT_YELLOW);
+        spr.drawString("! ", 10, 4, 2);
+        spr.drawString("TF card storage is full", 28, 0, 2);
+        spr.pushSprite(140, 215);
+        break;
+    case 2:
+        spr.setFreeFont(FSS9);
+        spr.setTextColor(TFT_GREEN);
+        spr.drawString("Vision AI Sensor connected", 22, 0, 2);
+        spr.pushSprite(120, 215);
+        break;
+    case 3:
+        spr.setFreeFont(FSS9);
+        spr.setTextColor(TFT_GREEN);
+        spr.drawString("Saving has been started", 22, 0, 2);
+        spr.pushSprite(140, 215);
+        break;
+    case 4:
+        spr.setFreeFont(FSS9);
+        spr.setTextColor(TFT_YELLOW);
+        spr.drawString("Please insert TF card", 22, 0, 2);
+        spr.pushSprite(148, 215);
+        break;
+
+    default:;
+    }
+    spr.setTextColor(TFT_WHITE);
+    spr.drawString("Network :", 5, 0, GFXFF);
+
+    spr.deleteSprite();
+}
+
 void setup()
 {
     DISPLAY_INIT();
@@ -136,13 +183,15 @@ void setup()
     lis.setFullScaleRange(LIS3DHTR_RANGE_2G);
 }
 
+int gg = 0;
+
 void loop()
 {
     Network_state(1);
     top(1);
-
     TFCard_Sound_Display();
     // Grove_Tip();
-    TFcard_Tip();
+    // TFcard_Tip();
+    Below_Right_State_Content(gg % 2 + 1);
     delay(500);
 }

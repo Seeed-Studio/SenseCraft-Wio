@@ -50,9 +50,9 @@ void top(int _CHOOSE)
     spr.deleteSprite();
 }
 
-void Light_first_Display(int light)
+void Light_first_Display(int _light)
 {
-    spr.createSprite(20 * PIXEL, 5 * FONT_ROW_HEIGHT);
+    spr.createSprite(22 * PIXEL, 5 * FONT_ROW_HEIGHT);
     spr.fillScreen(tft.color565(0, 139, 0));
     spr.setFreeFont(FSS9);
     spr.setTextColor(TFT_WHITE);
@@ -60,17 +60,23 @@ void Light_first_Display(int light)
 
     spr.setFreeFont(FSS24);
     spr.setTextColor(TFT_WHITE);
-    spr.drawNumber(light, 25, 2 * FONT_ROW_HEIGHT, GFXFF);
+    if (_light < 10)
+        spr.drawNumber(_light, 25, 2 * FONT_ROW_HEIGHT, GFXFF);
+    else if (10 < _light < 100)
+        spr.drawNumber(_light, 10, 2 * FONT_ROW_HEIGHT, GFXFF);
+    else if (_light > 100)
+        spr.drawNumber(_light, 0, 2 * FONT_ROW_HEIGHT, GFXFF);
+
     spr.pushSprite(10, 3.8 * FONT_ROW_HEIGHT);
     spr.deleteSprite();
 }
 
-void Sound_first_Display(int sound)
+void Sound_first_Display(int _sound)
 {
     spr.createSprite(27 * PIXEL, 7 * FONT_ROW_HEIGHT);
     spr.setFreeFont(FSS9);
-    spr.setTextColor(TFT_BLACK, tft.color565(220, 220, 220));
-    spr.fillRect(0, 0, 16 * PIXEL, FONT_ROW_HEIGHT, tft.color565(220, 220, 220));
+    spr.setTextColor(TFT_WHITE);
+    spr.fillRect(0, 0, 16 * PIXEL, FONT_ROW_HEIGHT, tft.color565(100, 100, 100));
     spr.drawString("Sensor", 2, 2, GFXFF);
 
     spr.setFreeFont(FSS9);
@@ -79,7 +85,7 @@ void Sound_first_Display(int sound)
 
     spr.setFreeFont(FSS24);
     spr.setTextColor(TFT_WHITE);
-    spr.drawNumber(sound, 0, 3.7 * FONT_ROW_HEIGHT, GFXFF);
+    spr.drawNumber(_sound, 0, 3.7 * FONT_ROW_HEIGHT, GFXFF);
 
     spr.fillCircle(17, 6.8 * FONT_ROW_HEIGHT, 3, tft.color565(0, 193, 255));
     spr.fillCircle(34, 6.8 * FONT_ROW_HEIGHT, 3, tft.color565(220, 220, 220));
@@ -88,7 +94,7 @@ void Sound_first_Display(int sound)
     spr.deleteSprite();
 }
 
-void IMU_first_Display(float x, float y, float z)
+void IMU_first_Display(float _x, float _y, float _z)
 {
     spr.createSprite(27 * PIXEL, 6 * FONT_ROW_HEIGHT);
     spr.setFreeFont(FSS9);
@@ -96,9 +102,9 @@ void IMU_first_Display(float x, float y, float z)
     spr.drawString("IMU", 2, 2, GFXFF);
     spr.setFreeFont(FSS12);
     spr.setTextColor(TFT_WHITE);
-    spr.drawFloat(x, 2, 0, 1.5 * FONT_ROW_HEIGHT, GFXFF); // Display the value of IMU X-axis
-    spr.drawFloat(y, 2, 0, 2.5 * FONT_ROW_HEIGHT, GFXFF); // Display the value of IMU Y-axis
-    spr.drawFloat(z, 2, 0, 3.5 * FONT_ROW_HEIGHT, GFXFF); // Display the value of IMU Z-axis
+    spr.drawFloat(_x, 2, 0, 1.5 * FONT_ROW_HEIGHT, GFXFF); // Display the value of IMU X-axis
+    spr.drawFloat(_y, 2, 0, 2.5 * FONT_ROW_HEIGHT, GFXFF); // Display the value of IMU Y-axis
+    spr.drawFloat(_z, 2, 0, 3.5 * FONT_ROW_HEIGHT, GFXFF); // Display the value of IMU Z-axis
     spr.setFreeFont(FSS9);
     spr.drawString("X,Y,Z", 0, 4.5 * FONT_ROW_HEIGHT, GFXFF);
     spr.pushSprite(10 + 59 * PIXEL, 3.8 * FONT_ROW_HEIGHT);
