@@ -5,3 +5,5 @@
 .DS_Store
 *.pio
 .pio/
+.vscode/
+src/main.cpp

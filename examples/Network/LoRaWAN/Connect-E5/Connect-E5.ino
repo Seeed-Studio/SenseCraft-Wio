@@ -18,7 +18,7 @@ void DISPLAY_INIT() // Display initialization, black background rotation
     pinMode(WIO_KEY_C, INPUT_PULLUP);
     tft.begin();
     tft.setRotation(3);
-    tft.fillScreen(TFT_BLACK);
+    tft.fillScreen(TFT_WHITE);
 }
 
 // 320 * 25 = 8000
@@ -156,7 +156,7 @@ void Lora_Banner()  //Lora title
 
 void Button_OK()
 {
-    spr.createSprite(85, 40);
+    spr.createSprite(85, 34);
     
     spr.setTextColor(TFT_WHITE);
     spr.fillRect(0, 0, 21 * PIXEL, 33, tft.color565(70, 130, 160));
@@ -167,22 +167,20 @@ void Button_OK()
     spr.deleteSprite();
 }
 
-void BindDev_Display() // Select Frequency band interface
+void Connect_E5() // Select Frequency band interface
 {
-    spr.createSprite(300, 80);
+    spr.createSprite(260, 55);
     
     spr.setTextColor(TFT_WHITE);
-    spr.drawString("Please download and register an account", 0, 6, 2);
-    spr.drawString("on our SenseCAP Mate APP, then scan the", 0, 20, 2);
-    spr.drawString("QR code on the back of Grove-Wio E5", 0, 34, 2);
-    spr.drawString("(which is included in the kit) to bind", 0, 48, 2);
-    spr.drawString("your device to the cloud.", 0, 62, 2);
+    spr.drawString("Please Connect the Grove - Wio-E5 to", 3, 6, 2);
+    spr.drawString("the Grove Connetor on the bottom right", 3, 20, 2);
+    spr.drawString("side of the screen", 3, 34, 2);
+    // spr.drawString("(which is included in the kit) to bind", 0, 48, 2);
+    // spr.drawString("your device to the cloud.", 0, 62, 2);
 
-    spr.pushSprite(25, 70);
+    spr.pushSprite(25, 100);
     spr.deleteSprite();
 }
-
-
 
 void setup()
 {
@@ -198,5 +196,5 @@ void loop()
     Network_state(1); 
     Lora_Banner();
     Button_OK();
-    BindDev_Display();
+    Connect_E5();
 }
