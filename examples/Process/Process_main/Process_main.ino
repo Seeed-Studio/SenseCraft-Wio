@@ -26,7 +26,7 @@ void DISPLAY_INIT() // Display initialization, black background rotation
 
 void Sense_Display(int CHOOSE_PAGE) // Sense interface display // 22 + 15
 {
-    spr.createSprite(320, 70);
+    spr.createSprite(320, 46);
     spr.setFreeFont(FSSB9);
     switch (CHOOSE_PAGE)
     {
@@ -369,7 +369,6 @@ void draw_title(int _title)
         spr.drawString("TinyML Example", 90, 0, GFXFF);
         spr.pushSprite(0, 50);
         spr.deleteSprite();
-    
     }
 }
 void setup()
@@ -391,7 +390,7 @@ int gg_network_flag = 0;
 void loop()
 {
     // test block begin
-    
+
     if (digitalRead(WIO_KEY_B) == LOW)
     {
         Serial.println("B Key pressed");
@@ -409,12 +408,11 @@ void loop()
 
     Sense_Display(gg_switch % 3); // 最底层画布 包含 Sense Process Networks 选择
 
-    draw_title(gg_switch % 3);   // 绘制 Tinyml Example  Vision AI real-time analysis 标题
+    draw_title(gg_switch % 3); // 绘制 Tinyml Example  Vision AI real-time analysis 标题
 
     Process_main(gg_switch % 5); // 中间部分对应文字实现 需要通过 tft.fillScreen(TFT_BLACK); 来确保 背景重新填充为黑色 否则 spr 会有上册颜色显示的残留
 
-    Network_state(gg_switch % 3);  // 底部网络状态显示函数 传入 0 1 2 分别对应 OFF WIFI LORA 
-    
+    Network_state(gg_switch % 3); // 底部网络状态显示函数 传入 0 1 2 分别对应 OFF WIFI LORA
+
     Below_Right_State_Content(gg_switch % 5); // 右下角 文字 插入TF卡 TF卡满 等提示
-    
 }
