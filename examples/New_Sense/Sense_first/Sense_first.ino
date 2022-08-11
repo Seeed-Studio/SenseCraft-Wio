@@ -25,13 +25,17 @@ struct _STRUCT_INPUT_DATA
     _data_base data[4];
 } GG;
 
-void _main_display(int _CHOOSE, _STRUCT_INPUT_DATA KK,bool complex=0)
+void _main_display(int _CHOOSE, _STRUCT_INPUT_DATA KK, int _ENABLE_GREEN ,bool complex=0)
 {
 
     spr.createSprite(90, 100);
-    spr.fillRect(0, 0, 90, 100, tft.color565(0, 139, 0));
+
+    if(_ENABLE_GREEN){
+      spr.fillRect(0, 0, 90, 100, tft.color565(0, 139, 0));
+    }
+    
     spr.setFreeFont(FSS9);
-    spr.setTextColor(TFT_GREEN);
+    spr.setTextColor(TFT_WHITE);
 
     short int _SIZE;
     if(complex){
@@ -74,6 +78,27 @@ void _sub_title(String value)
     spr.pushSprite(0, 65);
     spr.deleteSprite();
 }
+
+void Add_Display(int _CHOOSE)
+{
+    spr.createSprite(90, 100);
+
+    if(_CHOOSE){
+        spr.fillRect(0, 0, 90, 100, tft.color565(0, 139, 0));   
+    }
+   
+    spr.setFreeFont(FSS9);
+    spr.setTextColor(TFT_WHITE);
+    spr.drawString("ADD", 14, 5 ,4);
+
+    spr.fillRect(20, 1.5 * FONT_ROW_HEIGHT, 40, 40, TFT_WHITE);
+    spr.fillRect(38, 1.5 * FONT_ROW_HEIGHT + 6, 3, 26, TFT_BLACK);
+    spr.fillRect(27, 1.5 * FONT_ROW_HEIGHT + 18, 26, 3, TFT_BLACK);
+
+    spr.pushSprite(220, 90);
+    spr.deleteSprite();
+}
+
 void DISPLAY_INIT() // Display initialization, black background rotation
 {
     tft.begin();
@@ -146,6 +171,24 @@ void Network_state(int s_key)
     spr.setFreeFont(FSS9);
 
     spr.pushSprite(0, 215);
+    spr.deleteSprite();
+}
+
+void Page_state(int _CHOOSE_PAGE){
+    spr.createSprite(340, 10);
+    switch(_CHOOSE_PAGE){
+      case 0:
+        spr.fillCircle(145, 6, 3, tft.color565(0, 193, 255));
+        spr.fillCircle(165, 6, 3, tft.color565(220, 220, 220)); 
+        break;
+      case 1:
+        spr.fillCircle(145, 6, 3, tft.color565(220, 220, 220));
+        spr.fillCircle(165, 6, 3, tft.color565(0, 193, 255)); 
+        break;
+      default:
+        break;
+    }
+    spr.pushSprite(0, 200);
     spr.deleteSprite();
 }
 
@@ -259,11 +302,14 @@ void loop()
     GG.data[3].value = "AAAA";
     GG.data[3].type = "m/s";
 
-    _main_display(0, GG,1);
-    _main_display(1, GG);
-    _main_display(2, GG);
+    _main_display(0, GG,1,1); // 第几块，结构体，是否选中 1 绿色 0 默认， 是否开启复杂模式（显示不下调小字号）
+    _main_display(1, GG,0 );
+//    _main_display(2, GG,0 );
+    Add_Display(0); // Choosed 1 GREEN  0 Default
     _sub_title("ABCDEFG");
-
-    Below_Right_State_Content(1);
+    
+    Page_state(0);
+    
+    Below_Right_State_Content(1);  
     delay(500);
 }
