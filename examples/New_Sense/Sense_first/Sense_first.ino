@@ -25,7 +25,7 @@ struct _STRUCT_INPUT_DATA
     _data_base data[4];
 } GG;
 
-void _main_display(int _CHOOSE, _STRUCT_INPUT_DATA KK)
+void _main_display(int _CHOOSE, _STRUCT_INPUT_DATA KK,bool complex=0)
 {
 
     spr.createSprite(90, 100);
@@ -33,9 +33,17 @@ void _main_display(int _CHOOSE, _STRUCT_INPUT_DATA KK)
     spr.setFreeFont(FSS9);
     spr.setTextColor(TFT_GREEN);
 
+    short int _SIZE;
+    if(complex){
+      _SIZE = 2;
+    }
+    else{
+      _SIZE = 4;
+    }
+ 
     for (int i = 0; i < 4; i++)
     {
-        spr.drawString(KK.data[i].value, 2, 5 + 24 * i, 4);
+        spr.drawString(KK.data[i].value, 2, 5 + 24 * i, _SIZE);
         spr.drawString(KK.data[i].type, 68, 5 + 24 * i, 2);
     }
 
@@ -251,7 +259,7 @@ void loop()
     GG.data[3].value = "AAAA";
     GG.data[3].type = "m/s";
 
-    _main_display(0, GG);
+    _main_display(0, GG,1);
     _main_display(1, GG);
     _main_display(2, GG);
     _sub_title("ABCDEFG");
