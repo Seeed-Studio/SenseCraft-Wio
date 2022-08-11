@@ -180,29 +180,29 @@ void Network_state(int s_key)
 
 void Page_state(int PAGES, int _CHOOSE_PAGE)
 {
-
-    spr.createSprite(340, 10);
+//    PAGES = 3;
+    spr.createSprite(320, 10);
 
     int *GG_color_location = new int[PAGES];
 
     int temp = 0;
 
-    //    if(PAGES%2){
-    //      for(int i = 0 ; i < PAGES; i++){
-    //          GG_color_location[temp]=160 - PAGES / 2 * 20 + i *20;
-    //          temp++;
-    //      }
-    //    }
-    //    else{
-    //      for(int i = 0 ; i < PAGES; i++){
-    //          GG_color_location[temp]=160 - PAGES / 2 * 10 + i *20;
-    //          temp++;
-    //      }
-    //    }
+//        if(PAGES%2){
+//          for(int i = 0 ; i < PAGES; i++){
+//              GG_color_location[temp]=150 - PAGES / 2 * 20 + i *20;
+//              temp++;
+//          }
+//        }
+//        else{
+//          for(int i = 0 ; i < PAGES; i++){
+//              GG_color_location[temp]=150 - PAGES / 2 * 10 + i *20;
+//              temp++;
+//          }
+//        }
 
     for (int i = 0; i < PAGES; i++)
     {
-        GG_color_location[temp] = 160 - PAGES / 2 * 10 * (1 + PAGES % 2) + i * 20;
+        GG_color_location[temp] = 150 - PAGES / 2 * 10 * (1 + PAGES % 2) + i * 20;
         temp++;
     }
 
@@ -334,8 +334,13 @@ void loop()
     Add_Display(0); // Choosed 1 GREEN  0 Default
     _sub_title("ABCDEFG");
 
-    Page_state(2, 1);
+    for(int i = 0 ; i < 6 ; i ++){
+        
+        Page_state(i, i);  
+        delay(800);
+    }
+    
 
     Below_Right_State_Content(1);
-    delay(500);
+    delay(50);
 }
