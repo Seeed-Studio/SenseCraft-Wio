@@ -50,17 +50,22 @@ void top(int _CHOOSE)
     spr.deleteSprite();
 }
 
-void Light_first_Display(int light)
+void Light_first_Display(int _light)
 {
-    spr.createSprite(20 * PIXEL, 5 * FONT_ROW_HEIGHT);
-
+    spr.createSprite(22 * PIXEL, 5 * FONT_ROW_HEIGHT);
     spr.setFreeFont(FSS9);
     spr.setTextColor(TFT_WHITE);
     spr.drawString("Light", 20, 0, GFXFF);
 
     spr.setFreeFont(FSS24);
     spr.setTextColor(TFT_WHITE);
-    spr.drawNumber(light, 25, 2 * FONT_ROW_HEIGHT, GFXFF);
+    if (_light < 10)
+        spr.drawNumber(_light, 25, 2 * FONT_ROW_HEIGHT, GFXFF);
+    else if (10 < _light < 100)
+        spr.drawNumber(_light, 10, 2 * FONT_ROW_HEIGHT, GFXFF);
+    else if (_light > 100)
+        spr.drawNumber(_light, 0, 2 * FONT_ROW_HEIGHT, GFXFF);
+
     spr.pushSprite(10, 3.8 * FONT_ROW_HEIGHT);
     spr.deleteSprite();
 }
@@ -70,8 +75,8 @@ void Sound_first_Display(int sound)
     spr.createSprite(27 * PIXEL, 7 * FONT_ROW_HEIGHT);
     spr.fillRect(0, 35, 20 * PIXEL, 5 * FONT_ROW_HEIGHT, tft.color565(0, 139, 0));
     spr.setFreeFont(FSS9);
-    spr.setTextColor(TFT_BLACK, tft.color565(220, 220, 220));
-    spr.fillRect(0, 0, 16 * PIXEL, FONT_ROW_HEIGHT, tft.color565(220, 220, 220));
+    spr.setTextColor(TFT_WHITE);
+    spr.fillRect(0, 0, 16 * PIXEL, FONT_ROW_HEIGHT, tft.color565(100, 100, 100));
     spr.drawString("Sensor", 2, 2, GFXFF);
 
     spr.setFreeFont(FSS9);

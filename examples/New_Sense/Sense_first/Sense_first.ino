@@ -60,7 +60,14 @@ void Light_first_Display(int _light)
 
     spr.setFreeFont(FSS24);
     spr.setTextColor(TFT_WHITE);
-    spr.drawNumber(_light, 25, 2 * FONT_ROW_HEIGHT, GFXFF);
+
+    if (_light < 10)
+        spr.drawNumber(_light, 25, 2 * FONT_ROW_HEIGHT, GFXFF);
+    else if (10 < _light < 100)
+        spr.drawNumber(_light, 10, 2 * FONT_ROW_HEIGHT, GFXFF);
+    else if (_light > 100)
+        spr.drawNumber(_light, 0, 2 * FONT_ROW_HEIGHT, GFXFF);
+
     spr.pushSprite(10, 3.8 * FONT_ROW_HEIGHT);
     spr.deleteSprite();
 }

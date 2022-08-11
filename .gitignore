@@ -7,3 +7,4 @@
 .pio/
 .vscode/
 src/main.cpp
+platformio.ini

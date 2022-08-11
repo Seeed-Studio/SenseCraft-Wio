@@ -35,26 +35,26 @@ void Network_state(int s_key)
         spr.drawString("OFF", 60, 0, 2);
         break;
     case 1:
-        spr.setTextColor(TFT_GREEN, TFT_BLACK); // Networking status indication：ON
-        spr.drawString("LoRa", 60, 0, 2);       // Show the network you are in
+        spr.setTextColor(TFT_GREEN, TFT_BLACK);           // Networking status indication：ON
+        spr.drawString("LoRa", 60, 0, 2); // Show the network you are in
         break;
     case 2:
-        spr.setTextColor(TFT_GREEN, TFT_BLACK); // Networking status indication：ON
-        spr.drawString("WiFi", 60, 0, 2);       // Show the network you are in
+        spr.setTextColor(TFT_GREEN, TFT_BLACK);          // Networking status indication：ON
+        spr.drawString("WiFi", 60, 0, 2); // Show the network you are in
         break;
     default:;
     }
     spr.setTextColor(TFT_WHITE);
     spr.drawString("Network:", 5, 0, 2);
     spr.setFreeFont(FSS9);
-
+    
     spr.pushSprite(0, 215);
     spr.deleteSprite();
 }
 
 int GG;
 
-// 320*70 = 22400
+//320*70 = 22400
 void Sense_Display(int CHOOSE_PAGE) // Sense interface display
 {
     spr.createSprite(320, 50);
@@ -91,9 +91,9 @@ void Sense_Display(int CHOOSE_PAGE) // Sense interface display
     spr.deleteSprite();
 }
 
-void Below_Right_State_Content(int gg_state) // SD 插拔状态 Grove 插拔状态
+void Below_Right_State_Content(int gg_state)  // SD 插拔状态 Grove 插拔状态
 {
-
+    
     spr.createSprite(320, 25);
     spr.setFreeFont(FSSB9);
     spr.fillSprite(TFT_BLACK);
@@ -132,35 +132,53 @@ void Below_Right_State_Content(int gg_state) // SD 插拔状态 Grove 插拔状�
         spr.drawString("Please insert TF card", 22, 0, 2);
         spr.pushSprite(148, 215);
         break;
-
+    
     default:;
     }
     spr.setTextColor(TFT_WHITE);
     spr.drawString("Network :", 5, 0, GFXFF);
-
+    
     spr.deleteSprite();
 }
 
-void ubidots()
+
+void Lora_Banner()  //Lora title
 {
-    spr.createSprite(120, 30);
-    spr.fillSprite(tft.color565(100, 100, 100));
+    spr.createSprite(148, 19);
+
     spr.setFreeFont(FSS9);
-    spr.setTextColor(TFT_WHITE);
-    spr.drawString("WiFi(Ubidots)", 6, 6, GFXFF);
-    spr.pushSprite(102, 50);
+    spr.setTextColor(TFT_WHITE, tft.color565(112, 112, 112));
+    spr.drawString("LoRa(SenseCAP)", 3, 0, GFXFF);
+
+    spr.pushSprite(85, 50);
     spr.deleteSprite();
 }
 
-void waiting()
+void Button_OK()
 {
-
-    spr.createSprite(220, 30);
-    spr.fillSprite(TFT_BLACK);
-    spr.setFreeFont(FSS9);
+    spr.createSprite(85, 34);
+    
     spr.setTextColor(TFT_WHITE);
-    spr.drawString("Waiting for configuration...", 6, 6, GFXFF);
-    spr.pushSprite(60, 110);
+    spr.fillRect(0, 0, 21 * PIXEL, 33, tft.color565(70, 130, 160));
+    spr.setFreeFont(FSS12);
+    spr.drawString("OK", 24, 8, GFXFF);
+
+    spr.pushSprite(116, 170);
+    spr.deleteSprite();
+}
+
+void Connect_E5() // Select Frequency band interface
+{
+    spr.createSprite(260, 55);
+    
+    spr.setTextColor(TFT_WHITE);
+    spr.drawString("Please Connect the Grove - Wio-E5 to", 3, 6, 2);
+    spr.drawString("the Grove Connetor on the bottom right", 3, 20, 2);
+    spr.drawString("side of the screen", 3, 34, 2);
+    // spr.drawString("(which is included in the kit) to bind", 0, 48, 2);
+    // spr.drawString("your device to the cloud.", 0, 62, 2);
+
+    spr.pushSprite(25, 100);
     spr.deleteSprite();
 }
 
@@ -169,28 +187,14 @@ void setup()
     DISPLAY_INIT();
 }
 
-int test_flag = 0;
-int test_flag_1 = 0;
+// int test_flag = 0;
+// int test_flag_1 = 0;
 
 void loop()
-{
+{   
     Sense_Display(2);
-    if (digitalRead(WIO_KEY_A) == LOW)
-    {
-        test_flag_1++;
-        delay(300);
-    }
-
-    if (digitalRead(WIO_KEY_B) == LOW)
-    {
-        test_flag++;
-        delay(300);
-    }
-
-    Network_state(test_flag % 3); // 修改网络状态  左下角
-    ubidots();
-    waiting();
-    Below_Right_State_Content(test_flag % 5); // 修改 右下角 状态
-
-    delay(20);
+    Network_state(1); 
+    Lora_Banner();
+    Button_OK();
+    Connect_E5();
 }

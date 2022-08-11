@@ -18,9 +18,8 @@ void DISPLAY_INIT() // Display initialization, black background rotation
     pinMode(WIO_KEY_C, INPUT_PULLUP);
     tft.begin();
     tft.setRotation(3);
-    tft.fillScreen(TFT_WHITE);
+    tft.fillScreen(TFT_BLACK);
 }
-
 // 320 * 25 = 8000
 void Network_state(int s_key)
 {
@@ -35,26 +34,26 @@ void Network_state(int s_key)
         spr.drawString("OFF", 60, 0, 2);
         break;
     case 1:
-        spr.setTextColor(TFT_GREEN, TFT_BLACK);           // Networking status indication：ON
-        spr.drawString("LoRa", 60, 0, 2); // Show the network you are in
+        spr.setTextColor(TFT_GREEN, TFT_BLACK); // Networking status indication：ON
+        spr.drawString("LoRa", 60, 0, 2);       // Show the network you are in
         break;
     case 2:
-        spr.setTextColor(TFT_GREEN, TFT_BLACK);          // Networking status indication：ON
-        spr.drawString("WiFi", 60, 0, 2); // Show the network you are in
+        spr.setTextColor(TFT_GREEN, TFT_BLACK); // Networking status indication：ON
+        spr.drawString("WiFi", 60, 0, 2);       // Show the network you are in
         break;
     default:;
     }
     spr.setTextColor(TFT_WHITE);
     spr.drawString("Network:", 5, 0, 2);
     spr.setFreeFont(FSS9);
-    
+
     spr.pushSprite(0, 215);
     spr.deleteSprite();
 }
 
 int GG;
 
-//320*70 = 22400
+// 320*70 = 22400
 void Sense_Display(int CHOOSE_PAGE) // Sense interface display
 {
     spr.createSprite(320, 50);
@@ -91,9 +90,9 @@ void Sense_Display(int CHOOSE_PAGE) // Sense interface display
     spr.deleteSprite();
 }
 
-void Below_Right_State_Content(int gg_state)  // SD 插拔状态 Grove 插拔状态
+void Below_Right_State_Content(int gg_state) // SD 插拔状态 Grove 插拔状态
 {
-    
+
     spr.createSprite(320, 25);
     spr.setFreeFont(FSSB9);
     spr.fillSprite(TFT_BLACK);
@@ -132,15 +131,14 @@ void Below_Right_State_Content(int gg_state)  // SD 插拔状态 Grove 插拔状
         spr.drawString("Please insert TF card", 22, 0, 2);
         spr.pushSprite(148, 215);
         break;
-    
+
     default:;
     }
     spr.setTextColor(TFT_WHITE);
     spr.drawString("Network :", 5, 0, GFXFF);
-    
+
     spr.deleteSprite();
 }
-
 
 void Lora_Banner()  //Lora title
 {
@@ -154,47 +152,70 @@ void Lora_Banner()  //Lora title
     spr.deleteSprite();
 }
 
-void Button_OK()
+void Bandselect_Display(int SELECTION) // Select Frequency band interface
 {
-    spr.createSprite(85, 34);
-    
-    spr.setTextColor(TFT_WHITE);
-    spr.fillRect(0, 0, 21 * PIXEL, 33, tft.color565(70, 130, 160));
-    spr.setFreeFont(FSS12);
-    spr.drawString("OK", 24, 8, GFXFF);
+    //first line of information
+    spr.createSprite(290, 20);
 
-    spr.pushSprite(116, 170);
+    spr.setFreeFont(FSS9);
+    spr.setTextColor(TFT_WHITE);
+    spr.drawString("Select and confirm LoRaWAN frequency band", 5, 5, 2);
+
+    spr.pushSprite(15, 80);
     spr.deleteSprite();
-}
 
-void Connect_E5() // Select Frequency band interface
-{
-    spr.createSprite(260, 55);
-    
+    spr.createSprite(290, 90);
+
+    spr.setFreeFont(FSS9);
     spr.setTextColor(TFT_WHITE);
-    spr.drawString("Please Connect the Grove - Wio-E5 to", 3, 6, 2);
-    spr.drawString("the Grove Connetor on the bottom right", 3, 20, 2);
-    spr.drawString("side of the screen", 3, 34, 2);
-    // spr.drawString("(which is included in the kit) to bind", 0, 48, 2);
-    // spr.drawString("your device to the cloud.", 0, 62, 2);
+    switch (SELECTION)
+    {
+    case 0:
+        spr.fillRect(5, 0, 80, 60, tft.color565(0, 139, 0));
+        spr.drawString("The US915 band is commonly used in the", 5, 60, 2);
+        spr.drawString("North America.", 5, 73, 2);
+        break;
+    case 1:  
+        spr.fillRect(103, 0, 80, 60, tft.color565(0, 139, 0));
+        spr.drawString("The EU868 band is commonly used in the", 5, 60, 2);
+        spr.drawString("European region.", 5, 73, 2);
+        break;
+    case 2:
+        spr.fillRect(203, 0, 80, 60, tft.color565(0, 139, 0));
+        spr.drawString("The AU915 band is commonly used in the", 5, 60, 2);
+        spr.drawString("Australia region.", 5, 73, 2);
+    default:;
+    }
 
-    spr.pushSprite(25, 100);
+    spr.setFreeFont(FSS9);
+    spr.drawString("US", 5, 0, GFXFF);
+    spr.drawString("EU", 105, 0, GFXFF);
+    spr.drawString("AU", 205, 0, GFXFF);
+
+    spr.setFreeFont(FSS24);
+    spr.drawString("915", 5, 20, GFXFF);
+    spr.drawString("868", 105, 20, GFXFF);
+    spr.drawString("915", 205, 20, GFXFF);
+
+    spr.pushSprite(15, 110);
     spr.deleteSprite();
 }
 
 void setup()
 {
     DISPLAY_INIT();
+
 }
 
-// int test_flag = 0;
-// int test_flag_1 = 0;
+int test_flag_1 = 0;
 
 void loop()
-{
+{    
     Sense_Display(2);
-    Network_state(1); 
+    Network_state(1);
     Lora_Banner();
-    Button_OK();
-    Connect_E5();
+    Bandselect_Display(test_flag_1 % 3);
+    test_flag_1++;
+    Below_Right_State_Content(5);
+    delay(1000);
 }

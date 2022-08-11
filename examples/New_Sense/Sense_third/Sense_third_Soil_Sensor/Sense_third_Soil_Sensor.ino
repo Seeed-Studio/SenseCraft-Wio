@@ -71,31 +71,19 @@ void IMU_third_Display(float _x, float _y, float _z) //
 void Sense_third_Display(int _peoplecount)
 {
     spr.createSprite(38 * PIXEL, 7 * FONT_ROW_HEIGHT);
-
+    spr.fillRect(30, 35, 26 * PIXEL, 5 * FONT_ROW_HEIGHT, tft.color565(0, 139, 0));
     spr.setFreeFont(FSS9);
-    spr.setTextColor(TFT_BLACK, tft.color565(220, 220, 220));
-    spr.fillRect(12 * PIXEL, 0, 16 * PIXEL, FONT_ROW_HEIGHT, tft.color565(220, 220, 220));
+    spr.fillRect(40, 0, 75, 20, tft.color565(100, 100, 100));
+    spr.drawString("Sensor", 12 * PIXEL + 2, 2, GFXFF);
     spr.drawString("Sensor", 12 * PIXEL + 2, 2, GFXFF);
 
     spr.setFreeFont(FSS9);
     spr.setTextColor(TFT_WHITE);
-    spr.drawString("Vision AI", 11 * PIXEL, 12 + FONT_ROW_HEIGHT, GFXFF);
+    spr.drawString("Soil Moisture", 30, 12 + FONT_ROW_HEIGHT, GFXFF);
 
-    spr.setFreeFont(FSS12);
+    spr.setFreeFont(FSS24);
     spr.setTextColor(TFT_WHITE);
-    spr.drawNumber(_peoplecount, 11 * PIXEL + 17, 2.5 * FONT_ROW_HEIGHT, GFXFF);
-
-    spr.setFreeFont(FSS9);
-    spr.setTextColor(TFT_WHITE);
-    spr.drawString("People Count", 11 * PIXEL, 12 + 3 * FONT_ROW_HEIGHT, 2);
-
-    spr.setFreeFont(FSS12);
-    spr.setTextColor(TFT_WHITE);
-    spr.drawNumber(_peoplecount, 11 * PIXEL + 17, 4.5 * FONT_ROW_HEIGHT, GFXFF);
-
-    spr.setFreeFont(FSS9);
-    spr.setTextColor(TFT_WHITE);
-    spr.drawString("Accuracy(%)", 11 * PIXEL, 12 + 5 * FONT_ROW_HEIGHT, 2);
+    spr.drawNumber(_peoplecount, 8 * PIXEL + 15, 3.5 * FONT_ROW_HEIGHT, GFXFF);
 
     spr.fillCircle(17 * PIXEL + 17, 6.8 * FONT_ROW_HEIGHT, 3, tft.color565(0, 193, 255));
     spr.fillCircle(17 * PIXEL, 6.8 * FONT_ROW_HEIGHT, 3, tft.color565(220, 220, 220));
@@ -107,7 +95,7 @@ void Sense_third_Display(int _peoplecount)
 void Add_Display()
 {
     spr.createSprite(27 * PIXEL, 5 * FONT_ROW_HEIGHT);
-    spr.fillRect(0, 0, 20 * PIXEL, 5 * FONT_ROW_HEIGHT, tft.color565(0, 139, 0));
+
     spr.setFreeFont(FSSB9);
     spr.setTextColor(TFT_WHITE);
     spr.drawString("Add", 20, 0, GFXFF);
@@ -165,13 +153,13 @@ void TFcard_Tip()
 {
     spr.createSprite(SCREEN_WIDTH, 25);
     spr.setFreeFont(FSS9);
-
-    spr.setTextColor(tft.color565(0, 139, 0));
-    spr.drawString("Vison AI Sensor connected", 10, 2, 2);
+    spr.drawTriangle(0, 18, 11, 0, 22, 18, TFT_YELLOW);
+    spr.setTextColor(TFT_YELLOW);
+    spr.drawString("! ", 10, 4, 2);
+    spr.drawString("TF card storage is full", 28, 2, 2);
     spr.pushSprite(140, 215);
     spr.deleteSprite();
 }
-
 void Below_Right_State_Content(int gg_state) // SD 插拔状态 Grove 插拔状态
 {
 

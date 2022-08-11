@@ -52,7 +52,7 @@ void top(int _CHOOSE)
 
 void IMU_third_Display(float _x, float _y, float _z) //
 {
-    spr.createSprite(27 * PIXEL, 6 * FONT_ROW_HEIGHT);
+    spr.createSprite(20 * PIXEL, 6 * FONT_ROW_HEIGHT);
 
     spr.setFreeFont(FSS9);
     spr.setTextColor(TFT_WHITE);
@@ -64,7 +64,7 @@ void IMU_third_Display(float _x, float _y, float _z) //
     spr.drawFloat(_z, 2, 0, 3.5 * FONT_ROW_HEIGHT, GFXFF); // Display the value of IMU Z-axis
     spr.setFreeFont(FSS9);
     spr.drawString("X,Y,Z", 0, 4.5 * FONT_ROW_HEIGHT, GFXFF);
-    spr.pushSprite(10, 3.8 * FONT_ROW_HEIGHT);
+    spr.pushSprite(20, 3.8 * FONT_ROW_HEIGHT);
     spr.deleteSprite();
 }
 
@@ -73,8 +73,8 @@ void Sense_third_Display(int _peoplecount)
     spr.createSprite(38 * PIXEL, 7 * FONT_ROW_HEIGHT);
 
     spr.setFreeFont(FSS9);
-    spr.setTextColor(TFT_BLACK, tft.color565(220, 220, 220));
-    spr.fillRect(12 * PIXEL, 0, 16 * PIXEL, FONT_ROW_HEIGHT, tft.color565(220, 220, 220));
+    spr.setTextColor(TFT_WHITE);
+    spr.fillRect(40, 0, 75, 20, tft.color565(100, 100, 100));
     spr.drawString("Sensor", 12 * PIXEL + 2, 2, GFXFF);
 
     spr.setFreeFont(FSS9);
@@ -161,6 +161,57 @@ void TFcard_Tip()
     spr.deleteSprite();
 }
 
+void Below_Right_State_Content(int gg_state) // SD 插拔状态 Grove 插拔状态
+{
+
+    spr.createSprite(320, 25);
+
+    spr.setFreeFont(FSSB9);
+    spr.fillSprite(TFT_BLACK);
+    // int s_key = 1;
+    switch (gg_state)
+    {
+    case 0:
+        spr.setFreeFont(FSS9);
+        spr.setTextColor(TFT_YELLOW);
+        spr.drawString("Plug in a Grove sensor", 0, 0, 2);
+        spr.pushSprite(170, 215);
+        break;
+    case 1:
+        spr.setFreeFont(FSS9);
+        spr.drawTriangle(0, 18, 11, 0, 22, 18, TFT_YELLOW);
+        spr.setTextColor(TFT_YELLOW);
+        spr.drawString("! ", 10, 4, 2);
+        spr.drawString("TF card storage is full", 28, 0, 2);
+        spr.pushSprite(140, 215);
+        break;
+    case 2:
+        spr.setFreeFont(FSS9);
+        spr.setTextColor(TFT_GREEN);
+        spr.drawString("Vision AI Sensor connected", 22, 0, 2);
+        spr.pushSprite(120, 215);
+        break;
+    case 3:
+        spr.setFreeFont(FSS9);
+        spr.setTextColor(TFT_GREEN);
+        spr.drawString("Saving has been started", 22, 0, 2);
+        spr.pushSprite(140, 215);
+        break;
+    case 4:
+        spr.setFreeFont(FSS9);
+        spr.setTextColor(TFT_YELLOW);
+        spr.drawString("Please insert TF card", 22, 0, 2);
+        spr.pushSprite(148, 215);
+        break;
+
+    default:;
+    }
+    spr.setTextColor(TFT_WHITE);
+    spr.drawString("Network :", 5, 0, GFXFF);
+
+    spr.deleteSprite();
+}
+
 void setup()
 {
     DISPLAY_INIT();
@@ -170,15 +221,17 @@ void setup()
     lis.setFullScaleRange(LIS3DHTR_RANGE_2G);
 }
 
+int gg = 0;
+
 void loop()
 {
     Network_state(1);
     top(1);
-    // Sound_Display(analogRead(WIO_MIC));
     IMU_third_Display(lis.getAccelerationX(), lis.getAccelerationY(), lis.getAccelerationZ());
     Sense_third_Display(analogRead(WIO_MIC));
     Add_Display();
     // Grove_Tip();
-    TFcard_Tip();
+    // TFcard_Tip();
+    Below_Right_State_Content(gg % 2 + 1);
     delay(500);
 }

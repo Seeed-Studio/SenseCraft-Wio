@@ -135,138 +135,101 @@ void Below_Right_State_Content(int gg_state) // SD 插拔状态 Grove 插拔状�
 
     default:;
     }
-
     spr.setTextColor(TFT_WHITE);
     spr.drawString("Network :", 5, 0, GFXFF);
 
     spr.deleteSprite();
 }
 
-void wifi_head()
+void Lora_Banner()  //Lora title
 {
-    spr.createSprite(120, 24);
-    spr.fillSprite(tft.color565(100, 100, 100));
+    spr.createSprite(148, 19);
+
     spr.setFreeFont(FSS9);
-    spr.setTextColor(TFT_WHITE);
-    spr.drawString("WiFi(Ubidots)", 6, 3, GFXFF);
-    spr.pushSprite(102, 50);
+    spr.setTextColor(TFT_WHITE, tft.color565(112, 112, 112));
+    spr.drawString("LoRa(SenseCAP)", 3, 0, GFXFF);
+
+    spr.pushSprite(85, 50);
     spr.deleteSprite();
 }
 
-void wifi_info() ///
+void ConnectSuc_Display(int STATE) // conn
 {
-    spr.createSprite(200, 60);
-    spr.fillSprite(TFT_BLACK);
-    spr.setFreeFont(FSS9);
+    spr.createSprite(188, 95);
+
     spr.setTextColor(TFT_WHITE);
-    spr.drawString("Connected:", 6, 6, 2);
-    spr.drawString("WIFI(Ubidots)", 74, 6, 2);
+    spr.drawString("Connected: LoRa (SenseCAP)", 5, 3.8 * FONT_ROW_HEIGHT - 80, 2);
+    spr.drawString("Signal:", 5, 4.8 * FONT_ROW_HEIGHT - 75, 2);
+    spr.drawString("All data:", 5, 5.8 * FONT_ROW_HEIGHT - 75, 2);
+    spr.drawString("packets", 115, 5.8 * FONT_ROW_HEIGHT - 75, 2);
+    spr.drawString("Success:", 5, 6.8 * FONT_ROW_HEIGHT - 75, 2);
+    spr.drawString("packets", 115, 6.8 * FONT_ROW_HEIGHT - 75, 2);
 
-    spr.drawString("SSID:", 6, 26, 2);
-    spr.drawString("123456", 38, 26, 2);
+    spr.setFreeFont(FSSB9);
+    spr.setTextColor(tft.color565(0, 139, 0));
+    spr.drawString("10000", 65, 5.8 * FONT_ROW_HEIGHT - 75, 2); // Show total number of packages issued
+    spr.drawString("999", 65, 6.8 * FONT_ROW_HEIGHT - 75, 2);   // Shows the number of successful deliveries
 
-    spr.drawString("Account:", 6, 46, 2);
-    spr.drawString("user1", 60, 46, 2);
+    switch (STATE)
+    {
+    case 0:
+        spr.fillRect(53, 110 - 75, 3, 11, tft.color565(140, 42, 42)); // No signal
+        spr.fillRect(59, 107 - 75, 3, 14, tft.color565(140, 42, 42));
+        spr.fillRect(65, 104 - 75, 3, 17, tft.color565(140, 42, 42));
+        spr.fillRect(71, 101 - 75, 3, 20, tft.color565(140, 42, 42));
+        break;
+    case 1:
+        spr.fillRect(53, 110 - 75, 3, 11, tft.color565(0, 139, 0)); // One frame signal
+        spr.fillRect(59, 107 - 75, 3, 14, tft.color565(100, 100, 100));
+        spr.fillRect(65, 104 - 75, 3, 17, tft.color565(100, 100, 100));
+        spr.fillRect(71, 101 - 75, 3, 20, tft.color565(100, 100, 100));
+        break;
+    case 2:
+        spr.fillRect(53, 110 - 75, 3, 11, tft.color565(0, 139, 0)); // Two-frame signal
+        spr.fillRect(59, 107 - 75, 3, 14, tft.color565(0, 139, 0));
+        spr.fillRect(65, 104 - 75, 3, 17, tft.color565(100, 100, 100));
+        spr.fillRect(71, 101 - 75, 3, 20, tft.color565(100, 100, 100));
+        break;
+    case 3:
+        spr.fillRect(53, 110 - 75, 3, 11, tft.color565(0, 139, 0)); // Three-frame signal
+        spr.fillRect(59, 107 - 75, 3, 14, tft.color565(0, 139, 0));
+        spr.fillRect(65, 104 - 75, 3, 17, tft.color565(0, 139, 0));
+        spr.fillRect(71, 101 - 75, 3, 20, tft.color565(100, 100, 100));
+        break;
+    case 4:
+        spr.fillRect(53, 110 - 75, 3, 11, tft.color565(0, 139, 0)); // Four-frame signal
+        spr.fillRect(59, 107 - 75, 3, 14, tft.color565(0, 139, 0));
+        spr.fillRect(65, 104 - 75, 3, 17, tft.color565(0, 139, 0));
+        spr.fillRect(71, 101 - 75, 3, 20, tft.color565(0, 139, 0));
+        break;
 
-    spr.pushSprite(20, 76);
+    default:;
+    }
+    spr.pushSprite(20, 80);
     spr.deleteSprite();
 }
 
-void disconnect_button()
+void Lora_Connection_State(int STATE)
 {
-    spr.createSprite(100, 34);
-    spr.fillSprite(tft.color565(160, 34, 34));
-    spr.setFreeFont(FSS9);
-    spr.setTextColor(TFT_WHITE);
-    spr.drawString("Disconnect", 5, 8, GFXFF);
-    spr.pushSprite(115, 170);
+    spr.createSprite(90, 75);
+    switch (STATE)
+    {
+    case 0:                                                                 
+        spr.fillCircle(265 - 220, 4.9 * FONT_ROW_HEIGHT - 90, 10, tft.color565(160, 34, 34)); // Data transmission status: join failed
+        spr.setTextColor(TFT_WHITE);
+        spr.drawString("Join LoRaWAN", 220 - 220, 5.8 * FONT_ROW_HEIGHT - 90, 2);
+        spr.drawString("Failed", 250 - 220, 6.6 * FONT_ROW_HEIGHT - 90, 2);
+        break;
+    case 1:
+        spr.fillCircle(265 - 220, 4.9 * FONT_ROW_HEIGHT - 90, 10, tft.color565(255, 165, 0)); // Data transmission status: Packet loss
+        spr.setTextColor(TFT_WHITE);
+        spr.drawString("Send", 253 - 220, 5.8 * FONT_ROW_HEIGHT - 90, 2);
+        spr.drawString("Failed", 250 - 220, 6.6 * FONT_ROW_HEIGHT - 90, 2);
+        break;
+    default:;
+    }
+    spr.pushSprite(208, 80);
     spr.deleteSprite();
-}
-
-void wifi_sig(int key)
-{
-    if (key == 2) // Press the A button to disconnect
-    {
-        spr.createSprite(80, 40);
-        spr.setFreeFont(FSS9);
-        spr.setTextColor(TFT_WHITE);
-        spr.drawString("Signal:", 6, 15, 2);
-        spr.fillRect(51, 16, 3, 11, tft.color565(0, 139, 0)); // No signal
-        spr.fillRect(57, 13, 3, 14, tft.color565(0, 139, 0));
-        spr.fillRect(63, 10, 3, 17, tft.color565(100, 100, 100));
-        spr.fillRect(69, 7, 3, 20, tft.color565(100, 100, 100));
-        spr.pushSprite(20, 140);
-        spr.deleteSprite();
-    }
-    if (key == 3) // Press the A button to disconnect
-    {
-        spr.createSprite(80, 40);
-        spr.setFreeFont(FSS9);
-        spr.setTextColor(TFT_WHITE);
-        spr.drawString("Signal:", 6, 15, 2);
-        spr.fillRect(51, 16, 3, 11, tft.color565(0, 139, 0)); // No signal
-        spr.fillRect(57, 13, 3, 14, tft.color565(0, 139, 0));
-        spr.fillRect(63, 10, 3, 17, tft.color565(0, 139, 0));
-        spr.fillRect(69, 7, 3, 20, tft.color565(100, 100, 100));
-        spr.pushSprite(20, 140);
-        spr.deleteSprite();
-    }
-    if (key == 4) // Press the A button to disconnect
-    {
-
-        spr.createSprite(80, 40);
-        spr.setFreeFont(FSS9);
-        spr.setTextColor(TFT_WHITE);
-        spr.drawString("Signal:", 6, 15, 2);
-        spr.fillRect(51, 16, 3, 11, tft.color565(0, 139, 0)); // No signal
-        spr.fillRect(57, 13, 3, 14, tft.color565(0, 139, 0));
-        spr.fillRect(63, 10, 3, 17, tft.color565(0, 139, 0));
-        spr.fillRect(69, 7, 3, 20, tft.color565(0, 139, 0));
-        spr.pushSprite(20, 140);
-        spr.deleteSprite();
-    }
-    if (key == 1) // Press the B button to disconnect
-    {
-        spr.createSprite(80, 40);
-        spr.setFreeFont(FSS9);
-        spr.setTextColor(TFT_WHITE);
-        spr.drawString("Signal:", 6, 15, 2);
-        spr.fillRect(51, 16, 3, 11, tft.color565(0, 139, 0)); // No signal
-        spr.fillRect(57, 13, 3, 14, tft.color565(100, 100, 100));
-        spr.fillRect(63, 10, 3, 17, tft.color565(100, 100, 100));
-        spr.fillRect(69, 7, 3, 20, tft.color565(100, 100, 100));
-        spr.pushSprite(20, 140);
-        spr.deleteSprite();
-
-        spr.createSprite(100, 100);
-        spr.fillCircle(28, 35, 10, TFT_YELLOW); // Data transmission status: join failed
-        spr.setTextColor(TFT_YELLOW);
-        spr.drawString("Low signal", 0, 60, 2);
-        spr.drawString("intensity", 4, 85, 2);
-        spr.pushSprite(240, 66);
-        spr.deleteSprite();
-    }
-    if (key == 0) // Press the C button to disconnect
-    {
-        spr.createSprite(80, 50);
-        spr.setFreeFont(FSS9);
-        spr.setTextColor(TFT_WHITE);
-        spr.drawString("Signal:", 6, 15, 2);
-        spr.fillRect(51, 16, 3, 11, tft.color565(140, 42, 42)); // No signal
-        spr.fillRect(57, 13, 3, 14, tft.color565(140, 42, 42));
-        spr.fillRect(63, 10, 3, 17, tft.color565(140, 42, 42));
-        spr.fillRect(69, 7, 3, 20, tft.color565(140, 42, 42));
-        spr.pushSprite(20, 140);
-        spr.deleteSprite();
-
-        spr.createSprite(100, 100);
-        spr.fillCircle(28, 35, 10, TFT_RED); // Data transmission status: join failed
-        spr.setTextColor(TFT_RED);
-        spr.drawString("Join WiFi", 0, 60, 2);
-        spr.drawString("Failed", 10, 85, 2);
-        spr.pushSprite(240, 66);
-        spr.deleteSprite();
-    }
 }
 
 void Disconnect_Tip(int _YES_NO_SELECTION) // Pop-up prompt for sensor insertion 0 NO 1 Yes
@@ -301,39 +264,36 @@ void Disconnect_Tip(int _YES_NO_SELECTION) // Pop-up prompt for sensor insertion
     spr.deleteSprite();
 }
 
+void Disconnect_Button()
+{
+    spr.createSprite(100, 30);
+    spr.fillRect( 0, 0, 100, 30,  tft.color565(160, 34, 34));
+    spr.setFreeFont(FSS9);
+    spr.setTextColor(TFT_WHITE);
+    spr.drawString("Disconnect", 4, 6, GFXFF);
+    spr.pushSprite(105, 180);
+    spr.deleteSprite();
+}
+
 void setup()
 {
     DISPLAY_INIT();
 }
 
-int test_flag = 0;
+// int test_flag = 0;
 int test_flag_1 = 0;
-int joystick = 0;
+
 void loop()
 {
-    if (digitalRead(WIO_KEY_A) == LOW)
-    {
-        test_flag_1++;
-        delay(300);
-        tft.fillScreen(TFT_BLACK);
-    }
 
-    Sense_Display(test_flag_1 % 3);
-
-    if (digitalRead(WIO_KEY_B) == LOW)
-    {
-        test_flag++;
-        delay(300);
-        tft.fillScreen(TFT_BLACK);
-    }
-
-    Network_state(test_flag % 3); // 修改网络状态  左下角
-    wifi_head();
-    wifi_info();
-    wifi_sig(test_flag % 5);
-    disconnect_button();
-    //    Disconnect_Tip(test_flag % 2); // 弹窗确认
-    Below_Right_State_Content(test_flag % 5); // 修改 右下角 状态
-
+    Sense_Display(2);
+    Network_state(1);
+    Lora_Banner();
+    // Disconnect_Tip(test_flag_1 % 2);
+     Below_Right_State_Content(5);
+    Lora_Connection_State(test_flag_1 % 2);
+    test_flag_1++;
+    ConnectSuc_Display(test_flag_1 % 4);
+    Disconnect_Button();
     delay(1000);
 }

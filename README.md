@@ -11,7 +11,7 @@ Status: ✅✅ finished ✅ doing  ❌ todo
 
 | Code | Content | Status| Coder|
 | :------------ |:---------------:| -----:| -----:|
-|New_Network| 是纯的单独界面（spr create delete 分块实现  每个ino 为一页） |✅ |0|
+|New_Network| 是纯的单独界面（spr create delete 分块实现  每个ino 为一页） |✅✅ |0|
 |New_Sense| 是纯的单独界面（spr create delete 分块实现  每个ino 为一页） |✅✅ |0|
 |Process| 已做出单独函数 完全解耦 直接依次调用就可以完成 Process 界面绘制 title 处轻微闪烁 因为视窗有部分重叠的地方  对于刷新背景为黑色 可以直接可以 tft.fillScreen(TFT_BLACK);|✅✅|1|
 |...| ...| ...|
@@ -28,6 +28,49 @@ Status: ✅✅ finished ✅ doing  ❌ todo
 加粗字体：FSSB9
 如果要使用更大号字体，可以选择FSS12、FSS18、FSS24
 如果要使用小号字体，请使用FSS9，将字号参数GFXFF改为2
+
+## Change Line Chart color
+
+如果需要修改坐标轴文字和坐标线条颜色 需要修改库  seeed_line_chart.h
+221-245 行
+
+颜色定义在 seeed_graphics_define.h
+
+```bash
+
+public:
+    xpositionx(
+        line_chart,
+        xlist(pix_t width, pix_t height), {
+            _height = height;
+            _width = width; }, {
+            _x_max_tick_count = 10;
+            _x_min_tick_count = 3;
+            _y_max_tick_count = 8;
+            _y_min_tick_count = 3;
+            _x_skip_tick = 0;
+            _tick = 8;
+            _x_auxi_role = dash_line().color(gray);
+            _x_role_color = pink;
+            _x_tick_color = green;
+            _x_role_thickness = pan_thickness;
+            _y_role_color = pink;  // 线
+            _y_tick_color = green; // 坐标轴上文字
+            _y_role_thickness = pan_thickness;
+            _backgroud = transparent;
+            _format = "%g";
+            _color = classic_colors;
+            _show_circle = std::initializer_list<bool>{ true };
+            _based_on = 0;
+            _max_size = 0; });
+    xprop(pix_t, height);
+    xprop(pix_t, width);
+    xprop(pix_t, x_max_tick_count);
+    xprop(pix_t, x_min_tick_count);
+    xprop(pix_t, y_max_tick_count);
+
+```
+
 # K1100 for Wio Terminal
 
 ## setup & build
