@@ -14,6 +14,58 @@ TFT_eSprite spr = TFT_eSprite(&tft);
 #define HIGHT_SIDE 47
 const static unsigned int FONT_ROW_HEIGHT = 22; // The height of a letter
 
+struct _data_base
+{
+    String value;
+    String type;
+};
+
+struct _STRUCT_INPUT_DATA
+{
+    _data_base data[4];
+} GG;
+
+void _main_display(int _CHOOSE, _STRUCT_INPUT_DATA KK)
+{
+
+    spr.createSprite(90, 100);
+    spr.fillRect(0, 0, 90, 100, tft.color565(0, 139, 0));
+    spr.setFreeFont(FSS9);
+    spr.setTextColor(TFT_GREEN);
+
+    for (int i = 0; i < 4; i++)
+    {
+        spr.drawString(KK.data[i].value, 2, 5 + 24 * i, 4);
+        spr.drawString(KK.data[i].type, 68, 5 + 24 * i, 2);
+    }
+
+    switch (_CHOOSE)
+    {
+    case 0:
+        spr.pushSprite(20, 90);
+        break;
+    case 1:
+        spr.pushSprite(120, 90);
+        break;
+    case 2:
+        spr.pushSprite(220, 90);
+        break;
+    default:
+        break;
+    }
+
+    spr.deleteSprite();
+}
+
+void _sub_title(String value)
+{
+    spr.createSprite(320, 15);
+    spr.setFreeFont(FSSB9);
+    spr.setTextColor(TFT_WHITE, tft.color565(100, 100, 100));
+    spr.drawString(value, 120, 0, GFXFF);
+    spr.pushSprite(0, 65);
+    spr.deleteSprite();
+}
 void DISPLAY_INIT() // Display initialization, black background rotation
 {
     tft.begin();
@@ -21,96 +73,40 @@ void DISPLAY_INIT() // Display initialization, black background rotation
     tft.fillScreen(TFT_BLACK);
 }
 
-void top(int _CHOOSE)
+// 320*70 = 22400
+void Sense_Display(int CHOOSE_PAGE) // Sense interface display
 {
-    spr.createSprite(SCREEN_WIDTH, 2 * FONT_ROW_HEIGHT + 1);
-
-    if (_CHOOSE == 1)
+    spr.createSprite(320, 60);
+    spr.setFreeFont(FSSB9);
+    switch (CHOOSE_PAGE)
+    {
+    case 0:
         spr.fillRect(4 * PIXEL, 0, 21 * PIXEL, FONT_ROW_HEIGHT + 15, tft.color565(135, 206, 235));
-    else
-        spr.fillRect(4 * PIXEL, 0, 21 * PIXEL, FONT_ROW_HEIGHT + 15, TFT_WHITE);
-    if (_CHOOSE == 2)
-        spr.fillRect(30 * PIXEL, 0, 21 * PIXEL, FONT_ROW_HEIGHT + 15, tft.color565(135, 206, 235));
-    else
         spr.fillRect(30 * PIXEL, 0, 21 * PIXEL, FONT_ROW_HEIGHT + 15, TFT_WHITE);
-    if (_CHOOSE == 3)
-        spr.fillRect(56 * PIXEL, 0, 21 * PIXEL, FONT_ROW_HEIGHT + 15, tft.color565(135, 206, 235));
-    else
         spr.fillRect(56 * PIXEL, 0, 21 * PIXEL, FONT_ROW_HEIGHT + 15, TFT_WHITE);
+        break;
+    case 1:
+        spr.fillRect(4 * PIXEL, 0, 21 * PIXEL, FONT_ROW_HEIGHT + 15, TFT_WHITE);
+        spr.fillRect(30 * PIXEL, 0, 21 * PIXEL, FONT_ROW_HEIGHT + 15, tft.color565(135, 206, 235));
+        spr.fillRect(56 * PIXEL, 0, 21 * PIXEL, FONT_ROW_HEIGHT + 15, TFT_WHITE);
+        break;
+    case 2:
+        spr.fillRect(4 * PIXEL, 0, 21 * PIXEL, FONT_ROW_HEIGHT + 15, TFT_WHITE);
+        spr.fillRect(30 * PIXEL, 0, 21 * PIXEL, FONT_ROW_HEIGHT + 15, TFT_WHITE);
+        spr.fillRect(56 * PIXEL, 0, 21 * PIXEL, FONT_ROW_HEIGHT + 15, tft.color565(135, 206, 235));
+        break;
+    default:
+        break;
+    }
 
     spr.setFreeFont(FSSB9);
     spr.setTextColor(TFT_BLACK);
     spr.drawString("Sense", 32, 11, GFXFF);
     spr.drawString("Process", 127, 11, GFXFF);
     spr.drawString("Network", 231, 11, GFXFF);
-
     spr.drawLine(0, 2 * FONT_ROW_HEIGHT, SCREEN_WIDTH, 2 * FONT_ROW_HEIGHT, TFT_WHITE);
 
     spr.pushSprite(0, 0);
-    spr.deleteSprite();
-}
-
-void Light_first_Display(int _light)
-{
-    spr.createSprite(24 * PIXEL, 3.7 * FONT_ROW_HEIGHT);
-
-    spr.setFreeFont(FSS9);
-    spr.setTextColor(TFT_WHITE);
-    spr.drawString("Light", 20, 0, GFXFF);
-
-    spr.setFreeFont(FSS24);
-    spr.setTextColor(TFT_WHITE);
-
-    if (_light < 10)
-        spr.drawNumber(_light, 25, 2 * FONT_ROW_HEIGHT, GFXFF);
-    else if (10 < _light < 100)
-        spr.drawNumber(_light, 10, 2 * FONT_ROW_HEIGHT, GFXFF);
-    else if (_light > 100)
-        spr.drawNumber(_light, 0, 2 * FONT_ROW_HEIGHT, GFXFF);
-
-    spr.pushSprite(10, 3.8 * FONT_ROW_HEIGHT);
-    spr.deleteSprite();
-}
-
-void Sound_first_Display(int _sound)
-{
-    spr.createSprite(27 * PIXEL, 7 * FONT_ROW_HEIGHT);
-
-    spr.setFreeFont(FSS9);
-    spr.setTextColor(TFT_BLACK, tft.color565(220, 220, 220));
-    spr.fillRect(0, 0, 16 * PIXEL, FONT_ROW_HEIGHT, tft.color565(220, 220, 220));
-    spr.drawString("Sensor", 2, 2, GFXFF);
-
-    spr.setFreeFont(FSS9);
-    spr.setTextColor(TFT_WHITE);
-    spr.drawString("Sound", 5, 12 + FONT_ROW_HEIGHT, GFXFF);
-
-    spr.setFreeFont(FSS24);
-    spr.setTextColor(TFT_WHITE);
-    spr.drawNumber(_sound, 0, 3.7 * FONT_ROW_HEIGHT, GFXFF);
-
-    spr.fillCircle(17, 6.8 * FONT_ROW_HEIGHT, 3, tft.color565(0, 193, 255));
-    spr.fillCircle(34, 6.8 * FONT_ROW_HEIGHT, 3, tft.color565(220, 220, 220));
-
-    spr.pushSprite(10 + 30 * PIXEL, 2.2 * FONT_ROW_HEIGHT);
-    spr.deleteSprite();
-}
-
-void IMU_first_Display(float _x, float _y, float _z) //
-{
-    spr.createSprite(27 * PIXEL, 6 * FONT_ROW_HEIGHT);
-
-    spr.setFreeFont(FSS9);
-    spr.setTextColor(TFT_WHITE);
-    spr.drawString("IMU", 2, 0, GFXFF);
-    spr.setFreeFont(FSS12);
-    spr.setTextColor(TFT_WHITE);
-    spr.drawFloat(_x, 2, 0, 1.5 * FONT_ROW_HEIGHT, GFXFF); // Display the value of IMU X-axis
-    spr.drawFloat(_y, 2, 0, 2.5 * FONT_ROW_HEIGHT, GFXFF); // Display the value of IMU Y-axis
-    spr.drawFloat(_z, 2, 0, 3.5 * FONT_ROW_HEIGHT, GFXFF); // Display the value of IMU Z-axis
-    spr.setFreeFont(FSS9);
-    spr.drawString("X,Y,Z", 0, 4.5 * FONT_ROW_HEIGHT, GFXFF);
-    spr.pushSprite(10 + 59 * PIXEL, 3.8 * FONT_ROW_HEIGHT);
     spr.deleteSprite();
 }
 
@@ -234,13 +230,32 @@ int gg = 0;
 void loop()
 {
     Network_state(1);
-    top(1);
+    Sense_Display(0);
     gg++;
-    Light_first_Display(analogRead(WIO_LIGHT));
-    Sound_first_Display(analogRead(WIO_MIC));
-    IMU_first_Display(lis.getAccelerationX(), lis.getAccelerationY(), lis.getAccelerationZ());
-    // Grove_Tip();
-    // TFcard_Tip();
-    Below_Right_State_Content(gg % 2 + 1);
+
+    _STRUCT_INPUT_DATA GG;
+
+    //    for(int i = 0 ;i < 4; i++){
+    //        GG.data[i].value = "AAAA";
+    //    }
+
+    GG.data[0].value = "A";
+    GG.data[0].type = "'C";
+
+    GG.data[1].value = "AA";
+    GG.data[1].type = "kg";
+
+    GG.data[2].value = "AAA";
+    GG.data[2].type = "cd";
+
+    GG.data[3].value = "AAAA";
+    GG.data[3].type = "m/s";
+
+    _main_display(0, GG);
+    _main_display(1, GG);
+    _main_display(2, GG);
+    _sub_title("ABCDEFG");
+
+    Below_Right_State_Content(1);
     delay(500);
 }

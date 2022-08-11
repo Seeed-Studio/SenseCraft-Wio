@@ -1,3 +1,6 @@
+## ALL in Sence First
+
+examples\New_Sense\Sense_first\Sense_first.ino
 ## Change Line Chart color
 
 如果需要修改坐标轴文字和坐标线条颜色 需要修改库  seeed_line_chart.h
