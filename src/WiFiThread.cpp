@@ -18,10 +18,10 @@ void WiFiThread::Run() {
     cfg.WriteConfigParam(filename, prefix_param, param);
     while (true) {
         Delay(Ticks::MsToTicks(1000));
-        LOGSS.print("SSID: ");
-        LOGSS.println(cfg.ssid);
-        LOGSS.print("PASSWORD: ");
-        LOGSS.println(cfg.password);
+        // LOGSS.print("SSID: ");
+        // LOGSS.println(cfg.ssid);
+        // LOGSS.print("PASSWORD: ");
+        // LOGSS.println(cfg.password);
         LOGSS.printf("WIFI Stacks Free Bytes Remaining %d\r\n", uxTaskGetStackHighWaterMark(GetHandle()));
     }
     //   while (WiFi.status() != WL_CONNECTED) {
