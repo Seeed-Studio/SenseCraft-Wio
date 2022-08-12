@@ -32,7 +32,7 @@ void SamplerThread::Run() {
         std::vector<sensor_data *> datas;
         for (auto sensor : sensors) {
             if (sensor->read(&sdata)) {
-                LOGSS.printf("Sampling %s\n", sdata.name);
+                //LOGSS.printf("Sampling %s\r\n", sdata.name);
                 // for (size_t i = 0; i < sdata.size; i++) {
                 //   LOGSS.printf("%02x ", ((uint8_t *)sdata.data)[i]);
                 // }
@@ -47,12 +47,13 @@ void SamplerThread::Run() {
             // LOGSS.println("SamplerThread");
         }
         lora->LoRaPushData(datas);
+        display.UIPushData(datas);
         for (auto data : datas) {
             delete data;
         }
         datas.clear();
         datas.shrink_to_fit();
-        Delay(Ticks::MsToTicks(1000));
-        LOGSS.printf("SamplerThread Stacks Free Bytes Remaining %d\r\n", uxTaskGetStackHighWaterMark(GetHandle()));
+        // Delay(Ticks::MsToTicks(1000));
+        //LOGSS.printf("SamplerThread Stacks Free Bytes Remaining %d\r\n", uxTaskGetStackHighWaterMark(GetHandle()));
     }
 }
