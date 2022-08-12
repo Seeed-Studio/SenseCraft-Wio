@@ -203,7 +203,7 @@ bool LoRaThread::SendGroveSensorData() {
     }
     return ret;
 }
-
+#if 0
 void LoRaThread::Run() {
     // init the library, search the LORAE5 over the different WIO port available
     Serial.begin(9600);
@@ -211,6 +211,7 @@ void LoRaThread::Run() {
     lorae5 = new Disk91_LoRaE5(&Serial);
     Init();
     while (true) {
+        LOGSS.printf("LoRa Sensor number: %d  %d \r\n", lora_data.size(), lora_data.capacity());
         if (!is_e5_init) {
             // try to init the LoRa E5 5s after the last failure
             Delay(Ticks::SecondsToTicks(5));
@@ -238,7 +239,15 @@ void LoRaThread::Run() {
 
         // clear all data in the lora_data queue
         lora_data.clear();
+        lora_data.shrink_to_fit();
         lora_data_ready = true;
+        Delay(Ticks::SecondsToTicks(60 * 5));
+    }
+}
+#endif
+
+void LoRaThread::Run() {
+    while (true) {
         Delay(Ticks::SecondsToTicks(60 * 5));
     }
 }
