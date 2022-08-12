@@ -17,13 +17,13 @@ void UI::init() {
 
 void UI::Run() {
     uint8_t nums;
-    uint8_t keys   = 2;
-    page.mainstate = SENSEPAGE;
-    page.key       = 0;
-    page.process_select    = 0;
-    page.sense_select      = 0;
-    page.network_select    = 0;
-    s_data_ready = true;
+    uint8_t keys        = 2;
+    page.mainstate      = SENSEPAGE;
+    page.key            = 0;
+    page.process_select = 0;
+    page.sense_select   = 0;
+    page.network_select = 0;
+    s_data_ready        = true;
     init();
 
     while (true) {
@@ -32,19 +32,18 @@ void UI::Run() {
             LOGSS.printf("btn Receive: %d ", nums);
             LOGSS.println(buff[0]);
             keys = buff[0] - 1;
-        }else 
+        } else
             keys = NONE_PRESSED;
-        
 
         // nums = sensorMail.Receive(&sdata, 256, 0);
         // if (nums > 0) {
-            // for (size_t i = 0; i < sdata.size; i = i + 4) {
-            //     LOGSS.printf("%d ", ((int32_t *)sdata.data)[i]);
-            // }
-            // temp_light = sdata.size;
-            // temp_mic   = ((int32_t *)sdata.data)[sdata.size - 5];
-            // LOGSS.printf("sensor Receive: %s %d %d\r\n", sdata.name, sdata.id, sdata.size);
-            // LOGSS.printf("UI thread free memory: %d\r", xPortGetFreeHeapSize());
+        // for (size_t i = 0; i < sdata.size; i = i + 4) {
+        //     LOGSS.printf("%d ", ((int32_t *)sdata.data)[i]);
+        // }
+        // temp_light = sdata.size;
+        // temp_mic   = ((int32_t *)sdata.data)[sdata.size - 5];
+        // LOGSS.printf("sensor Receive: %s %d %d\r\n", sdata.name, sdata.id, sdata.size);
+        // LOGSS.printf("UI thread free memory: %d\r", xPortGetFreeHeapSize());
         //}
         // LOGSS.printf("UI Stacks Free Bytes Remaining %d\r\n",
         //              uxTaskGetStackHighWaterMark(GetHandle()));
@@ -65,19 +64,16 @@ void UI::UIPushData(std::vector<sensor_data *> d) {
     }
 }
 
-
-
 #define PIXEL 4 // Width of one letter
 #define LEFT_SIDE 70
 #define HIGHT_SIDE 47
 const static unsigned int FONT_ROW_HEIGHT = 22; // The height of a letter
 
 void UI::PageMangent(uint8_t key) {
-    if (key < 3)
-    {
+    if (key < 3) {
         tft.fillScreen(TFT_BLACK);
         page.mainstate = (page_state)key;
-        key = NONE_PRESSED;
+        key            = NONE_PRESSED;
     }
     switch (page.mainstate) {
     case NETWORKPAGE:
@@ -192,7 +188,12 @@ void UI::Status2Display(uint8_t status) {
         spr.pushSprite(148, 215);
         break;
 
-    default:;
+    default:
+        spr.setFreeFont(FSS9);
+        spr.setTextColor(TFT_YELLOW);
+        spr.drawString("                             ", 22, 0, 2);
+        spr.pushSprite(148, 215);
+        break;
     }
     spr.deleteSprite();
 }
@@ -394,49 +395,52 @@ bool UI::Process_1(uint8_t key) {
 #define countof(a) (sizeof(a) / sizeof(*(a)))
 
 void UI::SensePageManager(uint8_t key) {
-    
-    if(s_data.size() == 0){
+
+    if (s_data.size() == 0) {
         s_data_ready = true;
         return;
     }
 
-
     switch (key) {
-        case LEFT_PRESSED:
-            s_sense.sense_select--;
-            if (s_sense.sense_select < 0) {
-                s_sense.sense_select = 0;
-            }
-            break;
-        case RIGHT_PRESSED:
-            s_sense.sense_select++;
-            if (s_sense.sense_select > s_data.size() - 1) {
-                s_sense.sense_select = s_data.size() - 1;
-            }
-            break;
-        case UP_PRESSED:
-            s_sense.current_page--;
-            if (s_sense.current_page < 0) {
-                s_sense.current_page = 0;
-            }
-            break;
-        case SELECT_PRESSED:
+    case LEFT_PRESSED:
+        s_sense.sense_select--;
+        if (s_sense.sense_select < 0) {
+            s_sense.sense_select = 0;
+        }
+        break;
+    case RIGHT_PRESSED:
+        s_sense.sense_select++;
+        if (s_sense.sense_select > s_data.size()) {
+            s_sense.sense_select = s_data.size();
+        }
+        break;
+    case UP_PRESSED:
+        s_sense.current_page--;
+        if (s_sense.current_page < 0) {
+            s_sense.current_page = 0;
+        }
+        tft.fillScreen(TFT_BLACK);
+        break;
+    case SELECT_PRESSED:
+        if (s_sense.is_next) {
             s_sense.current_page++;
             if (s_sense.current_page > countof(sense) - 1) {
                 s_sense.current_page = countof(sense) - 1;
             }
-            break;
+        }
+        tft.fillScreen(TFT_BLACK);
+        break;
     }
 
-    // LOGSS.printf("\r\n>>>>>UI Sensor number: %d  %d  %d\r\n", s_sense.sense_select , s_data.size(), key);
-    (this->*sense[s_sense.current_page])(s_sense.sense_select);
+    // LOGSS.printf("\r\n>>>>>UI Sensor number: %d  %d  %d\r\n", s_sense.sense_select ,
+    // s_data.size(), key);
+    s_sense.is_next = (this->*sense[s_sense.current_page])(s_sense.sense_select);
     s_data.clear();
-    // s_data.shrink_to_fit();
+    s_data.shrink_to_fit();
     s_data_ready = true;
 }
 
-void UI::SensorSubTitle(String value)
-{
+void UI::SensorSubTitle(String value) {
     spr.createSprite(320, 15);
     spr.setFreeFont(FSSB9);
     spr.setTextColor(TFT_WHITE, tft.color565(100, 100, 100));
@@ -445,46 +449,43 @@ void UI::SensorSubTitle(String value)
     spr.deleteSprite();
 }
 
-void UI::SensorADDDisplay(uint8_t is_backgroud){
-    spr.createSprite(90, 100);
+void UI::SensorADDDisplay(uint8_t is_backgroud) {
+    // spr.createSprite(90, 100);
 
-    if(is_backgroud){
-        spr.fillRect(0, 0, 90, 100, tft.color565(0, 139, 0));   
+    if (is_backgroud) {
+        spr.fillRect(0, 0, 90, 100, tft.color565(0, 139, 0));
     }
-   
+
     spr.setFreeFont(FSS9);
     spr.setTextColor(TFT_WHITE);
-    spr.drawString("ADD", 14, 5 ,4);
+    spr.drawString("ADD", 14, 5, 4);
 
     spr.fillRect(20, 1.5 * FONT_ROW_HEIGHT, 40, 40, TFT_WHITE);
     spr.fillRect(38, 1.5 * FONT_ROW_HEIGHT + 6, 3, 26, TFT_BLACK);
     spr.fillRect(27, 1.5 * FONT_ROW_HEIGHT + 18, 26, 3, TFT_BLACK);
 
-    spr.pushSprite(220, 90);
-    spr.deleteSprite();    
+    // spr.pushSprite(220, 90);
+    // spr.deleteSprite();
 }
 
-void UI::SensorPageState(int pages_num, int page_select)
-{
+void UI::SensorPageState(int pages_num, int page_select) {
 
     spr.createSprite(340, 10);
-                            // 问题
+    // 问题
     int *page_location = new int[pages_num];
 
     int temp = 0;
 
-    for (int i = 0; i < pages_num; i++)
-    {
+    for (int i = 0; i < pages_num; i++) {
         page_location[temp] = 140 - pages_num / 2 * 10 * (1 + pages_num % 2) + i * 20;
         temp++;
     }
 
-    for (int i = 0; i < pages_num; i++)
-    {
+    for (int i = 0; i < pages_num; i++) {
         if (i == page_select)
             spr.fillCircle(page_location[i], 6, 3, tft.color565(0, 193, 255));
         else
-            spr.fillCircle(page_location[i] , 6, 3, tft.color565(220, 220, 220));
+            spr.fillCircle(page_location[i], 6, 3, tft.color565(220, 220, 220));
     }
     delete page_location;
     spr.pushSprite(0, 200);
@@ -492,81 +493,88 @@ void UI::SensorPageState(int pages_num, int page_select)
 }
 
 bool UI::Sensor_1(uint8_t select) {
+    bool    ret;
     uint8_t sense_display_num = 0;
-    uint8_t sense_window = 0;
-
-    sense_window = select / 3;
+    uint8_t index             = 0;
 
     TitleDisplay(0);
-    //Display the sensor name
-    //注释掉，第一个框不闪
-    SensorSubTitle(s_data[select].name);
-    // 方案一：
-    //1，遍历所有数据
-    //2, 一个测量值一个框
-    //3，把框显示在不同的位置
-    #if 0
-    for(int si = 0; si < s_data.size(); si++){
-        spr.createSprite(90, 100);
-        //高亮选择的数据
-        if(si == select){
-            spr.fillRect(0, 0, 90, 100, tft.color565(0, 139, 0));
-        }
-        spr.setFreeFont(FSS9);
-        spr.setTextColor(TFT_WHITE);
-
-        //一次只显示4个数据，每个测量数据4个byte
-        if (s_data[si].size  > 4*4)
-            sense_display_num = 4*4;
-        else
-            sense_display_num = s_data[si].size;
-        
-        //把框分成4行，每行显示一个数据
-        // for(int i = 0; i < sense_display_num; i+=4){
-        //     spr.drawString(String(static_cast<uint16_t>(((int32_t *)s_data[si].data)[i])), 2, 5 + 24 * i/4, 2);
-        //     //todo，数据单位，暂时显示为空
-        //     spr.drawString("  ", 68, 5 + 24 * i, 2);
-        // }
-
-        //根据数据的index，显示不同的位置，一个页面只能显示三个，页面不够补+号。
-        spr.pushSprite(20 + (si%3)*100, 90);
-        spr.deleteSprite();
+    // Display the sensor name
+    if (select < s_data.size()) {
+        SensorSubTitle(s_data[select].name);
+        Status2Display(0xff);
+        ret = true;
+    } else {
+        SensorSubTitle("MORE");
+        Status2Display(0);
+        ret = false;
     }
-    #endif 
-    //方案二：
     //只显示select-1, select和select+1的数据
     //处理好特殊情况，第一个和最后一个
-    for(int si = 0; si < 3; si++){
+    for (int si = 0; si < 3; si++) {
         spr.createSprite(90, 100);
         //高亮选择的数据
-        if(si == 1){
+        if (si == select % 3) {
             spr.fillRect(0, 0, 90, 100, tft.color565(0, 139, 0));
         }
         spr.setFreeFont(FSS9);
         spr.setTextColor(TFT_WHITE);
 
-        //一次只显示4个数据，每个测量数据4个byte
-        if (s_data[select - 1 + si].size  > 4*4)
-            sense_display_num = 4*4;
-        else
-            sense_display_num = s_data[select - 1 + si].size;
-        
-        //把框分成4行，每行显示一个数据
-        for(int i = 0; i < sense_display_num; i+=4){
-            spr.drawString(String(static_cast<uint16_t>(((int32_t *)s_data[select - 1 + si].data)[i])), 2, 5 + 24 * i/4, 2);
-            //todo，数据单位，暂时显示为空
-            spr.drawString("  ", 68, 5 + 24 * i, 2);
-        }
+        //获取显示数据的位置
+        index = select + si - select % 3;
+        if (index >= s_data.size()) {
+            SensorADDDisplay(si == select % 3);
+        } else {
+            //一次只显示4个数据，每个测量数据4个byte
+            if (s_data[index].size > 4 * 4)
+                sense_display_num = 4 * 4;
+            else
+                sense_display_num = s_data[index].size;
 
+            //把框分成4行，每行显示一个数据
+            for (int i = 0; i < sense_display_num; i += 4) {
+                spr.drawString(String(static_cast<uint16_t>(((int32_t *)s_data[index].data)[i])), 2,
+                               5 + 24 * i / 4, 2);
+                // todo，数据单位，暂时显示为空
+                spr.drawString("  ", 68, 5 + 24 * i, 2);
+            }
+        }
         //根据数据的index，显示不同的位置，一个页面只能显示三个，页面不够补+号。
-        spr.pushSprite(20 + si*100, 90);
+        spr.pushSprite(20 + si * 100, 90);
         spr.deleteSprite();
     }
-    //SensorADDDisplay(1);
-    SensorPageState(6,3);
-    // TOdo
-
-    // toDo: Network status
+    // SensorADDDisplay(1);
+    SensorPageState(s_data.size() / 3 + 1, select / 3);
     Status1Display(0);
-    return false;
+    return ret;
+}
+
+bool UI::Sensor_2(uint8_t select) {
+    TitleDisplay(0);
+    // Display the sensor name
+    SensorSubTitle(s_data[select].name);
+
+    tft.fillRect(18, 78, 24, 90, TFT_WHITE);
+    if (line_chart_data.size() > LINE_DATA_MAX_SIZE) // keep the old line chart front
+    {
+        line_chart_data.pop(); // this is used to remove the first read variable
+    }
+    line_chart_data.push(random(0, 255));
+
+    // 85 * 260 = 22100
+    auto content = line_chart(20, 80); //(x,y) where the line graph begins
+    content.height(85)
+        .width(260)
+        .based_on(0.0)          // Starting point of y-axis, must be a float
+        .show_circle(false)     // drawing a cirle at each point, default is on.
+        .value(line_chart_data) // passing through the data to line graph
+        .max_size(LINE_DATA_MAX_SIZE)
+        .color(TFT_GREEN) // Setting the color for the line
+                          //        .backgroud(tft.color565(0,0,0)) // Setting the color for the
+                          //        backgroud
+        .backgroud(tft.color565(0, 0, 0))
+        .draw(&tft);
+
+    SensorPageState(s_data.size() / 3 + 1, select / 3);
+    Status1Display(0);
+    return true;
 }
