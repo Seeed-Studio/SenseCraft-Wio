@@ -1,20 +1,21 @@
 #include "FreeRTOS.h"
+#include  <stdlib.h>
+#if 0
+// #ifdef __cplusplus
+// extern "C" {
+// #endif
+// void *malloc(size_t size) {
+//     /* Call the FreeRTOS version of malloc. */
+//     return pvPortMalloc(size);
+// }
+// void free(void *ptr) {
+//     /* Call the FreeRTOS version of free. */
+//     vPortFree(ptr);
+// }
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-void *malloc(size_t size) {
-    /* Call the FreeRTOS version of malloc. */
-    return pvPortMalloc(size);
-}
-void free(void *ptr) {
-    /* Call the FreeRTOS version of free. */
-    vPortFree(ptr);
-}
-
-#ifdef __cplusplus
-}
-#endif
+// #ifdef __cplusplus
+// }
+// #endif
 
 /*inline void *operator new(size_t size)
 {
@@ -96,3 +97,4 @@ void operator delete[](void *p) noexcept {
 
     p = NULL;
 }
+#endif 

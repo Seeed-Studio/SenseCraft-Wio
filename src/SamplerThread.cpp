@@ -6,8 +6,8 @@
 #include "sensors/buildin_mic.h"
 #include <vector>
 
-SamplerThread::SamplerThread(SysConfig &config, Message &m1)
-    : Thread("SamplerThread", 256, 1), cfg(config), sensorMail(m1) {
+SamplerThread::SamplerThread(SysConfig &config, UI &ui)
+    : Thread("SamplerThread", 256, 1), cfg(config), display(ui) {
     // start thread when created
     Start();
 }
@@ -40,7 +40,7 @@ void SamplerThread::Run() {
                 //   LOGSS.printf("Sampling %s\n", sensor->get_name());
                 // }
                 // LOGSS.println(sensors.size());
-                sensorMail.Send((void *)&sdata, sizeof(sdata));
+                //sensorMail.Send((void *)&sdata, sizeof(sdata));
                 //deep Copy data into datas vector
                 datas.push_back(new sensor_data(sdata));
             }
@@ -52,7 +52,7 @@ void SamplerThread::Run() {
         }
         datas.clear();
         datas.shrink_to_fit();
-        // Delay(Ticks::MsToTicks(1000));
+        Delay(Ticks::MsToTicks(1000));
         LOGSS.printf("SamplerThread Stacks Free Bytes Remaining %d\r\n", uxTaskGetStackHighWaterMark(GetHandle()));
     }
 }

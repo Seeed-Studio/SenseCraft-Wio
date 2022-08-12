@@ -46,12 +46,12 @@ void setup()
     display_init();
 
     Message *btnMail = new Message(256);
-    Message *sensorMail = new Message(256);
+    // Message *sensorMail = new Message(256);
 
 
     ButtonThread *btn = new ButtonThread(*btnMail);
-    UI *u = new UI(tft,spr, *cfg, *btnMail, *sensorMail);
-    SamplerThread *sampler = new SamplerThread(*cfg,*sensorMail);
+    UI *u = new UI(tft,spr, *cfg, *btnMail);
+    SamplerThread *sampler = new SamplerThread(*cfg, *u);
 }
 
 //Get the size of memory left in the system in freertos.

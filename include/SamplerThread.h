@@ -4,6 +4,7 @@
 #include "SysConfig.h"
 #include "WiFiThread.h"
 #include "LoRaThread.h"
+#include "ui.h"
 #include "sensor.h"
 #include "utils.h"
 #include <Arduino.h>
@@ -13,7 +14,7 @@ using namespace cpp_freertos;
 
 class SamplerThread : public Thread {
   public:
-    SamplerThread(SysConfig &config, Message &m1);
+    SamplerThread(SysConfig &config, UI &ui);
 
   protected:
     virtual void Run();
@@ -25,7 +26,7 @@ class SamplerThread : public Thread {
   private:
     struct sensor_data sdata;
 
-    Message   &sensorMail;
+    UI   &display;
     SysConfig &cfg;
 
   private:

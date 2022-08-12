@@ -32,5 +32,7 @@ void ButtonThread::Run()
                 }
             }
         }
+        // LOGSS.printf("ButtonThread Free Bytes Remaining %d\r\n",
+        //              uxTaskGetStackHighWaterMark(GetHandle()));
     }
 }
