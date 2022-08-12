@@ -23,6 +23,7 @@ void UI::Run() {
     page.process_select    = 0;
     page.sense_select      = 0;
     page.network_select    = 0;
+    s_data_ready = true;
     init();
 
     while (true) {
@@ -31,7 +32,9 @@ void UI::Run() {
             LOGSS.printf("btn Receive: %d ", nums);
             LOGSS.println(buff[0]);
             keys = buff[0] - 1;
-        }
+        }else 
+            keys = NONE_PRESSED;
+        
 
         // nums = sensorMail.Receive(&sdata, 256, 0);
         // if (nums > 0) {
@@ -43,12 +46,26 @@ void UI::Run() {
             // LOGSS.printf("sensor Receive: %s %d %d\r\n", sdata.name, sdata.id, sdata.size);
             // LOGSS.printf("UI thread free memory: %d\r", xPortGetFreeHeapSize());
         //}
-        LOGSS.printf("UI Stacks Free Bytes Remaining %d\r\n",
-                     uxTaskGetStackHighWaterMark(GetHandle()));
+        // LOGSS.printf("UI Stacks Free Bytes Remaining %d\r\n",
+        //              uxTaskGetStackHighWaterMark(GetHandle()));
         PageMangent(keys);
-        Delay(Ticks::MsToTicks(1000));
+        //主要是等数据，不然会Sensor会get不到数据，无法切换页面，未来需要加锁
+        Delay(Ticks::MsToTicks(50));
     }
 }
+
+// Store the received sensor data in the UI class
+void UI::UIPushData(std::vector<sensor_data *> d) {
+    // A loop to deep copy param of d vector into new lora_data queue
+    // by Iterative method
+    if (s_data_ready) {
+        for (auto data : d)
+            s_data.push_back(*data);
+        s_data_ready = false;
+    }
+}
+
+
 
 #define PIXEL 4 // Width of one letter
 #define LEFT_SIDE 70
@@ -56,13 +73,12 @@ void UI::Run() {
 const static unsigned int FONT_ROW_HEIGHT = 22; // The height of a letter
 
 void UI::PageMangent(uint8_t key) {
-    if (key < 3 && key != page.mainstate) {
+    if (key < 3)
+    {
         tft.fillScreen(TFT_BLACK);
         page.mainstate = (page_state)key;
-        page.key = NONE;
-    }else
-        page.key = key;
-
+        key = NONE_PRESSED;
+    }
     switch (page.mainstate) {
     case NETWORKPAGE:
         (this->*network[0])(0);
@@ -71,7 +87,7 @@ void UI::PageMangent(uint8_t key) {
         (this->*process[0])(page.key);
         break;
     case SENSEPAGE:
-        SensePageManager(page.key);
+        SensePageManager(key);
         break;
     }
 }
@@ -375,9 +391,48 @@ bool UI::Process_1(uint8_t key) {
     Status1Display(0);
     return false;
 }
+#define countof(a) (sizeof(a) / sizeof(*(a)))
 
 void UI::SensePageManager(uint8_t key) {
-    (this->*sense[0])(0);
+    
+    if(s_data.size() == 0){
+        s_data_ready = true;
+        return;
+    }
+
+
+    switch (key) {
+        case LEFT_PRESSED:
+            s_sense.sense_select--;
+            if (s_sense.sense_select < 0) {
+                s_sense.sense_select = 0;
+            }
+            break;
+        case RIGHT_PRESSED:
+            s_sense.sense_select++;
+            if (s_sense.sense_select > s_data.size() - 1) {
+                s_sense.sense_select = s_data.size() - 1;
+            }
+            break;
+        case UP_PRESSED:
+            s_sense.current_page--;
+            if (s_sense.current_page < 0) {
+                s_sense.current_page = 0;
+            }
+            break;
+        case SELECT_PRESSED:
+            s_sense.current_page++;
+            if (s_sense.current_page > countof(sense) - 1) {
+                s_sense.current_page = countof(sense) - 1;
+            }
+            break;
+    }
+
+    // LOGSS.printf("\r\n>>>>>UI Sensor number: %d  %d  %d\r\n", s_sense.sense_select , s_data.size(), key);
+    (this->*sense[s_sense.current_page])(s_sense.sense_select);
+    s_data.clear();
+    // s_data.shrink_to_fit();
+    s_data_ready = true;
 }
 
 void UI::SensorSubTitle(String value)
@@ -436,66 +491,78 @@ void UI::SensorPageState(int pages_num, int page_select)
     spr.deleteSprite();
 }
 
-bool UI::Sensor_1(uint8_t) {
+bool UI::Sensor_1(uint8_t select) {
+    uint8_t sense_display_num = 0;
+    uint8_t sense_window = 0;
 
-    struct _data_base
-    {
-        String value;
-        String type;
-    };
-
-    struct _STRUCT_INPUT_DATA
-    {
-        _data_base data[4];
-    } GG;
-
-    GG.data[0].value = "A";
-    GG.data[0].type = "'C";
-
-    GG.data[1].value = "AA";
-    GG.data[1].type = "kg";
-
-    GG.data[2].value = "AAA";
-    GG.data[2].type = "cd";
-
-    GG.data[3].value = "AAAA";
-    GG.data[3].type = "m/s";
+    sense_window = select / 3;
 
     TitleDisplay(0);
-    SensorSubTitle("Sensor Data");
+    //Display the sensor name
+    //注释掉，第一个框不闪
+    SensorSubTitle(s_data[select].name);
+    // 方案一：
+    //1，遍历所有数据
+    //2, 一个测量值一个框
+    //3，把框显示在不同的位置
+    #if 0
+    for(int si = 0; si < s_data.size(); si++){
+        spr.createSprite(90, 100);
+        //高亮选择的数据
+        if(si == select){
+            spr.fillRect(0, 0, 90, 100, tft.color565(0, 139, 0));
+        }
+        spr.setFreeFont(FSS9);
+        spr.setTextColor(TFT_WHITE);
 
-    spr.createSprite(90, 100);
-    //
-    spr.fillRect(0, 0, 90, 100, tft.color565(0, 139, 0));
-    spr.setFreeFont(FSS9);
-    spr.setTextColor(TFT_WHITE);
+        //一次只显示4个数据，每个测量数据4个byte
+        if (s_data[si].size  > 4*4)
+            sense_display_num = 4*4;
+        else
+            sense_display_num = s_data[si].size;
+        
+        //把框分成4行，每行显示一个数据
+        // for(int i = 0; i < sense_display_num; i+=4){
+        //     spr.drawString(String(static_cast<uint16_t>(((int32_t *)s_data[si].data)[i])), 2, 5 + 24 * i/4, 2);
+        //     //todo，数据单位，暂时显示为空
+        //     spr.drawString("  ", 68, 5 + 24 * i, 2);
+        // }
 
-    short int _SIZE;
-
-    for (int i = 0; i < 4; i++)
-    {   //last parameter is the size of the font
-        spr.drawString(GG.data[i].value, 2, 5 + 24 * i, 4);
-        spr.drawString(GG.data[i].type, 68, 5 + 24 * i, 2);
+        //根据数据的index，显示不同的位置，一个页面只能显示三个，页面不够补+号。
+        spr.pushSprite(20 + (si%3)*100, 90);
+        spr.deleteSprite();
     }
+    #endif 
+    //方案二：
+    //只显示select-1, select和select+1的数据
+    //处理好特殊情况，第一个和最后一个
+    for(int si = 0; si < 3; si++){
+        spr.createSprite(90, 100);
+        //高亮选择的数据
+        if(si == 1){
+            spr.fillRect(0, 0, 90, 100, tft.color565(0, 139, 0));
+        }
+        spr.setFreeFont(FSS9);
+        spr.setTextColor(TFT_WHITE);
 
-    switch (0)
-    {
-    case 0:
-        spr.pushSprite(20, 90);
-        break;
-    case 1:
-        spr.pushSprite(120, 90);
-        break;
-    case 2:
-        spr.pushSprite(220, 90);
-        break;
-    default:
-        break;
+        //一次只显示4个数据，每个测量数据4个byte
+        if (s_data[select - 1 + si].size  > 4*4)
+            sense_display_num = 4*4;
+        else
+            sense_display_num = s_data[select - 1 + si].size;
+        
+        //把框分成4行，每行显示一个数据
+        for(int i = 0; i < sense_display_num; i+=4){
+            spr.drawString(String(static_cast<uint16_t>(((int32_t *)s_data[select - 1 + si].data)[i])), 2, 5 + 24 * i/4, 2);
+            //todo，数据单位，暂时显示为空
+            spr.drawString("  ", 68, 5 + 24 * i, 2);
+        }
+
+        //根据数据的index，显示不同的位置，一个页面只能显示三个，页面不够补+号。
+        spr.pushSprite(20 + si*100, 90);
+        spr.deleteSprite();
     }
-
-    spr.deleteSprite();
-
-    SensorADDDisplay(1);
+    //SensorADDDisplay(1);
     SensorPageState(6,3);
     // TOdo
 

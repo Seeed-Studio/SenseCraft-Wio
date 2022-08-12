@@ -23,12 +23,7 @@ enum page_state{
     SENSEPAGE
 };
 
-enum select_state {
-    LEFT,
-    RIGHT,
-    SELECT,
-    NONE,
-};
+#define NONE_PRESSED 0x0F
 
 //define a struct with keyboard statemachine
 struct PagesStateMachine
@@ -39,6 +34,13 @@ struct PagesStateMachine
     int8_t  process_select;
     int8_t  network_select;
 };
+struct SenseState{
+    int8_t current_page;
+    int8_t sense_window;
+    int8_t sense_select;
+};
+
+typedef bool (*page_t)(uint8_t key);
 
 class UI : public Thread
 {
@@ -53,6 +55,9 @@ protected:
     // void sense_2();
     // void sense_3();
 
+public:
+    void UIPushData(std::vector<sensor_data *> d);
+
 private:
     TFT_eSPI &tft;
     TFT_eSprite &spr;
@@ -60,6 +65,9 @@ private:
     Message &btnMail;
 
     SysConfig &cfg;
+
+    std::vector<sensor_data> s_data;
+    bool                     s_data_ready = true;
 
 
 
@@ -78,6 +86,8 @@ private:
     bool Process_1(uint8_t keys);
     void ProcessSubTitle(uint8_t t);
 
+    struct SenseState s_sense = {0,0};
+
     void SensePageManager(uint8_t keys);
     bool Sensor_1(uint8_t keys);
     void SensorADDDisplay(uint8_t chose);
@@ -85,10 +95,13 @@ private:
     void SensorSubTitle(String value);
 
 
+    typedef bool (UI::*page_t)(uint8_t key);
 
-    bool (UI::*network[3])(uint8_t key) = {&UI::Network_1};
-    bool (UI::*process[3])(uint8_t key) = {&UI::Process_1};
-    bool (UI::*sense[3])(uint8_t key) = {&UI::Sensor_1};
+
+
+    page_t network[3 ] = {&UI::Network_1};
+    page_t process[3 ] = {&UI::Process_1};
+    page_t sense[1]= {&UI::Sensor_1};
 
     void PageMangent(uint8_t key);
 
