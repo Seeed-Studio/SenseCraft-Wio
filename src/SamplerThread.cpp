@@ -45,10 +45,14 @@ void SamplerThread::Run() {
                 datas.push_back(new sensor_data(sdata));
             }
             // LOGSS.println("SamplerThread");
-            Delay(Ticks::MsToTicks(100));
         }
         lora->LoRaPushData(datas);
+        for (auto data : datas) {
+            delete data;
+        }
         datas.clear();
+        datas.shrink_to_fit();
+        // Delay(Ticks::MsToTicks(1000));
         LOGSS.printf("SamplerThread Stacks Free Bytes Remaining %d\r\n", uxTaskGetStackHighWaterMark(GetHandle()));
     }
 }
