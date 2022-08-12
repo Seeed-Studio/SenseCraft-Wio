@@ -41,7 +41,7 @@ bool FakeSensor::read(struct sensor_data *data) {
     data->id     = 0;
     data->name   = name;
     data->status = fake->status;
-    return true;
+    return data->size == 0 ? false : true;
 }
 
 const char *FakeSensor::get_name() {
