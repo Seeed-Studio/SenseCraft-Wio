@@ -2,14 +2,14 @@
 #define __UTILS_H__
 #include <stdint.h>
 
-#define LOGSS Serial
+#define LOGSS Serial1
 enum button_state {
-    SENSE_PRESSED = 1,
-    PROCESS_PRESSED,
     NETWORK_PRESSED,
+    PROCESS_PRESSED,
+    SENSE_PRESSED,
+    LEFT_PRESSED,
     UP_PRESSED,
     DOWN_PRESSED,
-    LEFT_PRESSED,
     RIGHT_PRESSED,
     SELECT_PRESSED,
 };

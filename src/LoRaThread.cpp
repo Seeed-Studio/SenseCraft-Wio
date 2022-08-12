@@ -67,8 +67,8 @@ LoRaThread::LoRaThread(SysConfig &config) : Thread("LoRaThread", 256, 1), cfg(co
 };
 
 void LoRaThread::Init() {
-    Serial1.begin(9600);
-    if (!lorae5->begin(DSKLORAE5_HWSERIAL_CUSTOM, &Serial1)) {
+    Serial3.begin(9600);
+    if (!lorae5->begin(DSKLORAE5_HWSERIAL_CUSTOM, &Serial3)) {
         is_e5_init = false;
         LOGSS.println("LoRa E5 Init Failed");
         return;

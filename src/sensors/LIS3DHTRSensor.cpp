@@ -5,8 +5,8 @@ LIS3DHTRSensor::LIS3DHTRSensor() {
 }
 
 void LIS3DHTRSensor::init() {
-    if (I2CScanner(LIS3DHTR_DEFAULT_ADDRESS, Wire1)) {
-        lis.begin(Wire1);
+    if (I2CScanner(LIS3DHTR_DEFAULT_ADDRESS, Wire)) {
+        lis.begin(Wire);
         lis.setOutputDataRate(LIS3DHTR_DATARATE_25HZ); // Data output rate
         lis.setFullScaleRange(LIS3DHTR_RANGE_2G);
         status = true;
@@ -22,7 +22,7 @@ bool LIS3DHTRSensor::read(struct sensor_data *sdata) {
     sdata->name = name;
 
     if (status) {
-        if (!I2CScanner(LIS3DHTR_DEFAULT_ADDRESS, Wire1)) {
+        if (!I2CScanner(LIS3DHTR_DEFAULT_ADDRESS, Wire)) {
             status = false;
             return false;
         }
