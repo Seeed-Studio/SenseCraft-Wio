@@ -27,6 +27,7 @@ enum sensor_type {
     BUILDIN_LIGHT = 1,
     BUILDIN_MIC,
     LIS3DHTRSENSOR,
+    GROVEVISIONAI,
 };
 
 enum lora_freq {
