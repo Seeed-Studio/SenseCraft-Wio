@@ -50,6 +50,12 @@
         "iostream": "cpp",
         "istream": "cpp",
         "sstream": "cpp",
-        "queue": "cpp"
+        "queue": "cpp",
+        "bitset": "cpp",
+        "complex": "cpp",
+        "map": "cpp",
+        "set": "cpp",
+        "iomanip": "cpp",
+        "valarray": "cpp"
     }
 }
