@@ -1,4 +1,6 @@
 
+// /Users/baozhu/Library/Arduino15/packages/Seeeduino/tools/bossac/1.8.0-48-gb176eee/bossac -i -d --port=cu.usbmodem101 -U -i --offset=0x4000 -w -v .pio/build/seeed_wio_terminal/firmware.bin -R 
+
 #include "Seeed_Arduino_ooFreeRTOS.h"
 #include <Arduino.h>
 #include <SPI.h>
@@ -20,6 +22,100 @@ TFT_eSPI tft;
 TFT_eSprite spr = TFT_eSprite(&tft); 
 
 
+struct sensor_data1 {
+     uint8_t   data[10];
+    unsigned char size;
+    uint8_t       id;
+    bool          status; // 0: normal, 1: error
+};
+
+
+class testThread : public Thread {
+  
+public:
+  
+  testThread(int i, int delayInSeconds)
+    : Thread( 256, 1), 
+      Id (i), 
+      DelayInSeconds(delayInSeconds)
+  {
+    Start();
+  };
+  sensor_data1 *data = new sensor_data1;
+  std::vector<sensor_data *> datas;
+protected:
+
+  virtual void Run() {
+    while (true) {
+    //   data->data = testdata;
+      memcpy(data->data, testdata, 10);
+    //  data->name = "hello";
+    //   datas.push_back(data);
+     // LOGSS.printf("Blink Therad: %d\n\r", Id);
+      digitalWrite(LED_BUILTIN, HIGH);   // turn the LED on (HIGH is the voltage level)
+      Delay(Ticks::SecondsToTicks(DelayInSeconds));
+      digitalWrite(LED_BUILTIN, LOW);    // turn the LED off by making the voltage LOW
+      Delay(Ticks::SecondsToTicks(DelayInSeconds)); 
+    //   datas.push_back(new sensor_data(*data));
+    //   for(auto d : datas) {
+    //     LOGSS.printf("data name: %s\n\r", d->name);
+    //     delete d;
+    //   }     
+
+    //   datas.clear();
+    //    datas.shrink_to_fit();
+    }
+  };
+
+private:
+  int Id;
+  int DelayInSeconds;
+  //10 random data
+  uint8_t testdata[10] = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A};
+};
+
+#if 1
+class test1Thread : public Thread {
+  
+public:
+  
+  test1Thread(int i, int delayInms)
+    : Thread( 256, 1), 
+      Id (i), 
+      DelayInSeconds(delayInms)
+  {
+    Start();
+  };
+  sensor_data *data = new sensor_data;
+protected:
+
+  virtual void Run() {
+    while (true) {
+      std::vector<sensor_data *> datas;
+      data->data = testdata;
+      data->name = "hello";
+    //   datas.push_back(data);
+
+      Delay(Ticks::MsToTicks(DelayInSeconds)); 
+      datas.push_back(new sensor_data(*data));
+      for(auto d : datas) {
+       // LOGSS.printf("data name: %s\n\r", d->name);
+        delete d;
+      }     
+      datas.clear();
+      datas.shrink_to_fit();
+    }
+  };
+
+private:
+  int Id;
+  int DelayInSeconds;
+  //10 random data
+  uint8_t testdata[10] = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A};
+};
+
+#endif
+
 
 void display_init()            // Display initialization, black background rotation
 {
@@ -31,7 +127,17 @@ void display_init()            // Display initialization, black background rotat
 
 void setup()
 {
-
+    LOGSS.begin(115200);
+    #ifdef CM_DEBUG
+    cm_backtrace_init("Seeed K1100 dev kit", HARDWARE_VERSION, SOFTWARE_VERSION);
+    #endif
+    pinMode(LED_BUILTIN, OUTPUT);
+    testThread *test = new testThread(1, 1);
+     test1Thread *test1 = new test1Thread(2, 3);
+    test1Thread *test2 = new test1Thread(3, 1);
+    test1Thread *test3 = new test1Thread(4, 1);
+    test1Thread *test4 = new test1Thread(5, 3);
+#if 0
     SysConfig *cfg = new SysConfig(); 
     cfg->init();
     #ifdef CM_DEBUG
@@ -52,6 +158,7 @@ void setup()
     ButtonThread *btn = new ButtonThread(*btnMail);
     UI *u = new UI(tft,spr, *cfg, *btnMail);
     SamplerThread *sampler = new SamplerThread(*cfg, *u);
+    #endif
 }
 
 //Get the size of memory left in the system in freertos.
