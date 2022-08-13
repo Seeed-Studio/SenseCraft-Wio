@@ -1,4 +1,7 @@
 #include "ui.h"
+#include "qrcode.h"
+
+#define countof(a) (sizeof(a) / sizeof(*(a)))
 
 // inline function, 4byte uint8_t to float
 void UI::uint8_to_float(uint8_t *data, float *destination) {
@@ -8,7 +11,7 @@ void UI::uint8_to_float(uint8_t *data, float *destination) {
 }
 
 UI::UI(TFT_eSPI &lcd, TFT_eSprite &display, SysConfig &config, Message &m1)
-    : Thread("UIThread", 1024, 1), tft(lcd), spr(display), cfg(config), btnMail(m1) {
+    : Thread("UIThread", 2048, 1), tft(lcd), spr(display), cfg(config), btnMail(m1) {
     Start();
 };
 
@@ -45,8 +48,8 @@ void UI::Run() {
         // LOGSS.printf("sensor Receive: %s %d %d\r\n", sdata.name, sdata.id, sdata.size);
         // LOGSS.printf("UI thread free memory: %d\r", xPortGetFreeHeapSize());
         //}
-        // LOGSS.printf("UI Stacks Free Bytes Remaining %d\r\n",
-        //              uxTaskGetStackHighWaterMark(GetHandle()));
+        LOGSS.printf("UI Stacks Free Bytes Remaining %d\r\n",
+                     uxTaskGetStackHighWaterMark(GetHandle()));
         PageMangent(keys);
         //主要是等数据，不然会Sensor会get不到数据，无法切换页面，未来需要加锁
         Delay(Ticks::MsToTicks(50));
@@ -80,7 +83,7 @@ void UI::PageMangent(uint8_t key) {
         (this->*network[0])(0);
         break;
     case PROCESSPAGE:
-        (this->*process[0])(page.key);
+        ProcessPageManager(key);
         break;
     case SENSEPAGE:
         SensePageManager(key);
@@ -292,6 +295,43 @@ bool UI::Network_1(uint8_t keys) {
     return false;
 }
 
+void UI::ProcessPageManager(uint8_t key) {
+    switch (key) {
+    case LEFT_PRESSED:
+        p_state.s_select--;
+        if (p_state.s_select < 0) {
+            p_state.s_select = 0;
+        }
+        tft.fillScreen(TFT_BLACK);
+        break;
+    case RIGHT_PRESSED:
+        p_state.s_select++;
+        // 只有两个选择
+        if (p_state.s_select > 2) {
+            p_state.s_select = 2;
+        }
+        tft.fillScreen(TFT_BLACK);
+        break;
+    case UP_PRESSED:
+        p_state.current_page--;
+        if (p_state.current_page < 0) {
+            p_state.current_page = 0;
+        }
+        tft.fillScreen(TFT_BLACK);
+        break;
+    case SELECT_PRESSED:
+        if (p_state.is_next) {
+            p_state.current_page++;
+            if (p_state.current_page > countof(process) - 1) {
+                p_state.current_page = countof(process) - 1;
+            }
+        }
+        tft.fillScreen(TFT_BLACK);
+        break;
+    }
+    p_state.is_next = (this->*process[p_state.current_page])(p_state.s_select);
+}
+
 void UI::ProcessSubTitle(uint8_t t) {
     switch (t) {
     case 0:
@@ -314,23 +354,12 @@ void UI::ProcessSubTitle(uint8_t t) {
     }
 }
 
-bool UI::Process_1(uint8_t key) {
+bool UI::Process_1(uint8_t select) {
     TitleDisplay(1);
-    if (key == LEFT_PRESSED) {
-        page.process_select--;
-        if (page.process_select < 0) {
-            page.process_select = 0;
-        }
-    } else if (key == RIGHT_PRESSED) {
-        page.process_select++;
-        if (page.process_select > 1) {
-            page.process_select = 1;
-        }
-    }
 
-    ProcessSubTitle(page.process_select);
+    ProcessSubTitle(select);
 
-    switch (page.process_select) {
+    switch (select) {
     // Vision AI real-time analysis
     case 0:
         // 270*80 = 21600
@@ -386,13 +415,92 @@ bool UI::Process_1(uint8_t key) {
 
     // toDo: Data Filter
     case 2:
+        p_state.s_select = 1;
         break;
     }
     // toDo: Network status
     Status1Display(0);
-    return false;
+    return true;
 }
-#define countof(a) (sizeof(a) / sizeof(*(a)))
+
+bool UI::Process_2(uint8_t select) {
+    bool is_vision_ai_running = false;
+    TitleDisplay(1);
+    ProcessSubTitle(select);
+    switch (select) {
+    // Vision AI real-time analysis
+    case 0:
+    {
+        // 270*80 = 21600
+        // check all data if vision ai is running
+        for (auto d : s_data)
+            if (d.id == GROVEVISIONAI)
+                is_vision_ai_running = true;
+        if (is_vision_ai_running) {
+            // vision ai is running
+            // todo: display the result
+        } else {
+            // vision ai is not running
+            spr.createSprite(340, 50);
+
+            spr.setFreeFont(FSSB9);
+            spr.setTextColor(TFT_WHITE);
+
+            spr.drawString("Please connect to Vision AI Sensor", 9, 20, GFXFF);
+
+            spr.pushSprite(0, 100);
+            spr.deleteSprite();
+
+            spr.createSprite(340, 50);
+            spr.pushSprite(0, 150);
+            spr.deleteSprite();
+        }
+        break;
+    }
+    // TinyML Example
+    case 1:
+    {
+        spr.createSprite(130, 130);
+        spr.setTextColor(TFT_WHITE);
+
+        double PIXELL = 3;
+
+        spr.fillRect(15, 0, 113, 113, TFT_WHITE);
+        QRCode   qrcode;
+        uint8_t *qrcodeData = (uint8_t *)malloc(qrcode_getBufferSize(5));
+        qrcode_initText(&qrcode, qrcodeData, 5, 0,
+                        "https://wiki.seeedstudio.com/K1100-Getting-Started/#tinyml-section");
+        for (uint8_t y = 0; y < qrcode.size; y++) {
+            // Each horizontal module
+            for (uint8_t x = 0; x < qrcode.size; x++) {
+                if (qrcode_getModule(&qrcode, x, y))
+                    spr.fillRect(x * PIXELL + 15 + 1, y * PIXELL + 1, PIXELL, PIXELL, TFT_BLACK);
+            }
+        }
+
+        free(qrcodeData);
+        spr.pushSprite(20, 80);
+        spr.deleteSprite();
+
+        spr.createSprite(130, 130);
+        spr.setFreeFont(FSS9);
+        // code to view the tutorial
+        spr.drawString("Scan the QR ", 0, 26, GFXFF);
+        spr.drawString("code to view ", 0, 46, GFXFF);
+        spr.drawString("the tutorial ", 0, 66, GFXFF);
+
+        spr.pushSprite(160, 80);
+        spr.deleteSprite();
+        break;
+    }
+    // toDo: Data Filter
+    case 2:
+        p_state.s_select = 1;
+        break;
+    }
+    // toDo: Network status
+    Status1Display(0);
+}
 
 void UI::SensePageManager(uint8_t key) {
 
@@ -403,38 +511,38 @@ void UI::SensePageManager(uint8_t key) {
 
     switch (key) {
     case LEFT_PRESSED:
-        s_sense.sense_select--;
-        if (s_sense.sense_select < 0) {
-            s_sense.sense_select = 0;
+        s_state.s_select--;
+        if (s_state.s_select < 0) {
+            s_state.s_select = 0;
         }
         break;
     case RIGHT_PRESSED:
-        s_sense.sense_select++;
-        if (s_sense.sense_select > s_data.size()) {
-            s_sense.sense_select = s_data.size();
+        s_state.s_select++;
+        if (s_state.s_select > s_data.size()) {
+            s_state.s_select = s_data.size();
         }
         break;
     case UP_PRESSED:
-        s_sense.current_page--;
-        if (s_sense.current_page < 0) {
-            s_sense.current_page = 0;
+        s_state.current_page--;
+        if (s_state.current_page < 0) {
+            s_state.current_page = 0;
         }
         tft.fillScreen(TFT_BLACK);
         break;
     case SELECT_PRESSED:
-        if (s_sense.is_next) {
-            s_sense.current_page++;
-            if (s_sense.current_page > countof(sense) - 1) {
-                s_sense.current_page = countof(sense) - 1;
+        if (s_state.is_next) {
+            s_state.current_page++;
+            if (s_state.current_page > countof(sense) - 1) {
+                s_state.current_page = countof(sense) - 1;
             }
         }
         tft.fillScreen(TFT_BLACK);
         break;
     }
 
-    // LOGSS.printf("\r\n>>>>>UI Sensor number: %d  %d  %d\r\n", s_sense.sense_select ,
+    // LOGSS.printf("\r\n>>>>>UI Sensor number: %d  %d  %d\r\n", s_state.s_select ,
     // s_data.size(), key);
-    s_sense.is_next = (this->*sense[s_sense.current_page])(s_sense.sense_select);
+    s_state.is_next = (this->*sense[s_state.current_page])(s_state.s_select);
     s_data.clear();
     s_data.shrink_to_fit();
     s_data_ready = true;
@@ -554,11 +662,13 @@ bool UI::Sensor_2(uint8_t select) {
     SensorSubTitle(s_data[select].name);
 
     tft.fillRect(18, 78, 24, 90, TFT_WHITE);
+
     if (line_chart_data.size() > LINE_DATA_MAX_SIZE) // keep the old line chart front
     {
         line_chart_data.pop(); // this is used to remove the first read variable
     }
-    line_chart_data.push(random(0, 255));
+
+    line_chart_data.push(((int32_t *)s_data[select].data)[0]);
 
     // 85 * 260 = 22100
     auto content = line_chart(20, 80); //(x,y) where the line graph begins

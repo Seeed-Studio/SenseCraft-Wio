@@ -29,10 +29,10 @@ struct PagesStateMachine {
     int8_t     process_select;
     int8_t     network_select;
 };
-struct SenseState {
+struct State {
     int8_t current_page;
     bool   is_next;
-    int8_t sense_select;
+    int8_t s_select;
 };
 
 typedef bool (*page_t)(uint8_t key);
@@ -71,14 +71,17 @@ class UI : public Thread {
     bool Network_1(uint8_t keys);
     bool NetworkSubtitles(uint8_t keys);
 
-    bool Process_1(uint8_t keys);
-    void ProcessSubTitle(uint8_t t);
+    struct State p_state = {0, true, 0};
+    void ProcessPageManager(uint8_t keys);
+    void ProcessSubTitle(uint8_t select);
+    bool Process_1(uint8_t select);
+    bool Process_2(uint8_t select);
 
-    struct SenseState s_sense = {0, true, 0};
 
+    struct State s_state = {0, true, 0};
     void SensePageManager(uint8_t keys);
-    bool Sensor_1(uint8_t keys);
-    bool Sensor_2(uint8_t keys);
+    bool Sensor_1(uint8_t select);
+    bool Sensor_2(uint8_t select);
     void SensorADDDisplay(uint8_t chose);
     void SensorPageState(int PAGES, int _CHOOSE_PAGE);
     void SensorSubTitle(String value);
@@ -86,7 +89,7 @@ class UI : public Thread {
     typedef bool (UI::*page_t)(uint8_t key);
 
     page_t network[3] = {&UI::Network_1};
-    page_t process[3] = {&UI::Process_1};
+    page_t process[2] = {&UI::Process_1, &UI::Process_2};
     page_t sense[2]   = {&UI::Sensor_1, &UI::Sensor_2};
 
     void PageMangent(uint8_t key);
