@@ -30,6 +30,63 @@ struct sensor_data1 {
 };
 
 
+class testuiThread : public Thread {
+  
+public:
+  
+  testuiThread(int i, int delayInSeconds,TFT_eSPI &lcd, TFT_eSprite &display)
+    : Thread( 1024, 1), 
+      Id (i), 
+      DelayInSeconds(delayInSeconds),
+      tft(lcd), spr(display)
+  {
+    Start();
+  };
+  sensor_data sdata ;
+  std::vector<sensor_data *> datas;
+protected:
+
+  virtual void Run() {
+    while (true) {
+      sdata.data = testdata;
+
+        tft.fillRect(18, 78, 24, 90, TFT_WHITE);
+
+        if (line_chart_data.size() > LINE_DATA_MAX_SIZE) // keep the old line chart front
+        {
+            line_chart_data.pop(); // this is used to remove the first read variable
+        }
+
+        line_chart_data.push(random(0, 10000)); // this is used to add a new variable to the end of the queue
+
+        // 85 * 260 = 22100
+        auto content = line_chart(20, 80); //(x,y) where the line graph begins
+        content.height(85)
+            .width(260)
+            .based_on(0.0)          // Starting point of y-axis, must be a float
+            .show_circle(false)     // drawing a cirle at each point, default is on.
+            .value(line_chart_data) // passing through the data to line graph
+            .max_size(LINE_DATA_MAX_SIZE)
+            .color(TFT_GREEN) // Setting the color for the line
+                            //        .backgroud(tft.color565(0,0,0)) // Setting the color for the
+                            //        backgroud
+            .backgroud(tft.color565(0, 0, 0))
+            .draw(&tft);
+
+    }
+  };
+
+private:
+    TFT_eSPI    &tft;
+    TFT_eSprite &spr;
+    doubles line_chart_data;
+
+  int Id;
+  int DelayInSeconds;
+  //10 random data
+  uint8_t testdata[10] = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A};
+};
+
 class testThread : public Thread {
   
 public:
@@ -41,14 +98,14 @@ public:
   {
     Start();
   };
-  sensor_data1 *data = new sensor_data1;
+  sensor_data sdata ;
   std::vector<sensor_data *> datas;
 protected:
 
   virtual void Run() {
     while (true) {
-    //   data->data = testdata;
-      memcpy(data->data, testdata, 10);
+      sdata.data = testdata;
+    //   memcpy(data->data, testdata, 10);
     //  data->name = "hello";
     //   datas.push_back(data);
      // LOGSS.printf("Blink Therad: %d\n\r", Id);
@@ -86,18 +143,18 @@ public:
   {
     Start();
   };
-  sensor_data *data = new sensor_data;
+  sensor_data sdata ;
 protected:
 
   virtual void Run() {
     while (true) {
       std::vector<sensor_data *> datas;
-      data->data = testdata;
-      data->name = "hello";
+      sdata.data = testdata;
+      sdata.name = "hello";
     //   datas.push_back(data);
 
       Delay(Ticks::MsToTicks(DelayInSeconds)); 
-      datas.push_back(new sensor_data(*data));
+      datas.push_back(new sensor_data(sdata));
       for(auto d : datas) {
        // LOGSS.printf("data name: %s\n\r", d->name);
         delete d;
@@ -128,15 +185,19 @@ void display_init()            // Display initialization, black background rotat
 void setup()
 {
     LOGSS.begin(115200);
+
     #ifdef CM_DEBUG
     cm_backtrace_init("Seeed K1100 dev kit", HARDWARE_VERSION, SOFTWARE_VERSION);
     #endif
     pinMode(LED_BUILTIN, OUTPUT);
     testThread *test = new testThread(1, 1);
-     test1Thread *test1 = new test1Thread(2, 3);
+    test1Thread *test1 = new test1Thread(2, 3);
     test1Thread *test2 = new test1Thread(3, 1);
     test1Thread *test3 = new test1Thread(4, 1);
     test1Thread *test4 = new test1Thread(5, 3);
+    display_init();
+    testuiThread *testui = new testuiThread(1, 1, tft, spr);
+    
 #if 0
     SysConfig *cfg = new SysConfig(); 
     cfg->init();
