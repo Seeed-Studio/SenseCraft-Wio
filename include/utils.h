@@ -27,6 +27,10 @@ enum sensor_type {
     BUILDIN_LIGHT = 1,
     BUILDIN_MIC,
     LIS3DHTRSENSOR,
+    SHT40SENSOR,
+    SGP30SENSOR,
+    SoilMoisture,
+    VISIONAISENSOR,
 };
 
 enum lora_freq {

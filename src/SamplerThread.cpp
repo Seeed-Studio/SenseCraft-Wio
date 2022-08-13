@@ -4,6 +4,10 @@
 #include "sensors/LIS3DHTRSensor.h"
 #include "sensors/buildin_light_sensor.h"
 #include "sensors/buildin_mic.h"
+#include "sensors/SHT40Sensor.h"
+#include "sensors/SGP30Sensor.h"
+#include "sensors/SoilSensor.h"
+#include "sensors/VisionAISensor.h"
 #include <vector>
 
 SamplerThread::SamplerThread(SysConfig &config, Message &m1)
@@ -22,7 +26,10 @@ void SamplerThread::Run() {
     sensors.push_back(new LIS3DHTRSensor());
     sensors.push_back(new FakeSensor());
 
-   
+    sensors.push_back(new SHT40Sensor());
+    sensors.push_back(new SGP30Sensor());
+    sensors.push_back(new SoilMoistureSensor());
+    sensors.push_back(new VisionSensor());
 
     for (auto sensor : sensors) {
         sensor->init();
