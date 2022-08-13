@@ -69,7 +69,7 @@ LoRaThread::LoRaThread(SysConfig &config) : Thread("LoRaThread", 256, 1), cfg(co
 void LoRaThread::Init() {
     Serial3.begin(9600);
     if (!lorae5->begin(DSKLORAE5_HWSERIAL_CUSTOM, &Serial3)) {
-        is_e5_init = false;
+        cfg.is_lorae5_init  = false;
         LOGSS.println("LoRa E5 Init Failed");
         return;
     }
@@ -82,13 +82,13 @@ void LoRaThread::Init() {
     // Setup the LoRaWan Credentials
     if (!lorae5->setup_sensecap(frequency, false,
                                 true)) { // Setup the LoRaWAN stack with the stored credentials
-        is_e5_init = false;
+        cfg.is_lorae5_init = false;
         LOGSS.println("LoRa E5 Setup Sensecap Failed");
         return;
     }
 
     LOGSS.println("LoRa E5 Init OK");
-    is_e5_init = true;
+    cfg.is_lorae5_init = true;
 
     // join network immediately
     Join();
@@ -96,11 +96,11 @@ void LoRaThread::Init() {
 
 void LoRaThread::Join() {
     if (!lorae5->join_sync()) {
-        is_e5_join = false;
+        cfg.is_lorae5_join = false;
         LOGSS.println("LoRa E5 Join Failed");
     } else {
         LOGSS.println("LoRa E5 Join Success");
-        is_e5_join = true;
+        cfg.is_lorae5_join = true;
         // Send Device Info first lorawan message
         SendDeviceInfo();
     }
@@ -114,7 +114,7 @@ bool LoRaThread::SendData(uint8_t *data, uint8_t len, uint8_t ver) {
                                      &downlink_rxPort, LORAE5_SF7, LORAE5_14DB, LORAE5_RETRY_3)) {
         Delay(Ticks::SecondsToTicks(10));
         if (retry++ > 10) {
-            is_e5_join = false;
+            cfg.is_lorae5_join = false;
             ret        = false;
             break;
         }
@@ -203,7 +203,7 @@ bool LoRaThread::SendGroveSensorData() {
     }
     return ret;
 }
-#if 0
+#if 1
 void LoRaThread::Run() {
     // init the library, search the LORAE5 over the different WIO port available
     Serial.begin(9600);
@@ -212,14 +212,14 @@ void LoRaThread::Run() {
     Init();
     while (true) {
         LOGSS.printf("LoRa Sensor number: %d  %d \r\n", lora_data.size(), lora_data.capacity());
-        if (!is_e5_init) {
+        if (!cfg.is_lorae5_init) {
             // try to init the LoRa E5 5s after the last failure
             Delay(Ticks::SecondsToTicks(5));
             Init();
             continue;
         }
 
-        if (!is_e5_join) {
+        if (!cfg.is_lorae5_join) {
             // try to join the LoRa E5 5 minutes  after the last failure
             Delay(Ticks::SecondsToTicks(30));
             Join();
@@ -244,13 +244,14 @@ void LoRaThread::Run() {
         Delay(Ticks::SecondsToTicks(60 * 5));
     }
 }
-#endif
+#elif
 
 void LoRaThread::Run() {
     while (true) {
         Delay(Ticks::SecondsToTicks(60 * 5));
     }
 }
+#endif
 
 // Store the received sensor data into a queue of length 30.
 void LoRaThread::LoRaPushData(std::vector<sensor_data *> d) {

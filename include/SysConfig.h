@@ -18,6 +18,9 @@ public:
 	String ssid;
 	String password;
 	String lora_frequency;
+	bool  is_lorae5_init = false;
+	bool  is_lorae5_join = false;
+	bool  wificonnected = false;
 
 	static SemaphoreHandle_t lock;
 

@@ -16,6 +16,8 @@ void WiFiThread::Run() {
     char *filename     = (char *)"config.txt";
     char *param        = (char *)"abcdeddfasdf";
     cfg.WriteConfigParam(filename, prefix_param, param);
+    if(WiFi.status() == WL_CONNECTED)
+        cfg.wificonnected = true;
     while (true) {
         Delay(Ticks::MsToTicks(1000));
         // LOGSS.print("SSID: ");

@@ -39,9 +39,6 @@ class LoRaThread : public Thread {
     uint8_t        downlink_rxPort;
     uint8_t        frequency;
 
-    bool is_e5_init = false;
-    bool is_e5_join = false;
-
     std::vector<sensor_data> lora_data;
     bool                     lora_data_ready = true;
 };
