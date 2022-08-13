@@ -21,6 +21,10 @@ enum page_state { NETWORKPAGE, PROCESSPAGE, SENSEPAGE };
 
 #define NONE_PRESSED 0x0F
 
+#define FIRST_PAGE 0
+#define LORA_PAGE 0
+#define WIFI_PAGE 1
+
 // define a struct with keyboard statemachine
 struct PagesStateMachine {
     page_state mainstate;
@@ -35,6 +39,19 @@ struct State {
     int8_t s_select;
 };
 
+struct NetworkState {
+    int8_t       current_network;
+    struct State nw_state; // network wifi state
+    struct State nl_state; // network lora state
+};
+
+struct LoRaBandInfo {
+    char  *type;
+    char  *frequency;
+    char  *country;
+    uint8_t band;
+};
+
 typedef bool (*page_t)(uint8_t key);
 
 class UI : public Thread {
@@ -44,7 +61,6 @@ class UI : public Thread {
 
   protected:
     virtual void Run();
-
 
   public:
     void UIPushData(std::vector<sensor_data *> d);
@@ -68,27 +84,45 @@ class UI : public Thread {
     void TitleDisplay(uint8_t t);
     void Status1Display(uint8_t status);
     void Status2Display(uint8_t status);
-    bool Network_1(uint8_t keys);
-    bool NetworkSubtitles(uint8_t keys);
+
+    void StatusMachine(struct State *ui_state, uint8_t key);
+
+    struct LoRaBandInfo lora_band_info[3] = {
+        {"US", "915", "North America", 0},
+        {"EU", "868", "European", 1},
+        {"AU", "915", "Australia", 2},
+    };
+
+    struct NetworkState n_state = {0, {0, false, 0}, {0, false, 0}};
+    bool                NetworkPageManager(uint8_t keys);
+    bool                Network_1(uint8_t select);
+    bool                Network_2_0(uint8_t select); // lora
+    bool                Network_2_1(uint8_t select); // wifi
+    bool                Network_3_0(uint8_t select); // lora
+    bool                Network_3_1(uint8_t select); // wifi
+    bool                Network_4_0(uint8_t select); // lora
+    bool                NetworkSubtitles(uint8_t keys);
+    void NetworkLoRaBandSelect(uint8_t location, struct LoRaBandInfo lbi, uint8_t select);
 
     struct State p_state = {0, true, 0};
-    void ProcessPageManager(uint8_t keys);
-    void ProcessSubTitle(uint8_t select);
-    bool Process_1(uint8_t select);
-    bool Process_2(uint8_t select);
-
+    void         ProcessPageManager(uint8_t keys);
+    void         ProcessSubTitle(uint8_t select);
+    bool         Process_1(uint8_t select);
+    bool         Process_2(uint8_t select);
 
     struct State s_state = {0, true, 0};
-    void SensePageManager(uint8_t keys);
-    bool Sensor_1(uint8_t select);
-    bool Sensor_2(uint8_t select);
-    void SensorADDDisplay(uint8_t chose);
-    void SensorPageState(int PAGES, int _CHOOSE_PAGE);
-    void SensorSubTitle(String value);
+    void         SensePageManager(uint8_t keys);
+    bool         Sensor_1(uint8_t select);
+    bool         Sensor_2(uint8_t select);
+    void         SensorADDDisplay(uint8_t chose);
+    void         SensorPageState(int PAGES, int _CHOOSE_PAGE);
+    void         SensorSubTitle(String value);
 
     typedef bool (UI::*page_t)(uint8_t key);
 
-    page_t network[3] = {&UI::Network_1};
+    page_t l_network[4] = {&UI::Network_1, &UI::Network_2_0, &UI::Network_3_0, &UI::Network_4_0};
+    page_t w_network[2] = {&UI::Network_1, &UI::Network_2_1};
+
     page_t process[2] = {&UI::Process_1, &UI::Process_2};
     page_t sense[2]   = {&UI::Sensor_1, &UI::Sensor_2};
 

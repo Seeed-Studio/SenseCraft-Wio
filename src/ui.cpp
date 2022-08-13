@@ -80,7 +80,7 @@ void UI::PageMangent(uint8_t key) {
     }
     switch (page.mainstate) {
     case NETWORKPAGE:
-        (this->*network[0])(0);
+        NetworkPageManager(key);
         break;
     case PROCESSPAGE:
         ProcessPageManager(key);
@@ -225,11 +225,132 @@ bool UI::NetworkSubtitles(uint8_t keys) {
     }
 }
 
-bool UI::Network_1(uint8_t keys) {
-    TitleDisplay(2);
-    NetworkSubtitles(keys);
+//todo: 未启用，待完善
+void UI::StatusMachine(struct State *ui_state, uint8_t key) {
+    switch (key) {
+    case LEFT_PRESSED:
+        ui_state->s_select--;
+        if (ui_state->s_select < 0) {
+            ui_state->s_select = 0;
+        }
+        tft.fillScreen(TFT_BLACK);
+        break;
+    case RIGHT_PRESSED:
+        ui_state->s_select++;
+        // 只有两个选择
+        if (ui_state->s_select > 2) {
+            ui_state->s_select = 2;
+        }
+        tft.fillScreen(TFT_BLACK);
+        break;
+    case UP_PRESSED:
+        ui_state->current_page--;
+        if (ui_state->current_page < 0) {
+            ui_state->current_page = 0;
+        }
+        tft.fillScreen(TFT_BLACK);
+        break;
+    case SELECT_PRESSED:
+        if (ui_state->is_next) {
+            ui_state->current_page++;
+            if (ui_state->current_page > countof(process) - 1) {
+                ui_state->current_page = countof(process) - 1;
+            }
+        }
+        tft.fillScreen(TFT_BLACK);
+        break;
+    }
+}
 
+
+bool UI::NetworkPageManager(uint8_t keys) {
     switch (keys) {
+    case LEFT_PRESSED:
+        if (n_state.nl_state.current_page == FIRST_PAGE && n_state.nw_state.current_page == FIRST_PAGE) {
+            n_state.current_network = LORA_PAGE;
+        }
+
+        if (n_state.current_network == LORA_PAGE) {
+            n_state.nl_state.s_select--;
+            if (n_state.nl_state.s_select < 0) {
+                n_state.nl_state.s_select = 0;
+            }
+        } else { // WiFi
+            n_state.nw_state.s_select--;
+            if (n_state.nw_state.s_select < 0) {
+                n_state.nw_state.s_select = 0;
+            }
+        }
+        tft.fillScreen(TFT_BLACK);
+        break;
+    case RIGHT_PRESSED:
+        if (n_state.nl_state.current_page == FIRST_PAGE && n_state.nw_state.current_page == FIRST_PAGE) {
+            n_state.current_network = WIFI_PAGE;
+        }
+
+        if (n_state.current_network == LORA_PAGE) {
+            n_state.nl_state.s_select++;
+            if (n_state.nl_state.s_select > sizeof(lora_band_info) / sizeof(lora_band_info[0]) - 1) {
+                n_state.nl_state.s_select = sizeof(lora_band_info) / sizeof(lora_band_info[0]) - 1;
+            }
+        } else { // WiFi
+            n_state.nw_state.s_select++;
+            if (n_state.nw_state.s_select > 1) {
+                n_state.nw_state.s_select = 1;
+            }
+        }
+        tft.fillScreen(TFT_BLACK);
+        break;
+    case UP_PRESSED:
+        if (n_state.current_network == LORA_PAGE) {
+            n_state.nl_state.current_page--;
+            if (n_state.nl_state.current_page < 0) {
+                n_state.nl_state.current_page = 0;
+            }
+        } else {// WiFi
+            n_state.nw_state.current_page--;
+            if (n_state.nw_state.current_page < 0) {
+                n_state.nw_state.current_page = 0;
+            }
+        }
+        tft.fillScreen(TFT_BLACK);
+        break;
+    case SELECT_PRESSED:
+        if (n_state.current_network == LORA_PAGE) {
+            if (n_state.nl_state.is_next) {
+                n_state.nl_state.current_page++;
+                if (n_state.nl_state.current_page > countof(l_network) - 1) {
+                    n_state.nl_state.current_page = countof(l_network) - 1;
+                }
+            }
+        } else { // WiFi
+            if (n_state.nw_state.is_next) {
+                n_state.nw_state.current_page++;
+                if (n_state.nw_state.current_page > countof(w_network) - 1) {
+                    n_state.nw_state.current_page = countof(w_network) - 1;
+                }
+            }
+        }
+        tft.fillScreen(TFT_BLACK);
+        break;
+    }
+
+    if (n_state.current_network == 0)
+        n_state.nl_state.is_next =
+            (this->*l_network[n_state.nl_state.current_page])(n_state.nl_state.s_select);
+    else
+        n_state.nw_state.is_next =
+            (this->*w_network[n_state.nw_state.current_page])(n_state.nw_state.s_select);
+    s_data.clear();
+    s_data.shrink_to_fit();
+    s_data_ready = true;
+}
+
+bool UI::Network_1(uint8_t select) {
+    TitleDisplay(2);
+    NetworkSubtitles(n_state.current_network);
+
+    switch (n_state.current_network) {
         // LoRa
     case 0:
         spr.createSprite(110, 60);
@@ -292,8 +413,223 @@ bool UI::Network_1(uint8_t keys) {
 
     // toDo: Network status
     Status1Display(0);
-    return false;
+    return true;
 }
+// Select Frequency band interface
+void UI::NetworkLoRaBandSelect(uint8_t location, struct LoRaBandInfo lbi, uint8_t select) {
+    spr.createSprite(340, 22);
+    spr.setFreeFont(FSS9);
+    spr.setTextColor(TFT_WHITE);
+    spr.drawString("Select and confirm LoRaWAN frequency band", 25, 4, 2);
+    spr.pushSprite(0, 65);
+    spr.deleteSprite();
+
+    spr.createSprite(290, 70);
+    if (location == select) {
+        spr.fillRect(3, 0, 80, 60, tft.color565(0, 139, 0));
+    }
+    spr.setFreeFont(FSS9);
+    spr.drawString(lbi.type, 5, 0, GFXFF);
+    spr.setFreeFont(FSS24);
+    spr.drawString(lbi.frequency, 5, 20, GFXFF);
+
+    switch (location) {
+    case 0:
+        spr.pushSprite(15, 110);
+        break;
+    case 1:
+        spr.pushSprite(115, 110);
+        break;
+    case 2:
+        spr.pushSprite(215, 110);
+        break;
+    default:;
+    }
+
+    spr.deleteSprite();
+
+    if (location == select) {
+        spr.createSprite(320, 20);
+        spr.setFreeFont(FSS9);
+        spr.setTextColor(TFT_WHITE);
+        spr.drawString(lbi.type, 80, 0, 2);
+        spr.drawString(lbi.frequency, 105, 0, 2);
+        spr.drawString("is for", 135, 0, 2);
+        spr.drawString(lbi.country, 180, 0, 2);
+        spr.pushSprite(0, 195);
+        spr.deleteSprite();
+    }
+}
+
+bool UI::Network_2_0(uint8_t select) {
+    bool ret = true;
+    TitleDisplay(2);
+    // NetworkSubtitles(n_state.current_network);
+
+    if (cfg.is_lorae5_init) {
+        for (uint8_t i = 0; i < 3; i++) {
+            NetworkLoRaBandSelect(i, lora_band_info[i], select);
+        }
+        ret = true;
+    } else {
+        spr.createSprite(260, 55);
+        spr.setTextColor(TFT_WHITE);
+        spr.drawString("Please Connect the Grove - Wio-E5 to", 3, 6, 2);
+        spr.drawString("the Grove Connetor on the bottom right", 3, 20, 2);
+        spr.drawString("side of the screen", 3, 34, 2);
+        // spr.drawString("(which is included in the kit) to bind", 0, 48, 2);
+        // spr.drawString("your device to the cloud.", 0, 62, 2);
+
+        spr.pushSprite(25, 100);
+        spr.deleteSprite();
+        ret = false;
+    }
+    Status1Display(0);
+    return ret;
+}
+bool UI::Network_2_1(uint8_t select) {
+    TitleDisplay(2);
+    NetworkSubtitles(n_state.current_network);
+
+    if(cfg.wificonnected){
+        spr.createSprite(200, 60);
+        spr.fillSprite(TFT_BLACK);
+        spr.setFreeFont(FSS9);
+        spr.setTextColor(TFT_WHITE);
+        spr.drawString("Connected:", 6, 6, 2);
+        spr.drawString("WIFI(Ubidots)", 74, 6, 2);
+
+        spr.drawString("SSID:", 6, 26, 2);
+        spr.drawString(cfg.ssid, 38, 26, 2);
+
+        spr.drawString("Account:", 6, 46, 2);
+        spr.drawString("user1", 60, 46, 2);
+
+        spr.pushSprite(20, 80);
+        spr.deleteSprite();
+
+        spr.createSprite(80, 40);
+        spr.setFreeFont(FSS9);
+        spr.setTextColor(TFT_WHITE);
+        spr.drawString("Signal:", 6 ,15, 2);
+        spr.fillRect(51, 16, 3, 11, tft.color565(0, 139, 0)); // No signal
+        spr.fillRect(57, 13, 3, 14, tft.color565(0, 139, 0));
+        spr.fillRect(63, 10, 3, 17,tft.color565(100, 100, 100));
+        spr.fillRect(69, 7, 3, 20, tft.color565(100, 100, 100));
+        spr.pushSprite(20, 150);
+        spr.deleteSprite();
+
+    }else{
+        spr.createSprite(200, 60);
+        spr.fillSprite(TFT_BLACK);
+        spr.setFreeFont(FSS9);
+        spr.setTextColor(TFT_WHITE);
+        spr.drawString("Waiting for  ", 6, 6, 2);
+        spr.drawString("configuration...", 76, 6, 2);
+        spr.pushSprite(20, 80);
+        spr.deleteSprite();
+    }
+
+    Status1Display(0);
+}
+bool UI::Network_3_0(uint8_t select) {
+    TitleDisplay(2);
+    // NetworkSubtitles(n_state.current_network);
+
+    spr.createSprite(300, 80);
+    spr.setTextColor(TFT_WHITE);
+    spr.drawString("Please download and register an account", 0, 6, 2);
+    spr.drawString("on our SenseCAP Mate APP, then scan the", 0, 20, 2);
+    spr.drawString("QR code on the back of Grove-Wio E5", 0, 34, 2);
+    spr.drawString("(which is included in the kit) to bind", 0, 48, 2);
+    spr.drawString("your device to the cloud.", 0, 62, 2);
+
+    spr.pushSprite(25, 90);
+    spr.deleteSprite();
+    Status1Display(0);
+    return true;
+}
+
+bool UI::Network_4_0(uint8_t select) {
+    TitleDisplay(2);
+    NetworkSubtitles(n_state.current_network);
+    spr.createSprite(188, 95);
+
+    spr.setTextColor(TFT_WHITE);
+    spr.drawString("Connected: LoRa (SenseCAP)", 5, 3.8 * FONT_ROW_HEIGHT - 80, 2);
+    spr.drawString("Signal:", 5, 4.8 * FONT_ROW_HEIGHT - 75, 2);
+    spr.drawString("All data:", 5, 5.8 * FONT_ROW_HEIGHT - 75, 2);
+    spr.drawString("packets", 115, 5.8 * FONT_ROW_HEIGHT - 75, 2);
+    spr.drawString("Success:", 5, 6.8 * FONT_ROW_HEIGHT - 75, 2);
+    spr.drawString("packets", 115, 6.8 * FONT_ROW_HEIGHT - 75, 2);
+
+    spr.setFreeFont(FSSB9);
+    spr.setTextColor(tft.color565(0, 139, 0));
+    spr.drawString("10000", 65, 5.8 * FONT_ROW_HEIGHT - 75, 2); // Show total number of packages issued
+    spr.drawString("999", 65, 6.8 * FONT_ROW_HEIGHT - 75, 2);   // Shows the number of successful deliveries
+
+    switch (3)
+    {
+    case 0:
+        spr.fillRect(53, 110 - 75, 3, 11, tft.color565(140, 42, 42)); // No signal
+        spr.fillRect(59, 107 - 75, 3, 14, tft.color565(140, 42, 42));
+        spr.fillRect(65, 104 - 75, 3, 17, tft.color565(140, 42, 42));
+        spr.fillRect(71, 101 - 75, 3, 20, tft.color565(140, 42, 42));
+        break;
+    case 1:
+        spr.fillRect(53, 110 - 75, 3, 11, tft.color565(0, 139, 0)); // One frame signal
+        spr.fillRect(59, 107 - 75, 3, 14, tft.color565(100, 100, 100));
+        spr.fillRect(65, 104 - 75, 3, 17, tft.color565(100, 100, 100));
+        spr.fillRect(71, 101 - 75, 3, 20, tft.color565(100, 100, 100));
+        break;
+    case 2:
+        spr.fillRect(53, 110 - 75, 3, 11, tft.color565(0, 139, 0)); // Two-frame signal
+        spr.fillRect(59, 107 - 75, 3, 14, tft.color565(0, 139, 0));
+        spr.fillRect(65, 104 - 75, 3, 17, tft.color565(100, 100, 100));
+        spr.fillRect(71, 101 - 75, 3, 20, tft.color565(100, 100, 100));
+        break;
+    case 3:
+        spr.fillRect(53, 110 - 75, 3, 11, tft.color565(0, 139, 0)); // Three-frame signal
+        spr.fillRect(59, 107 - 75, 3, 14, tft.color565(0, 139, 0));
+        spr.fillRect(65, 104 - 75, 3, 17, tft.color565(0, 139, 0));
+        spr.fillRect(71, 101 - 75, 3, 20, tft.color565(100, 100, 100));
+        break;
+    case 4:
+        spr.fillRect(53, 110 - 75, 3, 11, tft.color565(0, 139, 0)); // Four-frame signal
+        spr.fillRect(59, 107 - 75, 3, 14, tft.color565(0, 139, 0));
+        spr.fillRect(65, 104 - 75, 3, 17, tft.color565(0, 139, 0));
+        spr.fillRect(71, 101 - 75, 3, 20, tft.color565(0, 139, 0));
+        break;
+
+    default:;
+    }
+    spr.pushSprite(20, 100);
+    spr.deleteSprite();
+
+    spr.createSprite(90, 75);
+    switch (0)
+    {
+    case 0:                                                                 
+        spr.fillCircle(265 - 220, 4.9 * FONT_ROW_HEIGHT - 90, 10, tft.color565(160, 34, 34)); // Data transmission status: join failed
+        spr.setTextColor(TFT_WHITE);
+        spr.drawString("Join LoRaWAN", 220 - 220, 5.8 * FONT_ROW_HEIGHT - 90, 2);
+        spr.drawString("Failed", 250 - 220, 6.6 * FONT_ROW_HEIGHT - 90, 2);
+        break;
+    case 1:
+        spr.fillCircle(265 - 220, 4.9 * FONT_ROW_HEIGHT - 90, 10, tft.color565(255, 165, 0)); // Data transmission status: Packet loss
+        spr.setTextColor(TFT_WHITE);
+        spr.drawString("Send", 253 - 220, 5.8 * FONT_ROW_HEIGHT - 90, 2);
+        spr.drawString("Failed", 250 - 220, 6.6 * FONT_ROW_HEIGHT - 90, 2);
+        break;
+    default:;
+    }
+    spr.pushSprite(208, 100);
+    spr.deleteSprite();
+
+
+    Status1Display(0);
+}
+
 
 void UI::ProcessPageManager(uint8_t key) {
     switch (key) {
@@ -429,8 +765,7 @@ bool UI::Process_2(uint8_t select) {
     ProcessSubTitle(select);
     switch (select) {
     // Vision AI real-time analysis
-    case 0:
-    {
+    case 0: {
         // 270*80 = 21600
         // check all data if vision ai is running
         for (auto d : s_data)
@@ -458,8 +793,7 @@ bool UI::Process_2(uint8_t select) {
         break;
     }
     // TinyML Example
-    case 1:
-    {
+    case 1: {
         spr.createSprite(130, 130);
         spr.setTextColor(TFT_WHITE);
 
