@@ -156,7 +156,7 @@ protected:
       Delay(Ticks::MsToTicks(DelayInSeconds)); 
       datas.push_back(new sensor_data(sdata));
       for(auto d : datas) {
-       // LOGSS.printf("data name: %s\n\r", d->name);
+        LOGSS.printf("data name: %s\n\r", d->name);
         delete d;
       }     
       datas.clear();
