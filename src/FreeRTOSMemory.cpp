@@ -1,100 +1,28 @@
 #include "FreeRTOS.h"
-#include  <stdlib.h>
-#if 0
-// #ifdef __cplusplus
-// extern "C" {
-// #endif
-// void *malloc(size_t size) {
-//     /* Call the FreeRTOS version of malloc. */
-//     return pvPortMalloc(size);
-// }
-// void free(void *ptr) {
-//     /* Call the FreeRTOS version of free. */
-//     vPortFree(ptr);
-// }
+#include <malloc.h>
+#include <stdlib.h>
 
-// #ifdef __cplusplus
-// }
-// #endif
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-/*inline void *operator new(size_t size)
-{
-        void *p;
-        if(uxTaskGetNumberOfTasks())
-                p=pvPortMalloc(size);
-        else
-                p=malloc(size);
-        return p;
-}
-inline void operator delete(void *p) noexcept
-{
-        if(uxTaskGetNumberOfTasks())
-                vPortFree( p );
-        else
-                free( p );
-        p = NULL;
-}*/
-
-// Define the �new� operator for C++ to use the freeRTOS memory management
-// functions. THIS IS NOT OPTIONAL!
-//
-void *operator new(size_t size) {
-    void *p;
-
-    if (uxTaskGetNumberOfTasks())
-        p = pvPortMalloc(size);
-    else
-        p = malloc(size);
-
-    /*#ifdef __EXCEPTIONS
-     if (p==0) // did pvPortMalloc succeed?
-      throw std::bad_alloc(); // ANSI/ISO compliant behavior
-    #endif*/
-
-    return p;
+_PTR _malloc_r(struct _reent *r, size_t sz) {
+    return pvPortMalloc(sz);
 }
 
-//
-// Define the �delete� operator for C++ to use the freeRTOS memory management
-// functions. THIS IS NOT OPTIONAL!
-//
-void operator delete(void *p) noexcept {
-
-    if (uxTaskGetNumberOfTasks())
-        vPortFree(p);
-    else
-        free(p);
-
-    p = NULL;
+_PTR _calloc_r(struct _reent *r, size_t a, size_t b) {
+    return pvPortMalloc(a * b);
 }
 
-void *operator new[](size_t size) {
-    void *p;
-
-    if (uxTaskGetNumberOfTasks())
-        p = pvPortMalloc(size);
-    else
-        p = malloc(size);
-
-    /*#ifdef __EXCEPTIONS
-     if (p==0) // did pvPortMalloc succeed?
-      throw std::bad_alloc(); // ANSI/ISO compliant behavior
-    #endif*/
-
-    return p;
+void _free_r(struct _reent *r, _PTR x) {
+    vPortFree(x);
 }
 
-//
-// Define the �delete� operator for C++ to use the freeRTOS memory management
-// functions. THIS IS NOT OPTIONAL!
-//
-void operator delete[](void *p) noexcept {
-
-    if (uxTaskGetNumberOfTasks())
-        vPortFree(p);
-    else
-        free(p);
-
-    p = NULL;
+_PTR _realloc_r(struct _reent *r, _PTR x, size_t sz) {
+    vPortFree(x);
+    return pvPortMalloc(sz);
 }
-#endif 
+
+#ifdef __cplusplus
+}
+#endif
