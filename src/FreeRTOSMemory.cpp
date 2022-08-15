@@ -1,5 +1,5 @@
 #include "FreeRTOS.h"
-#include  <stdlib.h>
+#include <stdlib.h>
 #if 0
 // #ifdef __cplusplus
 // extern "C" {
@@ -97,4 +97,4 @@ void operator delete[](void *p) noexcept {
 
     p = NULL;
 }
-#endif 
+#endif

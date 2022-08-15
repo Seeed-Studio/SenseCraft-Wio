@@ -22,8 +22,6 @@ void SamplerThread::Run() {
     sensors.push_back(new LIS3DHTRSensor());
     // sensors.push_back(new FakeSensor());
 
-   
-
     for (auto sensor : sensors) {
         sensor->init();
     }
@@ -32,16 +30,16 @@ void SamplerThread::Run() {
         std::vector<sensor_data *> datas;
         for (auto sensor : sensors) {
             if (sensor->read(&sdata)) {
-                //LOGSS.printf("Sampling %s\r\n", sdata.name);
-                // for (size_t i = 0; i < sdata.size; i++) {
-                //   LOGSS.printf("%02x ", ((uint8_t *)sdata.data)[i]);
-                // }
-                // for (auto sensor : sensors) {
-                //   LOGSS.printf("Sampling %s\n", sensor->get_name());
-                // }
-                // LOGSS.println(sensors.size());
-                //sensorMail.Send((void *)&sdata, sizeof(sdata));
-                //deep Copy data into datas vector
+                // LOGSS.printf("Sampling %s\r\n", sdata.name);
+                //  for (size_t i = 0; i < sdata.size; i++) {
+                //    LOGSS.printf("%02x ", ((uint8_t *)sdata.data)[i]);
+                //  }
+                //  for (auto sensor : sensors) {
+                //    LOGSS.printf("Sampling %s\n", sensor->get_name());
+                //  }
+                //  LOGSS.println(sensors.size());
+                // sensorMail.Send((void *)&sdata, sizeof(sdata));
+                // deep Copy data into datas vector
                 datas.push_back(new sensor_data(sdata));
             }
             // LOGSS.println("SamplerThread");
@@ -54,6 +52,7 @@ void SamplerThread::Run() {
         datas.clear();
         datas.shrink_to_fit();
         // Delay(Ticks::MsToTicks(1000));
-        //LOGSS.printf("SamplerThread Stacks Free Bytes Remaining %d\r\n", uxTaskGetStackHighWaterMark(GetHandle()));
+        // LOGSS.printf("SamplerThread Stacks Free Bytes Remaining %d\r\n",
+        // uxTaskGetStackHighWaterMark(GetHandle()));
     }
 }

@@ -204,28 +204,29 @@ bool UI::NetworkSubtitles(uint8_t keys) {
     switch (keys) {
     // LoRa
     case 0:
-        spr.createSprite(155, 30);
+        spr.createSprite(85, 30);
         spr.fillSprite(tft.color565(100, 100, 100));
         spr.setFreeFont(FSS9);
         spr.setTextColor(TFT_WHITE);
-        spr.drawString("LoRa(SenseCAP)", 6, 6, GFXFF);
-        spr.pushSprite(85, 50);
+        spr.drawString("   LoRa    ", 6, 6, GFXFF);
+        spr.pushSprite(120, 50);
+
         spr.deleteSprite();
         break;
     // WiFi
     case 1:
-        spr.createSprite(120, 30);
-        spr.fillSprite(tft.color565(100, 100, 100));
+        spr.createSprite(85, 30);
+        spr.fillSprite(tft.color565(100, 100, 100)); // fill color below text
         spr.setFreeFont(FSS9);
         spr.setTextColor(TFT_WHITE);
-        spr.drawString("WiFi(Ubidots)", 6, 6, GFXFF);
-        spr.pushSprite(102, 50);
+        spr.drawString("   WiFi    ", 6, 6, GFXFF);
+        spr.pushSprite(120, 50);
         spr.deleteSprite();
         break;
     }
 }
 
-//todo: 未启用，待完善
+// todo: 未启用，待完善
 void UI::StatusMachine(struct State *ui_state, uint8_t key) {
     switch (key) {
     case LEFT_PRESSED:
@@ -262,11 +263,11 @@ void UI::StatusMachine(struct State *ui_state, uint8_t key) {
     }
 }
 
-
 bool UI::NetworkPageManager(uint8_t keys) {
     switch (keys) {
     case LEFT_PRESSED:
-        if (n_state.nl_state.current_page == FIRST_PAGE && n_state.nw_state.current_page == FIRST_PAGE) {
+        if (n_state.nl_state.current_page == FIRST_PAGE &&
+            n_state.nw_state.current_page == FIRST_PAGE) {
             n_state.current_network = LORA_PAGE;
         }
 
@@ -284,13 +285,15 @@ bool UI::NetworkPageManager(uint8_t keys) {
         tft.fillScreen(TFT_BLACK);
         break;
     case RIGHT_PRESSED:
-        if (n_state.nl_state.current_page == FIRST_PAGE && n_state.nw_state.current_page == FIRST_PAGE) {
+        if (n_state.nl_state.current_page == FIRST_PAGE &&
+            n_state.nw_state.current_page == FIRST_PAGE) {
             n_state.current_network = WIFI_PAGE;
         }
 
         if (n_state.current_network == LORA_PAGE) {
             n_state.nl_state.s_select++;
-            if (n_state.nl_state.s_select > sizeof(lora_band_info) / sizeof(lora_band_info[0]) - 1) {
+            if (n_state.nl_state.s_select >
+                sizeof(lora_band_info) / sizeof(lora_band_info[0]) - 1) {
                 n_state.nl_state.s_select = sizeof(lora_band_info) / sizeof(lora_band_info[0]) - 1;
             }
         } else { // WiFi
@@ -307,7 +310,7 @@ bool UI::NetworkPageManager(uint8_t keys) {
             if (n_state.nl_state.current_page < 0) {
                 n_state.nl_state.current_page = 0;
             }
-        } else {// WiFi
+        } else { // WiFi
             n_state.nw_state.current_page--;
             if (n_state.nw_state.current_page < 0) {
                 n_state.nw_state.current_page = 0;
@@ -357,8 +360,8 @@ bool UI::Network_1(uint8_t select) {
         spr.fillSprite(tft.color565(0, 139, 0));
         spr.setFreeFont(FSS9);
         spr.setTextColor(TFT_WHITE);
-        spr.drawString("LoRa", 6, 6, GFXFF);
-        spr.drawString("(SenseCAP)", 5, 36, GFXFF);
+        spr.drawString("    LoRa", 6, 6, GFXFF);
+        // spr.drawString("(SenseCAP)", 5, 36, GFXFF);
         spr.pushSprite(30, 95);
         spr.deleteSprite();
 
@@ -366,8 +369,8 @@ bool UI::Network_1(uint8_t select) {
         spr.fillSprite(TFT_BLACK);
         spr.setFreeFont(FSS9);
         spr.setTextColor(TFT_WHITE);
-        spr.drawString("WIFI", 6, 6, GFXFF);
-        spr.drawString("(Ubidots)", 6, 36, GFXFF);
+        spr.drawString("    WIFI", 6, 6, GFXFF);
+        // spr.drawString("(Ubidots)", 6, 36, GFXFF);
         spr.pushSprite(200, 95);
         spr.deleteSprite();
 
@@ -387,7 +390,7 @@ bool UI::Network_1(uint8_t select) {
         spr.setFreeFont(FSS9);
         spr.setTextColor(TFT_WHITE);
         spr.drawString("LoRa", 6, 6, GFXFF);
-        spr.drawString("(SenseCAP)", 5, 36, GFXFF);
+        // spr.drawString("(SenseCAP)", 5, 36, GFXFF);
         spr.pushSprite(30, 95);
         spr.deleteSprite();
 
@@ -395,8 +398,8 @@ bool UI::Network_1(uint8_t select) {
         spr.fillSprite(tft.color565(0, 139, 0));
         spr.setFreeFont(FSS9);
         spr.setTextColor(TFT_WHITE);
-        spr.drawString("WIFI", 6, 6, GFXFF);
-        spr.drawString("(Ubidots)", 6, 36, GFXFF);
+        spr.drawString("WiFi", 6, 6, GFXFF);
+        // spr.drawString("(Ubidots)", 6, 36, GFXFF);
         spr.pushSprite(200, 95);
         spr.deleteSprite();
 
@@ -491,13 +494,13 @@ bool UI::Network_2_1(uint8_t select) {
     TitleDisplay(2);
     NetworkSubtitles(n_state.current_network);
 
-    if(cfg.wificonnected){
+    if (cfg.wificonnected) {
         spr.createSprite(200, 60);
         spr.fillSprite(TFT_BLACK);
         spr.setFreeFont(FSS9);
         spr.setTextColor(TFT_WHITE);
         spr.drawString("Connected:", 6, 6, 2);
-        spr.drawString("WIFI(Ubidots)", 74, 6, 2);
+        spr.drawString("    WIFI    ", 74, 6, 2);
 
         spr.drawString("SSID:", 6, 26, 2);
         spr.drawString(cfg.ssid, 38, 26, 2);
@@ -511,15 +514,15 @@ bool UI::Network_2_1(uint8_t select) {
         spr.createSprite(80, 40);
         spr.setFreeFont(FSS9);
         spr.setTextColor(TFT_WHITE);
-        spr.drawString("Signal:", 6 ,15, 2);
+        spr.drawString("Signal:", 6, 15, 2);
         spr.fillRect(51, 16, 3, 11, tft.color565(0, 139, 0)); // No signal
         spr.fillRect(57, 13, 3, 14, tft.color565(0, 139, 0));
-        spr.fillRect(63, 10, 3, 17,tft.color565(100, 100, 100));
+        spr.fillRect(63, 10, 3, 17, tft.color565(100, 100, 100));
         spr.fillRect(69, 7, 3, 20, tft.color565(100, 100, 100));
         spr.pushSprite(20, 150);
         spr.deleteSprite();
 
-    }else{
+    } else {
         spr.createSprite(200, 60);
         spr.fillSprite(TFT_BLACK);
         spr.setFreeFont(FSS9);
@@ -556,7 +559,7 @@ bool UI::Network_4_0(uint8_t select) {
     spr.createSprite(188, 95);
 
     spr.setTextColor(TFT_WHITE);
-    spr.drawString("Connected: LoRa (SenseCAP)", 5, 3.8 * FONT_ROW_HEIGHT - 80, 2);
+    spr.drawString("Connected: LoRa  ", 5, 3.8 * FONT_ROW_HEIGHT - 80, 2);
     spr.drawString("Signal:", 5, 4.8 * FONT_ROW_HEIGHT - 75, 2);
     spr.drawString("All data:", 5, 5.8 * FONT_ROW_HEIGHT - 75, 2);
     spr.drawString("packets", 115, 5.8 * FONT_ROW_HEIGHT - 75, 2);
@@ -565,11 +568,12 @@ bool UI::Network_4_0(uint8_t select) {
 
     spr.setFreeFont(FSSB9);
     spr.setTextColor(tft.color565(0, 139, 0));
-    spr.drawString("10000", 65, 5.8 * FONT_ROW_HEIGHT - 75, 2); // Show total number of packages issued
-    spr.drawString("999", 65, 6.8 * FONT_ROW_HEIGHT - 75, 2);   // Shows the number of successful deliveries
+    spr.drawString("10000", 65, 5.8 * FONT_ROW_HEIGHT - 75,
+                   2); // Show total number of packages issued
+    spr.drawString("999", 65, 6.8 * FONT_ROW_HEIGHT - 75,
+                   2); // Shows the number of successful deliveries
 
-    switch (3)
-    {
+    switch (3) {
     case 0:
         spr.fillRect(53, 110 - 75, 3, 11, tft.color565(140, 42, 42)); // No signal
         spr.fillRect(59, 107 - 75, 3, 14, tft.color565(140, 42, 42));
@@ -607,16 +611,16 @@ bool UI::Network_4_0(uint8_t select) {
     spr.deleteSprite();
 
     spr.createSprite(90, 75);
-    switch (0)
-    {
-    case 0:                                                                 
-        spr.fillCircle(265 - 220, 4.9 * FONT_ROW_HEIGHT - 90, 10, tft.color565(160, 34, 34)); // Data transmission status: join failed
-        spr.setTextColor(TFT_WHITE);
-        spr.drawString("Join LoRaWAN", 220 - 220, 5.8 * FONT_ROW_HEIGHT - 90, 2);
-        spr.drawString("Failed", 250 - 220, 6.6 * FONT_ROW_HEIGHT - 90, 2);
+    switch (0) {
+    case 0:
+        // spr.fillCircle(265 - 220, 4.9 * FONT_ROW_HEIGHT - 90, 10, tft.color565(160, 34, 34)); //
+        // Data transmission status: join failed spr.setTextColor(TFT_WHITE); spr.drawString("Join
+        // LoRaWAN", 220 - 220, 5.8 * FONT_ROW_HEIGHT - 90, 2); spr.drawString("Failed", 250 -
+        // 220, 6.6 * FONT_ROW_HEIGHT - 90, 2);
         break;
     case 1:
-        spr.fillCircle(265 - 220, 4.9 * FONT_ROW_HEIGHT - 90, 10, tft.color565(255, 165, 0)); // Data transmission status: Packet loss
+        spr.fillCircle(265 - 220, 4.9 * FONT_ROW_HEIGHT - 90, 10,
+                       tft.color565(255, 165, 0)); // Data transmission status: Packet loss
         spr.setTextColor(TFT_WHITE);
         spr.drawString("Send", 253 - 220, 5.8 * FONT_ROW_HEIGHT - 90, 2);
         spr.drawString("Failed", 250 - 220, 6.6 * FONT_ROW_HEIGHT - 90, 2);
@@ -626,10 +630,8 @@ bool UI::Network_4_0(uint8_t select) {
     spr.pushSprite(208, 100);
     spr.deleteSprite();
 
-
     Status1Display(0);
 }
-
 
 void UI::ProcessPageManager(uint8_t key) {
     switch (key) {
@@ -975,12 +977,11 @@ bool UI::Sensor_1(uint8_t select) {
             //把框分成4行，每行显示一个数据
             for (int i = 0; i < sense_display_num; i += 4) {
                 int32_t dd = ((uint8_t *)s_data[index].data)[i] << 0 |
-                               ((uint8_t *)s_data[index].data)[i + 1] << 8 |
-                               ((uint8_t *)s_data[index].data)[i + 2] << 16 |
-                               ((uint8_t *)s_data[index].data)[i + 3] << 24;
+                             ((uint8_t *)s_data[index].data)[i + 1] << 8 |
+                             ((uint8_t *)s_data[index].data)[i + 2] << 16 |
+                             ((uint8_t *)s_data[index].data)[i + 3] << 24;
 
-                spr.drawString(String(dd), 2,
-                               5 + 24 * i / 4, 2);
+                spr.drawString(String(dd), 2, 5 + 24 * i / 4, 2);
                 // todo，数据单位，暂时显示为空
                 spr.drawString("  ", 68, 5 + 24 * i, 2);
             }

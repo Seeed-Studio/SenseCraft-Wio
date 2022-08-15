@@ -15,7 +15,7 @@ public:
     bool read(struct sensor_data *data);
     const char *get_name();
 private:
-    const char *name = "LIS3DHTR";
+    const char *name = "IMU"; //LIS3DHTR
     int data[3];
 
     bool status;

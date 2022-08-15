@@ -12,7 +12,7 @@ public:
 	const char *get_name();
 	bool read(struct sensor_data *data);
 private:
-	const char *name = "buildin-light";
+	const char *name = "Light sensor"; /// buildin-light
 	int light_value;
 
 };

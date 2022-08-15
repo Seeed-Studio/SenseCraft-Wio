@@ -63,14 +63,14 @@ void ConnectSuc_Display(int key) // Select Frequency band interface
   
     spr.setFreeFont(FSS9);
     spr.setTextColor(TFT_WHITE, tft.color565(0, 139, 0));
-    spr.drawString("WiFi(Ubidots)", 205, 48, GFXFF);
+    spr.drawString("WiFi      ", 205, 48, GFXFF); //  WiFi(Ubidots)
 
     spr.setFreeFont(FSS9);
     spr.setTextColor(TFT_WHITE, tft.color565(100, 100, 100));
-    spr.drawString("LoRa (SenseCAP)", 5, 48, GFXFF);
+    spr.drawString("LoRa      ", 5, 48, GFXFF);    // LoRa(Sencecap)
 
     spr.setTextColor(TFT_WHITE);
-    spr.drawString("Connected: WiFi(Ubidots)", 30, 3.8 * FONT_ROW_HEIGHT, 2);
+    spr.drawString("Connected: WiFi     ", 30, 3.8 * FONT_ROW_HEIGHT, 2);
     spr.drawString("Signal:", 30, 4.8 * FONT_ROW_HEIGHT, 2);
     spr.drawString("All data:", 30, 5.8 * FONT_ROW_HEIGHT, 2);
     spr.drawString("packets", 140, 5.8 * FONT_ROW_HEIGHT, 2);
@@ -96,7 +96,7 @@ void ConnectSuc_Display(int key) // Select Frequency band interface
 
       spr.setFreeFont(FSS9);
       spr.setTextColor(tft.color565(0, 139, 0), TFT_BLACK);             //Networking status indication：ON
-      spr.drawString("WiFi(Ubidots)", 82, 218 , GFXFF);
+      spr.drawString("    WiFi    ", 82, 218 , GFXFF);  // WIFI(Ubidots)
     }
     if(key == 1)  //Press the A button to disconnect
     {
@@ -112,7 +112,7 @@ void ConnectSuc_Display(int key) // Select Frequency band interface
 
       spr.setFreeFont(FSS9);
       spr.setTextColor(tft.color565(0, 139, 0), TFT_BLACK);             //Networking status indication：ON
-      spr.drawString("WiFi(Ubidots)", 82, 218 , GFXFF);
+      spr.drawString("    WiFi    ", 82, 218 , GFXFF);  //WiFi(Ubidots)
     }
     if(key == 2)  //Press the B button to disconnect
     {
@@ -128,7 +128,7 @@ void ConnectSuc_Display(int key) // Select Frequency band interface
 
       spr.setFreeFont(FSS9);
       spr.setTextColor(tft.color565(0, 139, 0), TFT_BLACK);             //Networking status indication：ON
-      spr.drawString("WiFi(Ubidots)", 82, 218 , GFXFF);
+      spr.drawString("    WiFi    ", 82, 218 , GFXFF);
     }
     if(key == 3)  //Press the C button to disconnect
     {
