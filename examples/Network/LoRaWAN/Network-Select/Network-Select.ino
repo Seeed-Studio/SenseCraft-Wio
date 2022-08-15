@@ -62,8 +62,8 @@ void NetworkHome_Display() // Select network interface
   
     spr.setFreeFont(FSS9);
     spr.setTextColor(TFT_WHITE, tft.color565(100, 100, 100));
-    spr.drawString("LoRa(SenseCAP)", 5, 48, GFXFF);
-    spr.drawString("WiFi(Ubidots)", 205, 48, GFXFF);
+    spr.drawString("    LoRa    ", 5, 48, GFXFF);  //LoRa(SenseCAP)
+    spr.drawString("    WiFi    ", 205, 48, GFXFF); //WiFi(Ubidots)
 
     spr.setTextColor(TFT_WHITE, TFT_BLACK);
     spr.drawString("Please toggle the bottom right", 30, 95 + FONT_ROW_HEIGHT, GFXFF);
@@ -108,8 +108,8 @@ void NetSelection(int key)
 
     spr.setFreeFont(FSS9);
     spr.setTextColor(TFT_WHITE, tft.color565(100, 100, 100));
-    spr.drawString("LoRa(SenseCAP)", 5, 48, GFXFF);
-    spr.drawString("WiFi(Ubidots)", 205, 48, GFXFF);
+    spr.drawString("    LoRa    ", 5, 48, GFXFF); //LoRa(SenseCAP)
+    spr.drawString("    WiFi    ", 205, 48, GFXFF); //WiFi(Ubidots)
     
     if(key == 0)spr.fillCircle(175, 56, 10, tft.color565(190, 190, 190));                 //Default in no network state selected
     if(key == 1)spr.fillCircle(160, 55, 10, TFT_BLUE);                                    //button to the left to select LoRa network
@@ -163,8 +163,8 @@ void WioE5connect_Display()
 
     spr.setFreeFont(FSS9);
     spr.setTextColor(TFT_WHITE, tft.color565(100, 100, 100));
-    spr.drawString("LoRa(SenseCAP)", 5, 48, GFXFF);
-    spr.drawString("WiFi(Ubidots)", 205, 48, GFXFF);
+    spr.drawString("    LoRa    ", 5, 48, GFXFF);
+    spr.drawString("    WiFi    ", 205, 48, GFXFF); //WiFi(Ubidots)
     
     spr.fillCircle(175, 56, 10, tft.color565(190, 190, 190));                 //Default in no network state selected
     

@@ -61,11 +61,11 @@ void WifiSelection()
 
     spr.setFreeFont(FSS9);
     spr.setTextColor(TFT_WHITE, tft.color565(0, 139, 0));
-    spr.drawString("WiFi(Ubidots)", 205, 48, GFXFF);
+    spr.drawString("    WiFi    ", 205, 48, GFXFF); //(Ubidots)
 
     spr.setFreeFont(FSS9);
     spr.setTextColor(TFT_WHITE, tft.color565(100, 100, 100));
-    spr.drawString("LoRa(SenseCAP)", 5, 48, GFXFF);
+    spr.drawString("    LoRa    ", 5, 48, GFXFF);  //LoRa(SenseCAP)
     
     spr.fillCircle(192, 55, 10, TFT_BLUE);                                    //button to the right to select the WiFi network
     
@@ -115,11 +115,11 @@ void WifiWait_Display()
 
     spr.setFreeFont(FSS9);
     spr.setTextColor(TFT_WHITE, tft.color565(0, 139, 0));
-    spr.drawString("WiFi(Ubidots)", 205, 48, GFXFF);
+    spr.drawString("    WiFi    ", 205, 48, GFXFF); //
 
     spr.setFreeFont(FSS9);
     spr.setTextColor(TFT_WHITE, tft.color565(100, 100, 100));
-    spr.drawString("LoRa(SenseCAP)", 5, 48, GFXFF);
+    spr.drawString("    LoRa    ", 5, 48, GFXFF);
     
     spr.fillCircle(192, 55, 10, TFT_BLUE);                                    //button to the right to select the WiFi network
     
@@ -165,11 +165,11 @@ void Wificonnect_Display()
 
     spr.setFreeFont(FSS9);
     spr.setTextColor(TFT_WHITE, tft.color565(0, 139, 0));
-    spr.drawString("WiFi(Ubidots)", 205, 48, GFXFF);
+    spr.drawString("    WiFi    ", 205, 48, GFXFF);
 
     spr.setFreeFont(FSS9);
     spr.setTextColor(TFT_WHITE, tft.color565(100, 100, 100));
-    spr.drawString("LoRa(SenseCAP)", 5, 48, GFXFF);
+    spr.drawString("    LoRa    ", 5, 48, GFXFF);
     
     spr.fillCircle(192, 55, 10, TFT_BLUE);                                    //button to the right to select the WiFi network
     
@@ -187,7 +187,7 @@ void Wificonnect_Display()
 //    spr.drawString("OFF", 82, 218 , GFXFF);
 
     spr.setTextColor(TFT_GREEN, TFT_BLACK);             //Networking status indication：ON
-    spr.drawString("WiFi(Ubidots)", 82, 218 , GFXFF);  //Show the network you are in
+    spr.drawString("    WiFi    ", 82, 218 , GFXFF);  //Show the network you are in
 
     spr.pushSprite(0, 0);
     spr.deleteSprite();

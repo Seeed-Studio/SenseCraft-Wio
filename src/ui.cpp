@@ -556,7 +556,7 @@ bool UI::Network_4_0(uint8_t select) {
     spr.createSprite(188, 95);
 
     spr.setTextColor(TFT_WHITE);
-    spr.drawString("Connected: LoRa (SenseCAP)", 5, 3.8 * FONT_ROW_HEIGHT - 80, 2);
+    spr.drawString("Connected: LoRa  ", 5, 3.8 * FONT_ROW_HEIGHT - 80, 2);
     spr.drawString("Signal:", 5, 4.8 * FONT_ROW_HEIGHT - 75, 2);
     spr.drawString("All data:", 5, 5.8 * FONT_ROW_HEIGHT - 75, 2);
     spr.drawString("packets", 115, 5.8 * FONT_ROW_HEIGHT - 75, 2);
