@@ -20,7 +20,7 @@ void SamplerThread::Run() {
     sensors.push_back(new buildin_light_sensor());
     sensors.push_back(new buildin_mic());
     sensors.push_back(new LIS3DHTRSensor());
-    sensors.push_back(new FakeSensor());
+    // sensors.push_back(new FakeSensor());
 
    
 
