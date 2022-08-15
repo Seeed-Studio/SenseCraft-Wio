@@ -141,10 +141,12 @@ void ConnectSuc_Display(int key) // Select Frequency band interface
       spr.fillRect(90, 104, 3, 17, tft.color565(140, 42, 42));
       spr.fillRect(96, 101, 3, 20, tft.color565(140, 42, 42));
 
-      spr.fillCircle(265, 4.9 * FONT_ROW_HEIGHT, 10, TFT_RED);          //Data transmission status: join failed
-      spr.setTextColor(TFT_WHITE);
-      spr.drawString("Join LoRaWAN", 220, 5.8 * FONT_ROW_HEIGHT, 2);
-      spr.drawString("Failed", 250, 6.6 * FONT_ROW_HEIGHT, 2);
+
+      // Demo version we dont display "Join loRaWAN failed"
+      // spr.fillCircle(265, 4.9 * FONT_ROW_HEIGHT, 10, TFT_RED);          //Data transmission status: join failed
+      // spr.setTextColor(TFT_WHITE);
+      // spr.drawString("Join LoRaWAN", 220, 5.8 * FONT_ROW_HEIGHT, 2);
+      // spr.drawString("Failed", 250, 6.6 * FONT_ROW_HEIGHT, 2);
 
       spr.setFreeFont(FSS9);
       spr.setTextColor(TFT_RED);                                        //Networking status indication：OFF

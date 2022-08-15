@@ -210,6 +210,7 @@ bool UI::NetworkSubtitles(uint8_t keys) {
         spr.setTextColor(TFT_WHITE);
         spr.drawString("   LoRa    ", 6, 6, GFXFF);
         spr.pushSprite(120, 50);
+
         spr.deleteSprite();
         break;
     // WiFi
@@ -610,10 +611,10 @@ bool UI::Network_4_0(uint8_t select) {
     switch (0)
     {
     case 0:                                                                 
-        spr.fillCircle(265 - 220, 4.9 * FONT_ROW_HEIGHT - 90, 10, tft.color565(160, 34, 34)); // Data transmission status: join failed
-        spr.setTextColor(TFT_WHITE);
-        spr.drawString("Join LoRaWAN", 220 - 220, 5.8 * FONT_ROW_HEIGHT - 90, 2);
-        spr.drawString("Failed", 250 - 220, 6.6 * FONT_ROW_HEIGHT - 90, 2);
+        // spr.fillCircle(265 - 220, 4.9 * FONT_ROW_HEIGHT - 90, 10, tft.color565(160, 34, 34)); // Data transmission status: join failed
+        // spr.setTextColor(TFT_WHITE);
+        // spr.drawString("Join LoRaWAN", 220 - 220, 5.8 * FONT_ROW_HEIGHT - 90, 2);
+        // spr.drawString("Failed", 250 - 220, 6.6 * FONT_ROW_HEIGHT - 90, 2);
         break;
     case 1:
         spr.fillCircle(265 - 220, 4.9 * FONT_ROW_HEIGHT - 90, 10, tft.color565(255, 165, 0)); // Data transmission status: Packet loss
