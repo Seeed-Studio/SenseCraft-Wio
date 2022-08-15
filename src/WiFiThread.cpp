@@ -16,7 +16,7 @@ void WiFiThread::Run() {
     char *filename     = (char *)"config.txt";
     char *param        = (char *)"abcdeddfasdf";
     cfg.WriteConfigParam(filename, prefix_param, param);
-    if(WiFi.status() == WL_CONNECTED)
+    if (WiFi.status() == WL_CONNECTED)
         cfg.wificonnected = true;
     while (true) {
         Delay(Ticks::MsToTicks(10000));
@@ -24,7 +24,8 @@ void WiFiThread::Run() {
         // LOGSS.println(cfg.ssid);
         // LOGSS.print("PASSWORD: ");
         // LOGSS.println(cfg.password);
-        //LOGSS.printf("WIFI Stacks Free Bytes Remaining %d\r\n", uxTaskGetStackHighWaterMark(GetHandle()));
+        // LOGSS.printf("WIFI Stacks Free Bytes Remaining %d\r\n",
+        // uxTaskGetStackHighWaterMark(GetHandle()));
     }
     //   while (WiFi.status() != WL_CONNECTED) {
     //     Delay(500);

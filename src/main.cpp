@@ -1,13 +1,13 @@
 
+#include "ButtonThread.h"
+#include "FreeRTOS.h"
+#include "LoRaThread.h"
+#include "SamplerThread.h"
 #include "Seeed_Arduino_ooFreeRTOS.h"
+#include "SysConfig.h"
+#include "ui.h"
 #include <Arduino.h>
 #include <SPI.h>
-#include "ui.h"
-#include "ButtonThread.h"
-#include "SamplerThread.h"
-#include "LoRaThread.h"
-#include "SysConfig.h"
-#include "FreeRTOS.h"
 #ifdef CM_DEBUG
 #include "cm_backtrace.h"
 #endif
@@ -16,27 +16,23 @@
 
 using namespace cpp_freertos;
 
-TFT_eSPI tft;
-TFT_eSprite spr = TFT_eSprite(&tft); 
+TFT_eSPI    tft;
+TFT_eSprite spr = TFT_eSprite(&tft);
 
-
-
-void display_init()            // Display initialization, black background rotation
+void display_init() // Display initialization, black background rotation
 {
     tft.begin();
     tft.setRotation(3);
     tft.fillScreen(TFT_BLACK);
 }
 
+void setup() {
 
-void setup()
-{
-
-    SysConfig *cfg = new SysConfig(); 
+    SysConfig *cfg = new SysConfig();
     cfg->init();
-    #ifdef CM_DEBUG
+#ifdef CM_DEBUG
     cm_backtrace_init("Seeed K1100 dev kit", HARDWARE_VERSION, SOFTWARE_VERSION);
-    #endif
+#endif
     // put your setup code here, to run once:
     LOGSS.begin(115200);
     uint32_t start = millis();
@@ -48,20 +44,17 @@ void setup()
     Message *btnMail = new Message(256);
     // Message *sensorMail = new Message(256);
 
-
-    ButtonThread *btn = new ButtonThread(*btnMail);
-    UI *u = new UI(tft,spr, *cfg, *btnMail);
+    ButtonThread  *btn     = new ButtonThread(*btnMail);
+    UI            *u       = new UI(tft, spr, *cfg, *btnMail);
     SamplerThread *sampler = new SamplerThread(*cfg, *u);
 }
 
-//Get the size of memory left in the system in freertos.
+// Get the size of memory left in the system in freertos.
 int freeMemory() {
-  return xPortGetFreeHeapSize();
+    return xPortGetFreeHeapSize();
 }
 
-
-void loop()
-{
+void loop() {
     LOGSS.printf("Main Stacks Free Bytes Remaining %d\r\n", uxTaskGetStackHighWaterMark(NULL));
     delay(10000);
 }

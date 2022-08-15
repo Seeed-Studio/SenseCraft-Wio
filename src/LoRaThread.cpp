@@ -69,7 +69,7 @@ LoRaThread::LoRaThread(SysConfig &config) : Thread("LoRaThread", 256, 1), cfg(co
 void LoRaThread::Init() {
     Serial3.begin(9600);
     if (!lorae5->begin(DSKLORAE5_HWSERIAL_CUSTOM, &Serial3)) {
-        cfg.is_lorae5_init  = false;
+        cfg.is_lorae5_init = false;
         LOGSS.println("LoRa E5 Init Failed");
         return;
     }
@@ -115,7 +115,7 @@ bool LoRaThread::SendData(uint8_t *data, uint8_t len, uint8_t ver) {
         Delay(Ticks::SecondsToTicks(10));
         if (retry++ > 10) {
             cfg.is_lorae5_join = false;
-            ret        = false;
+            ret                = false;
             break;
         }
     }
