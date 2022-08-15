@@ -128,7 +128,7 @@ void ConnectSuc_Display(int key) // Select Frequency band interface
 
       spr.setFreeFont(FSS9);
       spr.setTextColor(tft.color565(0, 139, 0), TFT_BLACK);             //Networking status indication：ON
-      spr.drawString("WiFi(Ubidots)", 82, 218 , GFXFF);
+      spr.drawString("    WiFi    ", 82, 218 , GFXFF);
     }
     if(key == 3)  //Press the C button to disconnect
     {

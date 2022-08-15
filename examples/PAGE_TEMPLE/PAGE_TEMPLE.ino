@@ -26,7 +26,7 @@ void Network_state(int s_key)
         break;
     case 1:
         spr.setTextColor(TFT_GREEN, TFT_BLACK);             //Networking status indication：ON
-        spr.drawString("LoRa(SenseCAP)", 82, 218 , GFXFF);  //Show the network you are in
+        spr.drawString("    LoRa    ", 82, 218 , GFXFF);  //Show the network you are in
         break;
     default:;
     }

@@ -204,22 +204,22 @@ bool UI::NetworkSubtitles(uint8_t keys) {
     switch (keys) {
     // LoRa
     case 0:
-        spr.createSprite(155, 30);
+        spr.createSprite(85, 30);
         spr.fillSprite(tft.color565(100, 100, 100));
         spr.setFreeFont(FSS9);
         spr.setTextColor(TFT_WHITE);
-        spr.drawString("LoRa(SenseCAP)", 6, 6, GFXFF);
-        spr.pushSprite(85, 50);
+        spr.drawString("   LoRa    ", 6, 6, GFXFF);
+        spr.pushSprite(120, 50);
         spr.deleteSprite();
         break;
     // WiFi
     case 1:
-        spr.createSprite(120, 30);
-        spr.fillSprite(tft.color565(100, 100, 100));
+        spr.createSprite(85, 30);
+        spr.fillSprite(tft.color565(100, 100, 100));  // fill color below text
         spr.setFreeFont(FSS9);
         spr.setTextColor(TFT_WHITE);
-        spr.drawString("WiFi(Ubidots)", 6, 6, GFXFF);
-        spr.pushSprite(102, 50);
+        spr.drawString("   WiFi    ", 6, 6, GFXFF);
+        spr.pushSprite(120, 50);
         spr.deleteSprite();
         break;
     }
@@ -357,8 +357,8 @@ bool UI::Network_1(uint8_t select) {
         spr.fillSprite(tft.color565(0, 139, 0));
         spr.setFreeFont(FSS9);
         spr.setTextColor(TFT_WHITE);
-        spr.drawString("LoRa", 6, 6, GFXFF);
-        spr.drawString("(SenseCAP)", 5, 36, GFXFF);
+        spr.drawString("    LoRa", 6, 6, GFXFF);
+        // spr.drawString("(SenseCAP)", 5, 36, GFXFF);
         spr.pushSprite(30, 95);
         spr.deleteSprite();
 
@@ -366,8 +366,8 @@ bool UI::Network_1(uint8_t select) {
         spr.fillSprite(TFT_BLACK);
         spr.setFreeFont(FSS9);
         spr.setTextColor(TFT_WHITE);
-        spr.drawString("WIFI", 6, 6, GFXFF);
-        spr.drawString("(Ubidots)", 6, 36, GFXFF);
+        spr.drawString("    WIFI", 6, 6, GFXFF);
+        // spr.drawString("(Ubidots)", 6, 36, GFXFF);
         spr.pushSprite(200, 95);
         spr.deleteSprite();
 
@@ -387,7 +387,7 @@ bool UI::Network_1(uint8_t select) {
         spr.setFreeFont(FSS9);
         spr.setTextColor(TFT_WHITE);
         spr.drawString("LoRa", 6, 6, GFXFF);
-        spr.drawString("(SenseCAP)", 5, 36, GFXFF);
+        // spr.drawString("(SenseCAP)", 5, 36, GFXFF);
         spr.pushSprite(30, 95);
         spr.deleteSprite();
 
@@ -395,8 +395,8 @@ bool UI::Network_1(uint8_t select) {
         spr.fillSprite(tft.color565(0, 139, 0));
         spr.setFreeFont(FSS9);
         spr.setTextColor(TFT_WHITE);
-        spr.drawString("WIFI", 6, 6, GFXFF);
-        spr.drawString("(Ubidots)", 6, 36, GFXFF);
+        spr.drawString("WiFi", 6, 6, GFXFF);
+        // spr.drawString("(Ubidots)", 6, 36, GFXFF);
         spr.pushSprite(200, 95);
         spr.deleteSprite();
 
@@ -497,7 +497,7 @@ bool UI::Network_2_1(uint8_t select) {
         spr.setFreeFont(FSS9);
         spr.setTextColor(TFT_WHITE);
         spr.drawString("Connected:", 6, 6, 2);
-        spr.drawString("WIFI(Ubidots)", 74, 6, 2);
+        spr.drawString("    WIFI    ", 74, 6, 2);
 
         spr.drawString("SSID:", 6, 26, 2);
         spr.drawString(cfg.ssid, 38, 26, 2);
