@@ -33,6 +33,7 @@ bool LIS3DHTRSensor::read(struct sensor_data *sdata) {
         data[2]       = (int)(z_values * 100);
         sdata->data   = data;
         sdata->size   = sizeof(data);
+        sdata->id      = LIS3DHTRSENSOR;
         sdata->status = true;
         return true;
     } else {
