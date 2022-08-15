@@ -11,7 +11,7 @@ void UI::uint8_to_float(uint8_t *data, float *destination) {
 }
 
 UI::UI(TFT_eSPI &lcd, TFT_eSprite &display, SysConfig &config, Message &m1)
-    : Thread("UIThread", 2048, 2), tft(lcd), spr(display), cfg(config), btnMail(m1) {
+    : Thread("UIThread", 4096, 2), tft(lcd), spr(display), cfg(config), btnMail(m1) {
     Start();
 };
 
@@ -975,7 +975,12 @@ bool UI::Sensor_1(uint8_t select) {
 
             //把框分成4行，每行显示一个数据
             for (int i = 0; i < sense_display_num; i += 4) {
-                spr.drawString(String(static_cast<uint16_t>(((int32_t *)s_data[index].data)[i])), 2,
+                int32_t dd = ((uint8_t *)s_data[index].data)[i] << 0 |
+                               ((uint8_t *)s_data[index].data)[i + 1] << 8 |
+                               ((uint8_t *)s_data[index].data)[i + 2] << 16 |
+                               ((uint8_t *)s_data[index].data)[i + 3] << 24;
+
+                spr.drawString(String(dd), 2,
                                5 + 24 * i / 4, 2);
                 // todo，数据单位，暂时显示为空
                 spr.drawString("  ", 68, 5 + 24 * i, 2);
