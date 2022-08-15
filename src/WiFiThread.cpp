@@ -19,12 +19,12 @@ void WiFiThread::Run() {
     if(WiFi.status() == WL_CONNECTED)
         cfg.wificonnected = true;
     while (true) {
-        Delay(Ticks::MsToTicks(1000));
+        Delay(Ticks::MsToTicks(10000));
         // LOGSS.print("SSID: ");
         // LOGSS.println(cfg.ssid);
         // LOGSS.print("PASSWORD: ");
         // LOGSS.println(cfg.password);
-        LOGSS.printf("WIFI Stacks Free Bytes Remaining %d\r\n", uxTaskGetStackHighWaterMark(GetHandle()));
+        //LOGSS.printf("WIFI Stacks Free Bytes Remaining %d\r\n", uxTaskGetStackHighWaterMark(GetHandle()));
     }
     //   while (WiFi.status() != WL_CONNECTED) {
     //     Delay(500);

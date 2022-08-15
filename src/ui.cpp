@@ -11,7 +11,7 @@ void UI::uint8_to_float(uint8_t *data, float *destination) {
 }
 
 UI::UI(TFT_eSPI &lcd, TFT_eSprite &display, SysConfig &config, Message &m1)
-    : Thread("UIThread", 2048, 1), tft(lcd), spr(display), cfg(config), btnMail(m1) {
+    : Thread("UIThread", 2048, 2), tft(lcd), spr(display), cfg(config), btnMail(m1) {
     Start();
 };
 
@@ -48,8 +48,8 @@ void UI::Run() {
         // LOGSS.printf("sensor Receive: %s %d %d\r\n", sdata.name, sdata.id, sdata.size);
         // LOGSS.printf("UI thread free memory: %d\r", xPortGetFreeHeapSize());
         //}
-        LOGSS.printf("UI Stacks Free Bytes Remaining %d\r\n",
-                     uxTaskGetStackHighWaterMark(GetHandle()));
+        // LOGSS.printf("UI Stacks Free Bytes Remaining %d\r\n",
+        //              uxTaskGetStackHighWaterMark(GetHandle()));
         PageMangent(keys);
         //主要是等数据，不然会Sensor会get不到数据，无法切换页面，未来需要加锁
         Delay(Ticks::MsToTicks(50));
