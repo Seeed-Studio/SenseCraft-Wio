@@ -427,7 +427,7 @@ void UI::NetworkLoRaBandSelect(uint8_t location, struct LoRaBandInfo lbi, uint8_
     spr.pushSprite(0, 65);
     spr.deleteSprite();
 
-    spr.createSprite(290, 70);
+    spr.createSprite(90, 70);
     if (location == select) {
         spr.fillRect(3, 0, 80, 60, tft.color565(0, 139, 0));
     }
