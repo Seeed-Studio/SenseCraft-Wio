@@ -141,7 +141,7 @@ Now we will build the project for Wio Terminal
 - Step 1: Clone the following GitHub repo
 
 ```sh
-git clone https://github.com/Seeed-Studio/Seeed_Arduino_K1100
+https://github.com/Seeed-Studio/SenseCraft
 ```
 
 - Step 2: Go into the project root directly and type the following to build the project
