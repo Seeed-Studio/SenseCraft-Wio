@@ -13,7 +13,7 @@ With this toolkit, we’ll break down the process of displaying sensor data into
 
 ![](https://files.seeedstudio.com/wiki/K1100/99.png)
 
-## Supported Hardware Platforms
+## Supported hardware platforms
 
 - [Wio Terminal](https://www.seeedstudio.com/Wio-Terminal-p-4509.html) (pilot testing hardware platform)
 - [M5 Stack](https://m5stack.com) (to-be-compatible)
@@ -161,11 +161,27 @@ Now we will upload the project into Wio Terminal
 pio run -t upload
 ```
 
+## Additional configuration steps
+
+Please note that you need to follow the steps below if you want to connect to SenseCAP platform via LoRa. This will not be needed in the future.
+
+- Step 1: When the Wio Terminal is connected to the PC with the above project loaded, you will see a new USB drive appear
+
+<div align=center><img width=230 src="https://files.seeedstudio.com/wiki/K1100-quick-start/30.png"/></div>
+
+- Step 2: Create a new file named **config.txt** inside this USB drive, add the following and save it
+
+```sh
+FREQUENCY=1
+```
+
+- Step 3: Turn OFF Wio Terminal and turn it back ON
+
 ## Get in touch
 
 Have any questions? Would like to discuss something in depth? [Join](https://join.slack.com/t/angular-builders/shared_invite/enQtODM2MjU5MTYyMDk2LTcxODQ3NTExNDZkM2U0NWQ2NmVmZTAwZWNmOThhYjg4ZDlmMGFlNDZmYWQxYzU5ODIzYjdmZGFmNmUxNDBlY2E) us on Discord: discord.seeed.cc (#iot-into-the-wild channel)!
 
-## Useful Links
+## Useful links
 
 To get started with this project, here is a list of links that we think miaght be useful.  
 
