@@ -1,5 +1,5 @@
 
-# SenseCraft - The Open Source Project of No-Code Smart Sensor Builder
+# SenseCraft - The Project of No-Code Smart Sensor Builder
 
 ## Description 
 
