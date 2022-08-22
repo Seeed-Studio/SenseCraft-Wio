@@ -11,7 +11,7 @@ With this toolkit, we’ll break down the process of displaying sensor data into
 - Process: Data handling and Machine Learning
 - Uplink (Network): Sending data to the clould via WiFi/ LoRaWAN 
 
-![](https://files.seeedstudio.com/wiki/K1100/99.png)
+![](https://files.seeedstudio.com/wiki/K1100-quick-start/34.png)
 
 ## Supported hardware platforms
 
