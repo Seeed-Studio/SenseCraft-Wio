@@ -28,6 +28,9 @@ enum sensor_type {
     BUILDIN_MIC,
     LIS3DHTRSENSOR,
     GROVEVISIONAI,
+    BUILDEX_SHT4X,
+    BUILDEX_SGP30,
+    BUILDEX_SOIL,
 };
 
 enum lora_freq {
