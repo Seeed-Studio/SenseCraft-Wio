@@ -6,6 +6,7 @@
 #include "Arduino.h"
 
 #define SOILPIN A0
+#define READ_NUM 10
 
 class buildex_soil_sensor : public sensor_base {
   public:

@@ -25,7 +25,7 @@ void SamplerThread::Run() {
     sensors.push_back(new LIS3DHTRSensor());
     sensors.push_back(new buildex_sht4x_sensor());
 	sensors.push_back(new buildex_sgp30_sensor());
-    //sensors.push_back(new buildex_soil_sensor());
+    sensors.push_back(new buildex_soil_sensor());
     // sensors.push_back(new FakeSensor());
 
     for (auto sensor : sensors) {

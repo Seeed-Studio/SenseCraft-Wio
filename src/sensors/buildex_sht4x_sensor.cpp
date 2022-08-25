@@ -12,7 +12,7 @@ void buildex_sht4x_sensor::init() {
 }
 
 bool buildex_sht4x_sensor::read(struct sensor_data *sdata) {
-
+    softwarei2c.begin(SHT4X_SDAPIN, SHT4X_SCLPIN);
     if (sht4x.measure() != SHT4X_STATUS_OK) {
         return false;
     }

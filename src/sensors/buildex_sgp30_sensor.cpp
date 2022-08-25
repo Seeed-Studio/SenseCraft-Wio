@@ -12,10 +12,8 @@ void buildex_sgp30_sensor::init() {
 }
 
 bool buildex_sgp30_sensor::read(struct sensor_data *sdata) {
-
-    SGP30ERR  err = SGP30_SUCCESS;
-    err = mySensor.measureAirQuality();; // sgp_measure_iaq_blocking_read(&tvoc_ppb, &co2_eq_ppm);
-    if (err == SGP30_SUCCESS) {
+    softwarei2c.begin(SGP30_SDAPIN, SGP30_SCLPIN);
+    if (mySensor.measureAirQuality() == SGP30_SUCCESS) {
         sgp30_value[0] = mySensor.CO2;
         sgp30_value[1] = mySensor.TVOC;
     } else {
