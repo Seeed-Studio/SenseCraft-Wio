@@ -27,7 +27,7 @@ Currently we have implemented several functions and they have already been teste
 
 - Step 2: Connect Wio Terminal to PC and enter bootloader mode on the Wio Terminal
 
-<div align=center><img width=450 src="https://files.seeedstudio.com/wiki/K1100-quick-start/32.png"/></div>
+<div align=center><img width=450 src="https://files.seeedstudio.com/wiki/K1100-quick-start/35.png"/></div>
 
 - Step 3: Drag-and-drop the .uf2 file into the USB drive which appears on PC
 
