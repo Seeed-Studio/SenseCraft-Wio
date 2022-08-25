@@ -1,5 +1,5 @@
-#ifndef __BUILDEX_SOIL_SENSOR_H
-#define __BUILDEX_SOIL_SENSOR_H
+#ifndef __GROVE_SOIL_SENSOR_H
+#define __GROVE_SOIL_SENSOR_H
 
 #include "sensor.h"
 #include "utils.h"
@@ -8,9 +8,9 @@
 #define SOILPIN A0
 #define READ_NUM 10
 
-class buildex_soil_sensor : public sensor_base {
+class grove_soil_sensor : public sensor_base {
   public:
-    buildex_soil_sensor();
+    grove_soil_sensor();
     void        init();
     const char *get_name();
     bool        read(struct sensor_data *data);

@@ -1,5 +1,5 @@
-#ifndef __BUILDEX_VISIONAI_SENSOR_H
-#define __BUILDEX_VISIONAI_SENSOR_H
+#ifndef __GROVE_VISIONAI_SENSOR_H
+#define __GROVE_VISIONAI_SENSOR_H
 
 #include "Seeed_Arduino_GroveAI.h"
 #include "SoftwareI2C.h"
@@ -15,9 +15,9 @@ using namespace cpp_freertos;
 #define VISIONAI_SCLPIN D0
 #define MAX_DETECTION 3
 
-class buildex_visionai_sensor : public sensor_base {
+class grove_visionai_sensor : public sensor_base {
   public:
-    buildex_visionai_sensor();
+    grove_visionai_sensor();
     void        init();
     const char *get_name();
     bool        read(struct sensor_data *data);

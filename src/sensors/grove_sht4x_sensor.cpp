@@ -1,9 +1,9 @@
-#include "buildex_sht4x_sensor.h"
+#include "grove_sht4x_sensor.h"
 #include "SoftwareI2C.h"
 
-buildex_sht4x_sensor::buildex_sht4x_sensor() {
+grove_sht4x_sensor::grove_sht4x_sensor() {
 }
-void buildex_sht4x_sensor::init() {
+void grove_sht4x_sensor::init() {
     softwarei2c.begin(SHT4X_SDAPIN, SHT4X_SCLPIN);
     sht4x.setPort(softwarei2c);
     sht4x.setChipType(SHT4X_CHIPTYPE_A);
@@ -11,7 +11,7 @@ void buildex_sht4x_sensor::init() {
     sht4x.checkSerial();
 }
 
-bool buildex_sht4x_sensor::read(struct sensor_data *sdata) {
+bool grove_sht4x_sensor::read(struct sensor_data *sdata) {
     softwarei2c.begin(SHT4X_SDAPIN, SHT4X_SCLPIN);
     if (sht4x.measure() != SHT4X_STATUS_OK) {
         return false;
@@ -28,14 +28,14 @@ bool buildex_sht4x_sensor::read(struct sensor_data *sdata) {
     }
     sdata->data   = &sht4x_value;
     sdata->size   = sizeof(sht4x_value);
-    sdata->id     = BUILDEX_SHT4X;
+    sdata->id     = GROVE_SHT4X;
     sdata->name   = name;
     sdata->status = true;
     return true;
 }
 
-const char *buildex_sht4x_sensor::get_name() {
+const char *grove_sht4x_sensor::get_name() {
     return "sht4x";
 }
 
-// buildex_sht4x_sensor  buildin_sht4x;
+// grove_sht4x_sensor  buildin_sht4x;

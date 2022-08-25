@@ -1,5 +1,5 @@
-#ifndef __BUILDEX_SGP30_SENSOR_H
-#define __BUILDEX_SGP30_SENSOR_H
+#ifndef __GROVE_SGP30_SENSOR_H
+#define __GROVE_SGP30_SENSOR_H
 
 #include "SparkFun_SGP30_Arduino_Library.h"
 #include "sensor.h"
@@ -9,9 +9,9 @@
 #define SGP30_SDAPIN D1
 #define SGP30_SCLPIN D0
 
-class buildex_sgp30_sensor : public sensor_base {
+class grove_sgp30_sensor : public sensor_base {
   public:
-    buildex_sgp30_sensor();
+    grove_sgp30_sensor();
     void        init();
     const char *get_name();
     bool        read(struct sensor_data *data);

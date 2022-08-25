@@ -1,15 +1,15 @@
-#include "buildex_visionai_sensor.h"
+#include "grove_visionai_sensor.h"
 
-buildex_visionai_sensor::buildex_visionai_sensor() {
+grove_visionai_sensor::grove_visionai_sensor() {
     state = 0;
 }
-void buildex_visionai_sensor::init() {
+void grove_visionai_sensor::init() {
     softwarei2c.begin(VISIONAI_SDAPIN, VISIONAI_SCLPIN);
     ai.begin(ALGO_OBJECT_DETECTION, MODEL_EXT_INDEX_1); // Object detection and externel model 1
     state = 1;
 }
 
-bool buildex_visionai_sensor::read(struct sensor_data *sdata) {
+bool grove_visionai_sensor::read(struct sensor_data *sdata) {
     uint16_t temp = 0;
     softwarei2c.begin(VISIONAI_SDAPIN, VISIONAI_SCLPIN);
 
@@ -43,14 +43,14 @@ bool buildex_visionai_sensor::read(struct sensor_data *sdata) {
     }
     sdata->size = sizeof(visionai_value);
     sdata->data   = &visionai_value;
-    sdata->id     = BUILDEX_VISIONAI;
+    sdata->id     = GROVE_VISIONAI;
     sdata->name   = name;
     sdata->status = true;
     return true;
 }
 
-const char *buildex_visionai_sensor::get_name() {
+const char *grove_visionai_sensor::get_name() {
     return "visionai";
 }
 
-// buildex_visionai_sensor  buildin_visionai;
+// grove_visionai_sensor  buildin_visionai;

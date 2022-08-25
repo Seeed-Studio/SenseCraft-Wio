@@ -1,5 +1,5 @@
-#ifndef __BUILDEX_SHT4X_SENSOR_H
-#define __BUILDEX_SHT4X_SENSOR_H
+#ifndef __GROVE_SHT4X_SENSOR_H
+#define __GROVE_SHT4X_SENSOR_H
 #include "SHT4x.h"
 #include "sensor.h"
 #include "utils.h"
@@ -8,10 +8,10 @@
 #define SHT4X_SDAPIN D1
 #define SHT4X_SCLPIN D0
 
-class buildex_sht4x_sensor : public sensor_base
+class grove_sht4x_sensor : public sensor_base
 {
 public:
-	buildex_sht4x_sensor();
+	grove_sht4x_sensor();
 	void init();
 	const char *get_name();
 	bool read(struct sensor_data *data);

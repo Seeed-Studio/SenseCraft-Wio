@@ -1,11 +1,11 @@
-#include "buildex_soil_sensor.h"
+#include "grove_soil_sensor.h"
 
-buildex_soil_sensor::buildex_soil_sensor() {
+grove_soil_sensor::grove_soil_sensor() {
 }
-void buildex_soil_sensor::init() {
+void grove_soil_sensor::init() {
 }
 
-bool buildex_soil_sensor::read(struct sensor_data *sdata) {
+bool grove_soil_sensor::read(struct sensor_data *sdata) {
     uint16_t sum = 0, data[READ_NUM] = {0};
     double   variance = 0.0;
 
@@ -28,14 +28,14 @@ bool buildex_soil_sensor::read(struct sensor_data *sdata) {
     soil_value    = sum / READ_NUM;
     sdata->data   = &soil_value;
     sdata->size   = sizeof(soil_value);
-    sdata->id     = BUILDEX_SOIL;
+    sdata->id     = GROVE_SOIL;
     sdata->name   = name;
     sdata->status = true;
     return true;
 }
 
-const char *buildex_soil_sensor::get_name() {
+const char *grove_soil_sensor::get_name() {
     return "soil";
 }
 
-// buildex_soil_sensor  buildin_soil;       // Serial.println("Measurement failed!");
+// grove_soil_sensor  buildin_soil;       // Serial.println("Measurement failed!");

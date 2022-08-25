@@ -1,8 +1,8 @@
-#include "buildex_sgp30_sensor.h"
+#include "grove_sgp30_sensor.h"
 
-buildex_sgp30_sensor::buildex_sgp30_sensor() {
+grove_sgp30_sensor::grove_sgp30_sensor() {
 }
-void buildex_sgp30_sensor::init() {
+void grove_sgp30_sensor::init() {
     softwarei2c.begin(SGP30_SDAPIN, SGP30_SCLPIN);
     // Initialize sensor
     if (mySensor.begin(softwarei2c) == false) {
@@ -11,7 +11,7 @@ void buildex_sgp30_sensor::init() {
     mySensor.initAirQuality();
 }
 
-bool buildex_sgp30_sensor::read(struct sensor_data *sdata) {
+bool grove_sgp30_sensor::read(struct sensor_data *sdata) {
     softwarei2c.begin(SGP30_SDAPIN, SGP30_SCLPIN);
     if (mySensor.measureAirQuality() == SGP30_SUCCESS) {
         sgp30_value[0] = mySensor.CO2;
@@ -22,14 +22,14 @@ bool buildex_sgp30_sensor::read(struct sensor_data *sdata) {
 
     sdata->data   = &sgp30_value;
     sdata->size   = sizeof(sgp30_value);
-    sdata->id     = BUILDEX_SGP30;
+    sdata->id     = GROVE_SGP30;
     sdata->name   = name;
     sdata->status = true;
     return true;
 }
 
-const char *buildex_sgp30_sensor::get_name() {
+const char *grove_sgp30_sensor::get_name() {
     return "sgp30";
 }
 
-// buildex_sgp30_sensor  buildin_sgp30;       // Serial.println("Measurement failed!");
+// grove_sgp30_sensor  buildin_sgp30;       // Serial.println("Measurement failed!");

@@ -771,7 +771,7 @@ bool UI::Process_2(uint8_t select) {
         // 270*80 = 21600
         // check all data if vision ai is running
         for (auto d : s_data)
-            if (d.id == BUILDEX_VISIONAI)
+            if (d.id == GROVE_VISIONAI)
                 is_vision_ai_running = true;
         if (is_vision_ai_running) {
             // vision ai is running
