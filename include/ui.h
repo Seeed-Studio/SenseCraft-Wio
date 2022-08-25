@@ -16,6 +16,7 @@ using namespace cpp_freertos;
 #define SCREEN_HIGH 240  // Wio Terminal Maximum Height
 
 #define LINE_DATA_MAX_SIZE 30 // maximum size of data
+#define DRAW_LINE_MAX_NUM 3 // maximum num of draw line
 
 enum page_state { NETWORKPAGE, PROCESSPAGE, SENSEPAGE };
 
@@ -135,7 +136,7 @@ class UI : public Thread {
     // temp data
     int     temp_light;
     int     temp_mic;
-    doubles line_chart_data;
+    doubles line_chart_data[4];
 };
 
 #endif // __UI_H__

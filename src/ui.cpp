@@ -997,33 +997,38 @@ bool UI::Sensor_1(uint8_t select) {
 }
 
 bool UI::Sensor_2(uint8_t select) {
+    uint16_t line_col[] = {TFT_GREEN, TFT_RED, TFT_BLUE, TFT_YELLOW};
+    uint8_t data_num = 0;
     TitleDisplay(0);
     // Display the sensor name
     SensorSubTitle(s_data[select].name);
 
     tft.fillRect(18, 78, 24, 90, TFT_WHITE);
 
-    if (line_chart_data.size() > LINE_DATA_MAX_SIZE) // keep the old line chart front
-    {
-        line_chart_data.pop(); // this is used to remove the first read variable
-    }
-
-    line_chart_data.push(((int32_t *)s_data[select].data)[0]);
-
     // 85 * 260 = 22100
     auto content = line_chart(20, 80); //(x,y) where the line graph begins
-    content.height(85)
-        .width(260)
-        .based_on(0.0)          // Starting point of y-axis, must be a float
-        .show_circle(false)     // drawing a cirle at each point, default is on.
-        .value(line_chart_data) // passing through the data to line graph
-        .max_size(LINE_DATA_MAX_SIZE)
-        .color(TFT_GREEN) // Setting the color for the line
-                          //        .backgroud(tft.color565(0,0,0)) // Setting the color for the
-                          //        backgroud
-        .backgroud(tft.color565(0, 0, 0))
-        .draw(&tft);
+    data_num = s_data[select].size / 4;
+    if(data_num > DRAW_LINE_MAX_NUM)
+        data_num = DRAW_LINE_MAX_NUM;
+    for (int i = 0; i < data_num; i++) {
+        if (line_chart_data[i].size() > LINE_DATA_MAX_SIZE) // keep the old line chart front
+        {
+            line_chart_data[i].pop(); // this is used to remove the first read variable
+        }
+        line_chart_data[i].push(((int32_t *)s_data[select].data)[i]);
 
+        content.height(85)
+            .width(260)
+            .based_on(0.0)             // Starting point of y-axis, must be a float
+            .show_circle(false)        // drawing a cirle at each point, default is on.
+            .value(line_chart_data[i]) // passing through the data to line graph
+            .max_size(LINE_DATA_MAX_SIZE)
+            .color(line_col[i]) // Setting the color for the line
+                              //        .backgroud(tft.color565(0,0,0)) // Setting the color for the
+                              //        backgroud
+            .backgroud(tft.color565(0, 0, 0))
+            .draw(&tft);
+    }
     SensorPageState(s_data.size() / 3 + 1, select / 3);
     Status1Display(0);
     return true;
