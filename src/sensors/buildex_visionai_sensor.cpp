@@ -10,7 +10,9 @@ void buildex_visionai_sensor::init() {
 }
 
 bool buildex_visionai_sensor::read(struct sensor_data *sdata) {
+    uint16_t temp = 0;
     softwarei2c.begin(VISIONAI_SDAPIN, VISIONAI_SCLPIN);
+
     if (ai.invoke()) // begin invoke
     {
         while (1) // wait for invoking finished
@@ -21,30 +23,25 @@ bool buildex_visionai_sensor::read(struct sensor_data *sdata) {
             } else if (ret == CMD_STATE_ERROR) {
                 return false;
             }
-            delay(200);
+            delay(100);
         }
-
         uint8_t len = ai.get_result_len(); // receive how many people detect
         if (len) {
             object_detection_t data; // get data
-            // 最多显示3个数据
-            visionai_value[0] = len;
-            if (len > MAX_DETECTION) {
-                len = MAX_DETECTION;
-            }
             for (int i = 0; i < len; i++) {
                 ai.get_result(i, (uint8_t *)&data, sizeof(object_detection_t)); // get result
-                visionai_value[i + 1] = data.confidence;
+                temp += data.confidence;
             }
-            sdata->size = sizeof(visionai_value[0]) * (len + 1);
-
+            visionai_value[0] = len;
+            visionai_value[1] = temp / len;
         } else {
             visionai_value[0] = 0x0;
-            sdata->size       = sizeof(visionai_value[0]);
+            visionai_value[1] = 0x0;
         }
     } else {
         return false;
     }
+    sdata->size = sizeof(visionai_value);
     sdata->data   = &visionai_value;
     sdata->id     = BUILDEX_VISIONAI;
     sdata->name   = name;

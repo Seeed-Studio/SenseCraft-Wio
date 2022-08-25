@@ -24,7 +24,7 @@ class buildex_visionai_sensor : public sensor_base {
 
   private:
     const char *name = "visionai sensor"; /// buildin-light
-    int         visionai_value[3];
+    int         visionai_value[2];
     uint8_t     state;
     SoftwareI2C softwarei2c;
     GroveAI     ai = GroveAI(softwarei2c);
