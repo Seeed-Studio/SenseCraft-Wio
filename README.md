@@ -21,6 +21,36 @@ With this toolkit, we’ll break down the process of displaying sensor data into
 
 Currently we have implemented several functions and they have already been tested to work well on the pilot testing hardware platform Wio Terminal. We will continue to further expand the possibilities of the current solution and ultimately end up with a more polished solution to serve the open source community. So, please stay tuned for our next update. 
 
+## Quick start with Wio Terminal
+
+- Step 1: Download the latest **.uf2** file [from here](https://github.com/Seeed-Studio/SenseCraft/releases)
+
+- Step 2: Connect Wio Terminal to PC and enter bootloader mode on the Wio Terminal
+
+<div align=center><img width=450 src="https://files.seeedstudio.com/wiki/K1100-quick-start/32.png"/></div>
+
+- Step 3: Drag-and-drop the .uf2 file into the USB drive which appears on PC
+
+<div align=center><img width=180 src="https://files.seeedstudio.com/wiki/K1100-quick-start/33.png"/></div>
+
+To get a sneak peak about how to use this at the current state, please follow [this wiki](https://wiki.seeedstudio.com/K1100-quickstart)
+
+**Note:** Please note that you need to follow the steps below if you want to connect to SenseCAP platform via LoRa. This will not be needed in the future.
+
+- Step 4: When the Wio Terminal is connected to the PC with the above project loaded, you will see a new USB drive appear
+
+<div align=center><img width=230 src="https://files.seeedstudio.com/wiki/K1100-quick-start/30.png"/></div>
+
+- Step 5: Create a new file named **config.txt** inside this USB drive, add the following and save it
+
+```sh
+FREQUENCY=1
+```
+
+- Step 6: Turn OFF Wio Terminal and turn it back ON
+
+## Functions list
+
 <table style="undefined;table-layout: fixed; width: 922px">
 <colgroup>
 <col style="width: 30px">
@@ -160,22 +190,6 @@ Now we will upload the project into Wio Terminal
 ```sh
 pio run -t upload
 ```
-
-## Additional configuration steps
-
-Please note that you need to follow the steps below if you want to connect to SenseCAP platform via LoRa. This will not be needed in the future.
-
-- Step 1: When the Wio Terminal is connected to the PC with the above project loaded, you will see a new USB drive appear
-
-<div align=center><img width=230 src="https://files.seeedstudio.com/wiki/K1100-quick-start/30.png"/></div>
-
-- Step 2: Create a new file named **config.txt** inside this USB drive, add the following and save it
-
-```sh
-FREQUENCY=1
-```
-
-- Step 3: Turn OFF Wio Terminal and turn it back ON
 
 ## Get in touch
 
