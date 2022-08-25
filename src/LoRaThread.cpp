@@ -188,15 +188,44 @@ bool LoRaThread::SendBuildinSensorData() {
 }
 
 bool LoRaThread::SendGroveSensorData() {
-    struct grove_sensor_data sdata;
-    bool                     ret = true;
-    sdata.precode                = 0x42;
+    struct grove_sensor_data sdata = {0};
+    bool                     ret   = true;
+    sdata.precode                  = 0x42;
     /*build sensor data*/
-    sdata.d0 = 0x80;
-    sdata.d1 = 0x80;
-    sdata.d2 = 0x80;
-    sdata.d3 = 0x80;
-    sdata.d4 = 0x80;
+    for (auto data : lora_data) {
+        // Copy the data to the buildin buffer in the order of the data id
+        switch (data.id) {
+            {
+            case GROVE_SOIL:
+                /* code */
+                sdata.d0 = BSWAP16(static_cast<uint16_t>(((int32_t *)data.data)[0]));
+                LOGSS.printf("Soil hum: %d\r\n, ", sdata.d0);
+                break;
+            case GROVE_SGP30:
+                sdata.d0 = BSWAP16(static_cast<uint16_t>(((int32_t *)data.data)[0]));
+                sdata.d1 = BSWAP16(static_cast<uint16_t>(((int32_t *)data.data)[1]));
+                LOGSS.printf("CO2: %d ,TVOC:%d\r\n, ", sdata.d0, sdata.d1);
+                /* code */
+                break;
+            case GROVE_SHT4X:
+                /* code */
+                sdata.d0 = BSWAP16(static_cast<uint16_t>(((int32_t *)data.data)[0]));
+                sdata.d1 = BSWAP16(static_cast<uint16_t>(((int32_t *)data.data)[1]));
+                LOGSS.printf("temperature: %d, humidity: %d\r\n", sdata.d0, sdata.d1);
+                break;
+            case GROVE_VISIONAI:
+                /* code */
+                sdata.d0 = BSWAP16(static_cast<uint16_t>(((int32_t *)data.data)[0]));
+                sdata.d1 = BSWAP16(static_cast<uint16_t>(((int32_t *)data.data)[1]));
+                LOGSS.printf("count: %d, confidence: %d\r\n", sdata.d0, sdata.d1);
+                break;
+            default:
+                break;
+            }
+        }
+    }
+    LOGSS.printf("data size %d\r\n", sizeof(sdata));
+    LOGSS.println("====================================");
     if (!SendData((uint8_t *)&sdata, sizeof(sdata), v2)) {
         LOGSS.println("LoRa E5 Send Buildin Sensor Data Failed");
         ret = false;
