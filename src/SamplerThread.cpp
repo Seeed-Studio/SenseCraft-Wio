@@ -7,6 +7,7 @@
 #include "sensors/buildex_sht4x_sensor.h"
 #include "sensors/buildex_sgp30_sensor.h"
 #include "sensors/buildex_soil_sensor.h"
+#include "sensors/buildex_visionai_sensor.h"
 #include <vector>
 
 SamplerThread::SamplerThread(SysConfig &config, UI &ui)
@@ -26,6 +27,7 @@ void SamplerThread::Run() {
     sensors.push_back(new buildex_sht4x_sensor());
 	sensors.push_back(new buildex_sgp30_sensor());
     sensors.push_back(new buildex_soil_sensor());
+    sensors.push_back(new buildex_visionai_sensor());
     // sensors.push_back(new FakeSensor());
 
     for (auto sensor : sensors) {
