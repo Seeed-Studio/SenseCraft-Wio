@@ -4,9 +4,27 @@
 #include "sensor.h"
 #include "utils.h"
 #include "SoftwareI2C.h"
+#include <Seeed_Arduino_ooFreeRTOS.h>
+
+using namespace cpp_freertos;
 
 #define SHT4X_SDAPIN D1
 #define SHT4X_SCLPIN D0
+
+class Sht4x : public Thread {
+
+  public:
+    Sht4x();
+    int     data[2];
+    uint8_t dsize;
+    bool    status;
+	SHT4x  sht4x_dev;
+	SoftwareI2C softwarei2c;
+
+  protected:
+    virtual void Run();
+};
+
 
 class grove_sht4x_sensor : public sensor_base
 {
@@ -19,8 +37,7 @@ private:
 	const char *name = "Sht4x sensor"; /// buildin-light
 	int sht4x_value[2];
 
-	SHT4x  sht4x;
-	SoftwareI2C softwarei2c;
+	Sht4x  *sht4x;
 };
 
 #endif

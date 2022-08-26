@@ -5,7 +5,6 @@
 #include "SoftwareI2C.h"
 #include "SysConfig.h"
 #include "sensor.h"
-#include <Arduino.h>
 #include <Seeed_Arduino_ooFreeRTOS.h>
 #include <utils.h>
 
@@ -14,6 +13,20 @@ using namespace cpp_freertos;
 #define VISIONAI_SDAPIN D1
 #define VISIONAI_SCLPIN D0
 #define MAX_DETECTION 3
+
+class Visionai : public Thread {
+
+  public:
+    Visionai();
+    int     data[2];
+    uint8_t dsize;
+    bool    status;
+    SoftwareI2C softwarei2c;
+    GroveAI     ai = GroveAI(softwarei2c);
+
+  protected:
+    virtual void Run();
+};
 
 class grove_visionai_sensor : public sensor_base {
   public:
@@ -25,9 +38,7 @@ class grove_visionai_sensor : public sensor_base {
   private:
     const char *name = "visionai sensor"; /// buildin-light
     int         visionai_value[2];
-    uint8_t     state;
-    SoftwareI2C softwarei2c;
-    GroveAI     ai = GroveAI(softwarei2c);
+    Visionai    *visionai;
 };
 
 #endif

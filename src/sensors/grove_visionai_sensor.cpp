@@ -1,52 +1,66 @@
 #include "grove_visionai_sensor.h"
+#include "Arduino.h"
 
-grove_visionai_sensor::grove_visionai_sensor() {
-    state = 0;
+Visionai::Visionai() : Thread("Visionai", 256, 1) {
 }
-void grove_visionai_sensor::init() {
+void Visionai::Run() {
+    uint16_t temp = 0;
     softwarei2c.begin(VISIONAI_SDAPIN, VISIONAI_SCLPIN);
     ai.begin(ALGO_OBJECT_DETECTION, MODEL_EXT_INDEX_1); // Object detection and externel model 1
-    state = 1;
+    while (true) {
+        softwarei2c.begin(VISIONAI_SDAPIN, VISIONAI_SCLPIN);
+        temp = 0;
+        if (ai.invoke()) // begin invoke
+        {
+            while (1) // wait for invoking finished
+            {
+                CMD_STATE_T ret = ai.state();
+                if (ret == CMD_STATE_IDLE) {
+                    break;
+                } else if (ret == CMD_STATE_ERROR) {
+                    status = false;
+                    Delay(Ticks::MsToTicks(200));
+                    goto next;
+                }
+                Delay(Ticks::MsToTicks(100));
+            }
+            uint8_t len = ai.get_result_len(); // receive how many people detect
+            if (len) {
+                object_detection_t g_data; // get data
+                for (int i = 0; i < len; i++) {
+                    ai.get_result(i, (uint8_t *)&g_data, sizeof(object_detection_t)); // get result
+                    temp += g_data.confidence;
+                }
+                status  = true;
+                data[0] = len;
+                data[1] = temp / len;
+            } else {
+                status  = true;
+                data[0] = 0x0;
+                data[1] = 0x0;
+            }
+        } else {
+            status = false;
+            Delay(Ticks::MsToTicks(200));
+        }
+    next:;
+    }
+}
+
+grove_visionai_sensor::grove_visionai_sensor() {
+    visionai = new Visionai();
+}
+void grove_visionai_sensor::init() {
+    visionai->Start();
 }
 
 bool grove_visionai_sensor::read(struct sensor_data *sdata) {
-    uint16_t temp = 0;
-    softwarei2c.begin(VISIONAI_SDAPIN, VISIONAI_SCLPIN);
-
-    if (ai.invoke()) // begin invoke
-    {
-        while (1) // wait for invoking finished
-        {
-            CMD_STATE_T ret = ai.state();
-            if (ret == CMD_STATE_IDLE) {
-                break;
-            } else if (ret == CMD_STATE_ERROR) {
-                return false;
-            }
-            delay(100);
-        }
-        uint8_t len = ai.get_result_len(); // receive how many people detect
-        if (len) {
-            object_detection_t data; // get data
-            for (int i = 0; i < len; i++) {
-                ai.get_result(i, (uint8_t *)&data, sizeof(object_detection_t)); // get result
-                temp += data.confidence;
-            }
-            visionai_value[0] = len;
-            visionai_value[1] = temp / len;
-        } else {
-            visionai_value[0] = 0x0;
-            visionai_value[1] = 0x0;
-        }
-    } else {
-        return false;
-    }
-    sdata->size = sizeof(visionai_value);
-    sdata->data   = &visionai_value;
+    sdata->size   = sizeof(visionai->data);
+    sdata->data   = &visionai->data;
     sdata->id     = GROVE_VISIONAI;
     sdata->name   = name;
-    sdata->status = true;
-    return true;
+    sdata->status = visionai->status;
+    return sdata->status;
 }
 
 const char *grove_visionai_sensor::get_name() {

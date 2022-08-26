@@ -1,31 +1,45 @@
 #include "grove_sgp30_sensor.h"
+#include "Arduino.h"
 
-grove_sgp30_sensor::grove_sgp30_sensor() {
+Sgp30::Sgp30() : Thread("Sgp30", 256, 1) {
 }
-void grove_sgp30_sensor::init() {
+void Sgp30::Run() {
     softwarei2c.begin(SGP30_SDAPIN, SGP30_SCLPIN);
     // Initialize sensor
     if (mySensor.begin(softwarei2c) == false) {
         return;
     }
     mySensor.initAirQuality();
+    while (true) {
+        softwarei2c.begin(SGP30_SDAPIN, SGP30_SCLPIN);
+        if (mySensor.measureAirQuality() == SGP30_SUCCESS) {
+            if (status == false)
+                mySensor.initAirQuality();
+            status  = true;
+            data[0] = mySensor.CO2;
+            data[1] = mySensor.TVOC;
+        } else {
+            status = false;
+        }
+        Delay(Ticks::MsToTicks(200));
+    }
+}
+
+grove_sgp30_sensor::grove_sgp30_sensor() {
+    sgp30 = new Sgp30();
+}
+void grove_sgp30_sensor::init() {
+    sgp30->Start();
 }
 
 bool grove_sgp30_sensor::read(struct sensor_data *sdata) {
-    softwarei2c.begin(SGP30_SDAPIN, SGP30_SCLPIN);
-    if (mySensor.measureAirQuality() == SGP30_SUCCESS) {
-        sgp30_value[0] = mySensor.CO2;
-        sgp30_value[1] = mySensor.TVOC;
-    } else {
-        return false;
-    }
 
-    sdata->data   = &sgp30_value;
-    sdata->size   = sizeof(sgp30_value);
+    sdata->data   = sgp30->data;
+    sdata->size   = sizeof(sgp30->data);
     sdata->id     = GROVE_SGP30;
     sdata->name   = name;
-    sdata->status = true;
-    return true;
+    sdata->status = sgp30->status;
+    return sdata->status;
 }
 
 const char *grove_sgp30_sensor::get_name() {
