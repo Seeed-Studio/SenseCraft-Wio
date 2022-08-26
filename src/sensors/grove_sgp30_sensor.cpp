@@ -1,7 +1,8 @@
 #include "grove_sgp30_sensor.h"
 #include "Arduino.h"
+#include "SensorsUtils.h"
 
-Sgp30::Sgp30() : Thread("Sgp30", 256, 1) {
+Sgp30::Sgp30() : Thread("Sgp30", 128, 1) {
 }
 void Sgp30::Run() {
     softwarei2c.begin(SGP30_SDAPIN, SGP30_SCLPIN);
@@ -21,7 +22,7 @@ void Sgp30::Run() {
         } else {
             status = false;
         }
-        Delay(Ticks::MsToTicks(200));
+        Delay(Ticks::MsToTicks(SENSOR_READ_DELAY));
     }
 }
 

@@ -7,6 +7,9 @@
 
 #define SOILPIN A0
 #define READ_NUM 10
+#define SOIL_DATA_MAX 1000
+#define DATA_VARIANCE_MAX 20
+
 
 class grove_soil_sensor : public sensor_base {
   public:

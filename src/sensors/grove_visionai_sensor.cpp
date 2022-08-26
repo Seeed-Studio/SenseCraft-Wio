@@ -1,7 +1,8 @@
 #include "grove_visionai_sensor.h"
 #include "Arduino.h"
+#include "SensorsUtils.h"
 
-Visionai::Visionai() : Thread("Visionai", 256, 1) {
+Visionai::Visionai() : Thread("Visionai", 128, 1) {
 }
 void Visionai::Run() {
     uint16_t temp = 0;
@@ -19,7 +20,6 @@ void Visionai::Run() {
                     break;
                 } else if (ret == CMD_STATE_ERROR) {
                     status = false;
-                    Delay(Ticks::MsToTicks(200));
                     goto next;
                 }
                 Delay(Ticks::MsToTicks(100));
@@ -41,9 +41,9 @@ void Visionai::Run() {
             }
         } else {
             status = false;
-            Delay(Ticks::MsToTicks(200));
         }
-    next:;
+    next:
+        Delay(Ticks::MsToTicks(SENSOR_READ_DELAY));
     }
 }
 

@@ -1,6 +1,7 @@
 #include "grove_sht4x_sensor.h"
 #include "Arduino.h"
 #include "SoftwareI2C.h"
+#include "SensorsUtils.h"
 
 Sht4x::Sht4x() : Thread("Sht4x", 128, 1) {
 }
@@ -29,7 +30,7 @@ void Sht4x::Run() {
             data[1] = 0xFF;
         }
     next:
-        Delay(Ticks::MsToTicks(200));
+        Delay(Ticks::MsToTicks(SENSOR_READ_DELAY));
     }
 }
 
