@@ -193,7 +193,7 @@ pio run -t upload
 
 ## Get in touch
 
-Have any questions? Would like to discuss something in depth? [Join](https://join.slack.com/t/angular-builders/shared_invite/enQtODM2MjU5MTYyMDk2LTcxODQ3NTExNDZkM2U0NWQ2NmVmZTAwZWNmOThhYjg4ZDlmMGFlNDZmYWQxYzU5ODIzYjdmZGFmNmUxNDBlY2E) us on Discord: discord.seeed.cc (#iot-into-the-wild channel)!
+Have any questions? Would like to discuss something in depth? [Join us on Discord](https://discord.seeed.cc) (#iot-into-the-wild channel)!
 
 ## Useful links
 
