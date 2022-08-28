@@ -16,7 +16,8 @@ using namespace cpp_freertos;
 #define SCREEN_HIGH 240  // Wio Terminal Maximum Height
 
 #define LINE_DATA_MAX_SIZE 30 // maximum size of data
-#define DRAW_LINE_MAX_NUM 3 // maximum num of draw line
+#define DRAW_LINE_MAX_NUM 3   // maximum num of draw line
+#define SHOW_LOG_MAX_SIZE 11 // maximum size of log
 
 enum page_state { NETWORKPAGE, PROCESSPAGE, SENSEPAGE };
 
@@ -47,9 +48,9 @@ struct NetworkState {
 };
 
 struct LoRaBandInfo {
-    char  *type;
-    char  *frequency;
-    char  *country;
+    char   *type;
+    char   *frequency;
+    char   *country;
     uint8_t band;
 };
 
@@ -65,6 +66,7 @@ class UI : public Thread {
 
   public:
     void UIPushData(std::vector<sensor_data *> d);
+    void UIPushLog(std::vector<log_data> d);
 
   private:
     TFT_eSPI    &tft;
@@ -76,6 +78,9 @@ class UI : public Thread {
 
     std::vector<sensor_data> s_data;
     bool                     s_data_ready = true;
+
+    std::vector<log_data> a_log;
+    bool                  log_ready = true;
 
     uint8_t            buff[256];
     struct sensor_data sdata;

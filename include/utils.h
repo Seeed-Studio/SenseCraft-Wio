@@ -22,8 +22,13 @@ struct sensor_data {
     bool          status; // 0: normal, 1: error
 };
 
+struct log_data {
+    char data[64];
+    uint16_t    time;
+};
+
 enum sensor_type {
-    //1-3, buildin sensor
+    // 1-3, buildin sensor
     BUILDIN_LIGHT = 1,
     BUILDIN_MIC,
     LIS3DHTRSENSOR,

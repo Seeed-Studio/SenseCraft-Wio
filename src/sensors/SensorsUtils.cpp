@@ -1,6 +1,7 @@
 
 #include "Arduino.h"
 #include "Wire.h"
+#include "sensor.h"
 
 bool I2CScanner(uint8_t address, TwoWire &wire)
 {

@@ -18,14 +18,16 @@ class Visionai : public Thread {
 
   public:
     Visionai();
-    int     data[2];
-    uint8_t dsize;
-    bool    status;
-    SoftwareI2C softwarei2c;
-    GroveAI     ai = GroveAI(softwarei2c);
+    int                     data[2];
+    uint8_t                 dsize;
+    bool                    status;
+    std::vector<log_data>   ai_log;
+    SoftwareI2C             softwarei2c;
+    GroveAI                 ai = GroveAI(softwarei2c);
 
   protected:
     virtual void Run();
+    void         pushlog(const char *msg);
 };
 
 class grove_visionai_sensor : public sensor_base {
@@ -38,7 +40,7 @@ class grove_visionai_sensor : public sensor_base {
   private:
     const char *name = "visionai sensor"; /// buildin-light
     int         visionai_value[2];
-    Visionai    *visionai;
+    Visionai   *visionai;
 };
 
 #endif

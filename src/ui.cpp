@@ -67,6 +67,18 @@ void UI::UIPushData(std::vector<sensor_data *> d) {
     }
 }
 
+void UI::UIPushLog(std::vector<log_data> d) {
+    if (log_ready) {
+        int log_num = d.size();
+        // 最多只显示11条日志
+        if (log_num > SHOW_LOG_MAX_SIZE)
+            log_num = SHOW_LOG_MAX_SIZE;
+        for (int i = 0; i < log_num; i++)
+            a_log.push_back(d.at(d.size() - log_num + i));
+        log_ready = false;
+    }
+}
+
 #define PIXEL 4 // Width of one letter
 #define LEFT_SIDE 70
 #define HIGHT_SIDE 47
@@ -762,7 +774,8 @@ bool UI::Process_1(uint8_t select) {
 }
 
 bool UI::Process_2(uint8_t select) {
-    bool is_vision_ai_running = false;
+    int  i = 0;
+    char buf[16];
     TitleDisplay(1);
     ProcessSubTitle(select);
     switch (select) {
@@ -770,28 +783,26 @@ bool UI::Process_2(uint8_t select) {
     case 0: {
         // 270*80 = 21600
         // check all data if vision ai is running
-        for (auto d : s_data)
-            if (d.id == GROVE_VISIONAI)
-                is_vision_ai_running = true;
-        if (is_vision_ai_running) {
-            // vision ai is running
-            // todo: display the result
-        } else {
-            // vision ai is not running
-            spr.createSprite(340, 50);
-
-            spr.setFreeFont(FSSB9);
-            spr.setTextColor(TFT_WHITE);
-
-            spr.drawString("Please connect to Vision AI Sensor", 9, 20, GFXFF);
-
-            spr.pushSprite(0, 100);
-            spr.deleteSprite();
-
-            spr.createSprite(340, 50);
-            spr.pushSprite(0, 150);
-            spr.deleteSprite();
+        if (a_log.size() == 0) {
+            log_ready = true;
+            break;
         }
+
+        spr.createSprite(320, 120);
+        spr.setFreeFont(FSS9);
+        for (auto data : a_log) {
+            sprintf(buf, "[%d]:", data.time);
+            spr.setTextColor(TFT_GREEN);
+            spr.drawString(buf, 4, i * 10, 2);
+            spr.setTextColor(TFT_WHITE);
+            spr.drawString(data.data, 68, i * 10, 2);
+            i++;
+        }
+        spr.pushSprite(0, 80);
+        spr.deleteSprite();
+        a_log.clear();
+        a_log.shrink_to_fit();
+        log_ready = true;
         break;
     }
     // TinyML Example

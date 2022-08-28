@@ -1,5 +1,6 @@
 
 #include "SamplerThread.h"
+#include "sensor.h"
 #include "sensors/FakeSensor.h"
 #include "sensors/LIS3DHTRSensor.h"
 #include "sensors/buildin_light_sensor.h"
@@ -54,6 +55,7 @@ void SamplerThread::Run() {
         }
         lora->LoRaPushData(datas);
         display.UIPushData(datas);
+        display.UIPushLog(sensor_base::slog);
         for (auto data : datas) {
             delete data;
         }
