@@ -2,7 +2,7 @@
 #include "Arduino.h"
 #include "SensorsUtils.h"
 
-Visionai::Visionai() : Thread("Visionai", 512, 1) {
+Visionai::Visionai() : Thread("Visionai", 256, 1) {
 }
 
 void Visionai::pushlog(const char *msg) {
