@@ -505,7 +505,7 @@ bool UI::Network_2_0(uint8_t select) {
 bool UI::Network_2_1(uint8_t select) {
     TitleDisplay(2);
     NetworkSubtitles(n_state.current_network);
-
+    cfg.wifi_on = true;
     if (cfg.wificonnected) {
         spr.createSprite(200, 60);
         spr.fillSprite(TFT_BLACK);
@@ -546,7 +546,9 @@ bool UI::Network_2_1(uint8_t select) {
     }
 
     Status1Display(0);
+    return true;
 }
+
 bool UI::Network_3_0(uint8_t select) {
     TitleDisplay(2);
     // NetworkSubtitles(n_state.current_network);
@@ -563,6 +565,14 @@ bool UI::Network_3_0(uint8_t select) {
     spr.deleteSprite();
     Status1Display(0);
     return true;
+}
+
+bool UI::Network_3_1(uint8_t select) {
+    TitleDisplay(2);
+    // NetworkSubtitles(n_state.current_network);
+    NetworkSubtitles(n_state.current_network);
+    cfg.wifi_on = false;
+    n_state.nw_state.current_page -= 2;
 }
 
 bool UI::Network_4_0(uint8_t select) {
@@ -1009,7 +1019,7 @@ bool UI::Sensor_1(uint8_t select) {
 
 bool UI::Sensor_2(uint8_t select) {
     uint16_t line_col[] = {TFT_GREEN, TFT_RED, TFT_BLUE, TFT_YELLOW};
-    uint8_t data_num = 0;
+    uint8_t  data_num   = 0;
     TitleDisplay(0);
     // Display the sensor name
     SensorSubTitle(s_data[select].name);
@@ -1018,8 +1028,8 @@ bool UI::Sensor_2(uint8_t select) {
 
     // 85 * 260 = 22100
     auto content = line_chart(20, 80); //(x,y) where the line graph begins
-    data_num = s_data[select].size / 4;
-    if(data_num > DRAW_LINE_MAX_NUM)
+    data_num     = s_data[select].size / 4;
+    if (data_num > DRAW_LINE_MAX_NUM)
         data_num = DRAW_LINE_MAX_NUM;
     for (int i = 0; i < data_num; i++) {
         if (line_chart_data[i].size() > LINE_DATA_MAX_SIZE) // keep the old line chart front
@@ -1035,8 +1045,8 @@ bool UI::Sensor_2(uint8_t select) {
             .value(line_chart_data[i]) // passing through the data to line graph
             .max_size(LINE_DATA_MAX_SIZE)
             .color(line_col[i]) // Setting the color for the line
-                              //        .backgroud(tft.color565(0,0,0)) // Setting the color for the
-                              //        backgroud
+                                //        .backgroud(tft.color565(0,0,0)) // Setting the color for
+                                //        the backgroud
             .backgroud(tft.color565(0, 0, 0))
             .draw(&tft);
     }

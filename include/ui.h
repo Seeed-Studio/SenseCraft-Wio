@@ -127,7 +127,7 @@ class UI : public Thread {
     typedef bool (UI::*page_t)(uint8_t key);
 
     page_t l_network[4] = {&UI::Network_1, &UI::Network_2_0, &UI::Network_3_0, &UI::Network_4_0};
-    page_t w_network[2] = {&UI::Network_1, &UI::Network_2_1};
+    page_t w_network[3] = {&UI::Network_1, &UI::Network_2_1, &UI::Network_3_1};
 
     page_t process[2] = {&UI::Process_1, &UI::Process_2};
     page_t sense[2]   = {&UI::Sensor_1, &UI::Sensor_2};
