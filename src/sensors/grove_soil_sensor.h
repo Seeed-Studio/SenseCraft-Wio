@@ -4,12 +4,14 @@
 #include "sensor.h"
 #include "utils.h"
 #include "Arduino.h"
+#include "SoftwareI2C.h"
 
 #define SOILPIN A0
 #define READ_NUM 10
 #define SOIL_DATA_MAX 1000
 #define DATA_VARIANCE_MAX 20
-
+#define SOFTWRIE_SDAPIN D1
+#define SOFTWRIE_SCLPIN D0
 
 class grove_soil_sensor : public sensor_base {
   public:
@@ -21,6 +23,7 @@ class grove_soil_sensor : public sensor_base {
   private:
     const char *name = "soil sensor"; /// buildin-light
     int         soil_value;
+    SoftwareI2C softwarei2c;
 };
 
 #endif

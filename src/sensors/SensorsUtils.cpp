@@ -1,9 +1,10 @@
 
 #include "Arduino.h"
 #include "Wire.h"
+#include "SoftwareI2C.h"
 #include "sensor.h"
 
-bool I2CScanner(uint8_t address, TwoWire &wire)
+template <typename T> bool I2CScanner(uint8_t address, T wire)
 {
     uint8_t error = 0;
     wire.begin();
@@ -29,3 +30,20 @@ bool I2CScanner(uint8_t address, TwoWire &wire)
 
    return true;
 }
+template bool I2CScanner(uint8_t address, TwoWire wire);
+
+template <typename T> 
+bool I2CScanner(T wire)
+{
+    for (unsigned char i = 1; i <= 127; i++) {
+        if (wire.beginTransmission(i)) {
+            LOGSS.printf("Found I2C device at address: ");
+            LOGSS.println( i);
+            return true;
+        }
+        wire.endTransmission();
+    }
+            LOGSS.println(" not Found I2C device  ");
+    return false;
+}
+template bool I2CScanner(SoftwareI2C wire);

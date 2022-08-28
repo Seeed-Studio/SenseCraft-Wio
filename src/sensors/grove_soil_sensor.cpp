@@ -1,4 +1,5 @@
 #include "grove_soil_sensor.h"
+#include "SensorsUtils.h"
 
 grove_soil_sensor::grove_soil_sensor() {
 }
@@ -8,7 +9,11 @@ void grove_soil_sensor::init() {
 bool grove_soil_sensor::read(struct sensor_data *sdata) {
     uint16_t sum = 0, data[READ_NUM] = {0};
     double   variance = 0.0;
-
+    softwarei2c.begin(SOFTWRIE_SDAPIN, SOFTWRIE_SCLPIN);
+    if(I2CScanner(softwarei2c))
+    {
+        return false;
+    }
     analogRead(SOILPIN);
     delay(2);
     // 求和
