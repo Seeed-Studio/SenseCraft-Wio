@@ -16,6 +16,8 @@ using namespace cpp_freertos;
 #define SCREEN_HIGH 240  // Wio Terminal Maximum Height
 
 #define LINE_DATA_MAX_SIZE 30 // maximum size of data
+#define DRAW_LINE_MAX_NUM 3   // maximum num of draw line
+#define SHOW_LOG_MAX_SIZE 11 // maximum size of log
 
 enum page_state { NETWORKPAGE, PROCESSPAGE, SENSEPAGE };
 
@@ -46,9 +48,9 @@ struct NetworkState {
 };
 
 struct LoRaBandInfo {
-    char  *type;
-    char  *frequency;
-    char  *country;
+    char   *type;
+    char   *frequency;
+    char   *country;
     uint8_t band;
 };
 
@@ -64,6 +66,7 @@ class UI : public Thread {
 
   public:
     void UIPushData(std::vector<sensor_data *> d);
+    void UIPushLog(std::vector<log_data> d);
 
   private:
     TFT_eSPI    &tft;
@@ -75,6 +78,9 @@ class UI : public Thread {
 
     std::vector<sensor_data> s_data;
     bool                     s_data_ready = true;
+
+    std::vector<log_data> a_log;
+    bool                  log_ready = true;
 
     uint8_t            buff[256];
     struct sensor_data sdata;
@@ -121,7 +127,7 @@ class UI : public Thread {
     typedef bool (UI::*page_t)(uint8_t key);
 
     page_t l_network[4] = {&UI::Network_1, &UI::Network_2_0, &UI::Network_3_0, &UI::Network_4_0};
-    page_t w_network[2] = {&UI::Network_1, &UI::Network_2_1};
+    page_t w_network[3] = {&UI::Network_1, &UI::Network_2_1, &UI::Network_3_1};
 
     page_t process[2] = {&UI::Process_1, &UI::Process_2};
     page_t sense[2]   = {&UI::Sensor_1, &UI::Sensor_2};
@@ -135,7 +141,7 @@ class UI : public Thread {
     // temp data
     int     temp_light;
     int     temp_mic;
-    doubles line_chart_data;
+    doubles line_chart_data[4];
 };
 
 #endif // __UI_H__

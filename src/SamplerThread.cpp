@@ -1,13 +1,18 @@
 
 #include "SamplerThread.h"
+#include "sensor.h"
 #include "sensors/FakeSensor.h"
 #include "sensors/LIS3DHTRSensor.h"
 #include "sensors/buildin_light_sensor.h"
 #include "sensors/buildin_mic.h"
+#include "sensors/grove_sht4x_sensor.h"
+#include "sensors/grove_sgp30_sensor.h"
+#include "sensors/grove_soil_sensor.h"
+#include "sensors/grove_visionai_sensor.h"
 #include <vector>
 
 SamplerThread::SamplerThread(SysConfig &config, UI &ui)
-    : Thread("SamplerThread", 256, 1), cfg(config), display(ui) {
+    : Thread("SamplerThread", 512, 1), cfg(config), display(ui) {
     // start thread when created
     Start();
 }
@@ -20,6 +25,10 @@ void SamplerThread::Run() {
     sensors.push_back(new buildin_light_sensor());
     sensors.push_back(new buildin_mic());
     sensors.push_back(new LIS3DHTRSensor());
+    sensors.push_back(new grove_sht4x_sensor());
+	sensors.push_back(new grove_sgp30_sensor());
+    sensors.push_back(new grove_soil_sensor());
+    sensors.push_back(new grove_visionai_sensor());
     // sensors.push_back(new FakeSensor());
 
     for (auto sensor : sensors) {
@@ -46,12 +55,13 @@ void SamplerThread::Run() {
         }
         lora->LoRaPushData(datas);
         display.UIPushData(datas);
+        display.UIPushLog(sensor_base::slog);
         for (auto data : datas) {
             delete data;
         }
         datas.clear();
         datas.shrink_to_fit();
-        // Delay(Ticks::MsToTicks(1000));
+        Delay(Ticks::MsToTicks(100));
         // LOGSS.printf("SamplerThread Stacks Free Bytes Remaining %d\r\n",
         // uxTaskGetStackHighWaterMark(GetHandle()));
     }

@@ -22,12 +22,20 @@ struct sensor_data {
     bool          status; // 0: normal, 1: error
 };
 
+struct log_data {
+    char data[64];
+    uint16_t    time;
+};
+
 enum sensor_type {
-    //1-3, buildin sensor
+    // 1-3, buildin sensor
     BUILDIN_LIGHT = 1,
     BUILDIN_MIC,
     LIS3DHTRSENSOR,
-    GROVEVISIONAI,
+    GROVE_VISIONAI,
+    GROVE_SHT4X,
+    GROVE_SGP30,
+    GROVE_SOIL,
 };
 
 enum lora_freq {

@@ -67,6 +67,18 @@ void UI::UIPushData(std::vector<sensor_data *> d) {
     }
 }
 
+void UI::UIPushLog(std::vector<log_data> d) {
+    if (log_ready) {
+        int log_num = d.size();
+        // 最多只显示11条日志
+        if (log_num > SHOW_LOG_MAX_SIZE)
+            log_num = SHOW_LOG_MAX_SIZE;
+        for (int i = 0; i < log_num; i++)
+            a_log.push_back(d.at(d.size() - log_num + i));
+        log_ready = false;
+    }
+}
+
 #define PIXEL 4 // Width of one letter
 #define LEFT_SIDE 70
 #define HIGHT_SIDE 47
@@ -493,7 +505,7 @@ bool UI::Network_2_0(uint8_t select) {
 bool UI::Network_2_1(uint8_t select) {
     TitleDisplay(2);
     NetworkSubtitles(n_state.current_network);
-
+    cfg.wifi_on = true;
     if (cfg.wificonnected) {
         spr.createSprite(200, 60);
         spr.fillSprite(TFT_BLACK);
@@ -534,7 +546,9 @@ bool UI::Network_2_1(uint8_t select) {
     }
 
     Status1Display(0);
+    return true;
 }
+
 bool UI::Network_3_0(uint8_t select) {
     TitleDisplay(2);
     // NetworkSubtitles(n_state.current_network);
@@ -551,6 +565,14 @@ bool UI::Network_3_0(uint8_t select) {
     spr.deleteSprite();
     Status1Display(0);
     return true;
+}
+
+bool UI::Network_3_1(uint8_t select) {
+    TitleDisplay(2);
+    // NetworkSubtitles(n_state.current_network);
+    NetworkSubtitles(n_state.current_network);
+    cfg.wifi_on = false;
+    n_state.nw_state.current_page -= 2;
 }
 
 bool UI::Network_4_0(uint8_t select) {
@@ -762,7 +784,8 @@ bool UI::Process_1(uint8_t select) {
 }
 
 bool UI::Process_2(uint8_t select) {
-    bool is_vision_ai_running = false;
+    int  i = 0;
+    char buf[16];
     TitleDisplay(1);
     ProcessSubTitle(select);
     switch (select) {
@@ -770,28 +793,26 @@ bool UI::Process_2(uint8_t select) {
     case 0: {
         // 270*80 = 21600
         // check all data if vision ai is running
-        for (auto d : s_data)
-            if (d.id == GROVEVISIONAI)
-                is_vision_ai_running = true;
-        if (is_vision_ai_running) {
-            // vision ai is running
-            // todo: display the result
-        } else {
-            // vision ai is not running
-            spr.createSprite(340, 50);
-
-            spr.setFreeFont(FSSB9);
-            spr.setTextColor(TFT_WHITE);
-
-            spr.drawString("Please connect to Vision AI Sensor", 9, 20, GFXFF);
-
-            spr.pushSprite(0, 100);
-            spr.deleteSprite();
-
-            spr.createSprite(340, 50);
-            spr.pushSprite(0, 150);
-            spr.deleteSprite();
+        if (a_log.size() == 0) {
+            log_ready = true;
+            break;
         }
+
+        spr.createSprite(320, 120);
+        spr.setFreeFont(FSS9);
+        for (auto data : a_log) {
+            sprintf(buf, "[%d]:", data.time);
+            spr.setTextColor(TFT_GREEN);
+            spr.drawString(buf, 4, i * 10, 2);
+            spr.setTextColor(TFT_WHITE);
+            spr.drawString(data.data, 68, i * 10, 2);
+            i++;
+        }
+        spr.pushSprite(0, 80);
+        spr.deleteSprite();
+        a_log.clear();
+        a_log.shrink_to_fit();
+        log_ready = true;
         break;
     }
     // TinyML Example
@@ -997,33 +1018,38 @@ bool UI::Sensor_1(uint8_t select) {
 }
 
 bool UI::Sensor_2(uint8_t select) {
+    uint16_t line_col[] = {TFT_GREEN, TFT_RED, TFT_BLUE, TFT_YELLOW};
+    uint8_t  data_num   = 0;
     TitleDisplay(0);
     // Display the sensor name
     SensorSubTitle(s_data[select].name);
 
     tft.fillRect(18, 78, 24, 90, TFT_WHITE);
 
-    if (line_chart_data.size() > LINE_DATA_MAX_SIZE) // keep the old line chart front
-    {
-        line_chart_data.pop(); // this is used to remove the first read variable
-    }
-
-    line_chart_data.push(((int32_t *)s_data[select].data)[0]);
-
     // 85 * 260 = 22100
     auto content = line_chart(20, 80); //(x,y) where the line graph begins
-    content.height(85)
-        .width(260)
-        .based_on(0.0)          // Starting point of y-axis, must be a float
-        .show_circle(false)     // drawing a cirle at each point, default is on.
-        .value(line_chart_data) // passing through the data to line graph
-        .max_size(LINE_DATA_MAX_SIZE)
-        .color(TFT_GREEN) // Setting the color for the line
-                          //        .backgroud(tft.color565(0,0,0)) // Setting the color for the
-                          //        backgroud
-        .backgroud(tft.color565(0, 0, 0))
-        .draw(&tft);
+    data_num     = s_data[select].size / 4;
+    if (data_num > DRAW_LINE_MAX_NUM)
+        data_num = DRAW_LINE_MAX_NUM;
+    for (int i = 0; i < data_num; i++) {
+        if (line_chart_data[i].size() > LINE_DATA_MAX_SIZE) // keep the old line chart front
+        {
+            line_chart_data[i].pop(); // this is used to remove the first read variable
+        }
+        line_chart_data[i].push(((int32_t *)s_data[select].data)[i]);
 
+        content.height(85)
+            .width(260)
+            .based_on(0.0)             // Starting point of y-axis, must be a float
+            .show_circle(false)        // drawing a cirle at each point, default is on.
+            .value(line_chart_data[i]) // passing through the data to line graph
+            .max_size(LINE_DATA_MAX_SIZE)
+            .color(line_col[i]) // Setting the color for the line
+                                //        .backgroud(tft.color565(0,0,0)) // Setting the color for
+                                //        the backgroud
+            .backgroud(tft.color565(0, 0, 0))
+            .draw(&tft);
+    }
     SensorPageState(s_data.size() / 3 + 1, select / 3);
     Status1Display(0);
     return true;
