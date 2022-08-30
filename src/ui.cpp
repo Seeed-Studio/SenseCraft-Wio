@@ -989,10 +989,16 @@ bool UI::Sensor_1(uint8_t select) {
         if (index >= s_data.size()) {
             SensorADDDisplay(si == select % 3);
         } else {
-            //一次只显示4个数据，每个测量数据4个byte
-            if (s_data[index].size > 4 * 4)
-                sense_display_num = 4 * 4;
-            else
+            //如果有多于4条数据，显示数据条数和平均值（主要满足Ai vision显示要求）
+            if (s_data[index].size > 4 * 4) {
+                sense_display_num = 2 * 4;
+                uint32_t temp;
+                for (int i = 0; i < s_data[index].size / 4; i++) {
+                    temp += ((uint32_t *)s_data[index].data)[i];
+                }
+                ((uint32_t*)s_data[index].data)[1] = temp / (s_data[index].size / 4);
+                ((uint32_t*)s_data[index].data)[0] = s_data[index].size / 4;
+            } else
                 sense_display_num = s_data[index].size;
 
             //把框分成4行，每行显示一个数据
@@ -1002,7 +1008,7 @@ bool UI::Sensor_1(uint8_t select) {
                              ((uint8_t *)s_data[index].data)[i + 2] << 16 |
                              ((uint8_t *)s_data[index].data)[i + 3] << 24;
 
-                spr.drawString(String(dd), 2, 5 + 24 * i / 4, 2);
+                spr.drawString(String(dd), 2, 5 + 24 * i / 4, 2 * (4 - sense_display_num / 4));
                 // todo，数据单位，暂时显示为空
                 spr.drawString("  ", 68, 5 + 24 * i, 2);
             }
