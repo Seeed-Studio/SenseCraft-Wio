@@ -7,9 +7,7 @@ Sgp30::Sgp30() : Thread("Sgp30", 128, 1) {
 void Sgp30::Run() {
     softwarei2c.begin(SGP30_SDAPIN, SGP30_SCLPIN);
     // Initialize sensor
-    if (mySensor.begin(softwarei2c) == false) {
-        return;
-    }
+    mySensor.begin(softwarei2c);
     mySensor.initAirQuality();
     while (true) {
         softwarei2c.begin(SGP30_SDAPIN, SGP30_SCLPIN);
