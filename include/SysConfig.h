@@ -17,6 +17,9 @@ public:
 	/* lora */
 	String ssid;
 	String password;
+	String mqtt_client_name;
+	String token;
+	String device_label;
 	String lora_frequency;
 	bool  lora_on = false;
 	bool  wifi_on = false;
