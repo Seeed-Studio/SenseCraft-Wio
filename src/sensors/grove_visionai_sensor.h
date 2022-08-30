@@ -18,7 +18,7 @@ class Visionai : public Thread {
 
   public:
     Visionai();
-    int                     data[2];
+    int                     data[20];
     uint8_t                 dsize;
     bool                    status;
     std::vector<log_data>   ai_log;
@@ -39,7 +39,7 @@ class grove_visionai_sensor : public sensor_base {
 
   private:
     const char *name = "visionai sensor"; /// buildin-light
-    int         visionai_value[2];
+    int         visionai_value[20];
     Visionai   *visionai;
 };
 
