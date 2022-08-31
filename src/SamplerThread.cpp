@@ -19,7 +19,7 @@ SamplerThread::SamplerThread(SysConfig &config, UI &ui)
 
 void SamplerThread::Run() {
     wifi = new WiFiThread(cfg);
-    // lora = new LoRaThread(cfg);
+    lora = new LoRaThread(cfg);
 
     std::vector<sensor_base *> sensors;
     sensors.push_back(new buildin_light_sensor());

@@ -23,7 +23,6 @@ void callback(char *topic, byte *payload, unsigned int length) {
     }
     LOGSS.println("");
 }
-
 void WiFiThread::reconnect() {
     // Loop until we're reconnected
     while (!client.connected()) {
@@ -55,13 +54,14 @@ void WiFiThread::send_data() {
     for (auto data : wifi_data) {
         // Builds the payload
         sprintf(payload, "%s", ""); 
-        if(data.size / 4 > 1)
+        if(data.size / 4 <= 1)
         {                 
         sprintf(payload, "%s", "");                   // Cleans the payload
         sprintf(payload, "{\"%s\":", data.name);                       // Adds the variable label
         sprintf(payload, "%s %d", payload, ((int32_t *)data.data)[0]); // Adds the value
         sprintf(payload, "%s}", payload); // Closes the dictionary brackets
         client.publish(topic, payload);
+        // LOGSS.println(payload);
         }
         else
         {
@@ -72,6 +72,8 @@ void WiFiThread::send_data() {
                 sprintf(payload, "%s %d", payload, ((int32_t *)data.data)[i]); // Adds the value
                 sprintf(payload, "%s}", payload); // Closes the dictionary brackets
                 client.publish(topic, payload);
+                // LOGSS.println(payload);
+                delay(500);
             }
         }
         
