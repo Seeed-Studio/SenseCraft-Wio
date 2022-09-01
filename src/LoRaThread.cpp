@@ -147,6 +147,19 @@ bool LoRaThread::SendDeviceInfo() {
     return true;
 }
 
+bool LoRaThread::SendVisionAIInfo() {
+    // Electricity information
+    uint8_t VisionAI_info[9] = {0x01, 0x09, 0x00, 0x00, 0x00, 0x11, 0x00, 0xEF, 0x36};
+
+    // Send electricity information
+    if (!SendData(VisionAI_info, 9, v1)) {
+        LOGSS.println("LoRa E5 Send VisionAI Info Failed");
+        return false;
+    }
+    LOGSS.println("LoRa E5 Send VisionAI Info Success");
+    return true;
+}
+
 bool LoRaThread::SendBuildinSensorData() {
     struct buildin_sensor_data sdata;
     sdata.precode = 0x40;
@@ -172,8 +185,8 @@ bool LoRaThread::SendBuildinSensorData() {
             case LIS3DHTRSENSOR:
                 /* code */
                 sdata.x = BSWAP16(static_cast<uint16_t>(((int32_t *)data.data)[0]));
-                sdata.y = BSWAP16(static_cast<uint16_t>(((int32_t *)data.data)[4]));
-                sdata.z = BSWAP16(static_cast<uint16_t>(((int32_t *)data.data)[8]));
+                sdata.y = BSWAP16(static_cast<uint16_t>(((int32_t *)data.data)[1]));
+                sdata.z = BSWAP16(static_cast<uint16_t>(((int32_t *)data.data)[2]));
                 LOGSS.printf("X: %d, Y: %d, Z: %d\r\n", sdata.x, sdata.y, sdata.z);
                 break;
             default:
@@ -209,12 +222,12 @@ bool LoRaThread::SendGroveSensorData() {
             case GROVE_SOIL:
                 /* code */
                 sdata.d4 = BSWAP16(static_cast<uint16_t>(((int32_t *)data.data)[0]));
-                LOGSS.printf("Soil hum: %d\r\n, ", sdata.d0);
+                LOGSS.printf("Soil hum: %d\r\n, ", sdata.d4);
                 break;
             case GROVE_SGP30:
                 sdata.d3 = BSWAP16(static_cast<uint16_t>(((int32_t *)data.data)[0]));
                 sdata.d2 = BSWAP16(static_cast<uint16_t>(((int32_t *)data.data)[1]));
-                LOGSS.printf("CO2: %d ,TVOC:%d\r\n, ", sdata.d0, sdata.d1);
+                LOGSS.printf("CO2: %d ,TVOC:%d\r\n, ", sdata.d2, sdata.d3);
                 /* code */
                 break;
             case GROVE_SHT4X:
@@ -336,7 +349,12 @@ void LoRaThread::Run() {
             Delay(Ticks::SecondsToTicks(60 * 5));
             continue;
         }
-        if (!SendGroveSensorData()) {
+        if (!SendVisionAIInfo()) {
+            // try to send the Ai Vision data 5 minutes  after the last failure
+            Delay(Ticks::SecondsToTicks(60 * 5));
+            continue;
+        }
+        if (!SendAiVisionData()) {
             // try to send the Ai Vision data 5 minutes  after the last failure
             Delay(Ticks::SecondsToTicks(60 * 5));
             continue;

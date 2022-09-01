@@ -22,6 +22,7 @@ class LoRaThread : public Thread {
     void Init();
     void Join();
     bool SendDeviceInfo();
+    bool SendVisionAIInfo();
     bool SendBuildinSensorData();
     bool SendGroveSensorData();
     bool SendAiVisionData();
