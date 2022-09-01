@@ -38,7 +38,7 @@ void Visionai::Run() {
             }
             uint8_t len = ai.get_result_len(); // receive how many people detect
             dsize       = len;
-            if (len) {
+            if (len > 0 && len <= MAX_DETECTION) {
                 int time1 = millis() - tick;
                 sprintf(log, "Time consuming: %d", time1);
                 pushlog(log);
@@ -54,8 +54,8 @@ void Visionai::Run() {
                     pushlog(log);
                 }
             } else {
-                dsize       = 1;
-                data[0]     = 0;
+                dsize   = 1;
+                data[0] = 0;
                 pushlog("No identification");
             }
             status = true;
@@ -76,7 +76,7 @@ void grove_visionai_sensor::init() {
 }
 
 bool grove_visionai_sensor::read(struct sensor_data *sdata) {
-    sdata->size                 = visionai->dsize*sizeof(visionai->data[0]);
+    sdata->size                 = visionai->dsize * sizeof(visionai->data[0]);
     sdata->data                 = &visionai->data;
     sdata->id                   = GROVE_VISIONAI;
     sdata->name                 = name;

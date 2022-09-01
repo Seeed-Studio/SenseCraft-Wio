@@ -12,7 +12,7 @@ using namespace cpp_freertos;
 
 #define VISIONAI_SDAPIN D1
 #define VISIONAI_SCLPIN D0
-#define MAX_DETECTION 3
+#define MAX_DETECTION 10
 
 class Visionai : public Thread {
 
