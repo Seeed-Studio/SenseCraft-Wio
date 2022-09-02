@@ -481,7 +481,7 @@ bool UI::Network_2_0(uint8_t select) {
     TitleDisplay(2);
     // NetworkSubtitles(n_state.current_network);
 
-    if (cfg.is_lorae5_init) {
+    if (true){// cfg.is_lorae5_init) {
         for (uint8_t i = 0; i < 3; i++) {
             NetworkLoRaBandSelect(i, lora_band_info[i], select);
         }
@@ -506,6 +506,7 @@ bool UI::Network_2_1(uint8_t select) {
     TitleDisplay(2);
     NetworkSubtitles(n_state.current_network);
     cfg.wifi_on = true;
+    cfg.lora_on = false;
     if (cfg.wificonnected) {
         spr.createSprite(200, 60);
         spr.fillSprite(TFT_BLACK);
@@ -552,7 +553,9 @@ bool UI::Network_2_1(uint8_t select) {
 bool UI::Network_3_0(uint8_t select) {
     TitleDisplay(2);
     // NetworkSubtitles(n_state.current_network);
-
+    cfg.lora_frequency = lora_band_info[select].band;
+    cfg.lora_on        = true;
+    cfg.wifi_on        = false;
     spr.createSprite(300, 80);
     spr.setTextColor(TFT_WHITE);
     spr.drawString("Please download and register an account", 0, 6, 2);
@@ -653,6 +656,16 @@ bool UI::Network_4_0(uint8_t select) {
     spr.deleteSprite();
 
     Status1Display(0);
+    return true;
+}
+
+bool UI::Network_5_0(uint8_t select) {
+    TitleDisplay(2);
+    // NetworkSubtitles(n_state.current_network);
+    NetworkSubtitles(n_state.current_network);
+    cfg.lora_on = false;
+    cfg.is_lorae5_init = false;
+    n_state.nl_state.current_page -= 3;
 }
 
 void UI::ProcessPageManager(uint8_t key) {

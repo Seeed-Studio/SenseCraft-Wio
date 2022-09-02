@@ -322,47 +322,49 @@ void LoRaThread::Run() {
     Serial.begin(9600);
     Serial.println("LoRa E5 Run..");
     lorae5 = new Disk91_LoRaE5(&Serial);
-    Init();
+    // Init();
     while (true) {
-        LOGSS.printf("LoRa Sensor number: %d  %d \r\n", lora_data.size(), lora_data.capacity());
-        if (!cfg.is_lorae5_init) {
-            // try to init the LoRa E5 5s after the last failure
-            Delay(Ticks::SecondsToTicks(5));
-            Init();
-            continue;
-        }
+        while (cfg.lora_on) {
+            LOGSS.printf("LoRa Sensor number: %d  %d \r\n", lora_data.size(), lora_data.capacity());
+            if (!cfg.is_lorae5_init) {
+                // try to init the LoRa E5 5s after the last failure
+                Delay(Ticks::SecondsToTicks(5));
+                Init();
+                continue;
+            }
 
-        if (!cfg.is_lorae5_join) {
-            // try to join the LoRa E5 5 minutes  after the last failure
-            Delay(Ticks::SecondsToTicks(30));
-            Join();
-            continue;
-        }
+            if (!cfg.is_lorae5_join) {
+                // try to join the LoRa E5 5 minutes  after the last failure
+                Delay(Ticks::SecondsToTicks(30));
+                Join();
+                continue;
+            }
 
-        if (!SendBuildinSensorData()) {
-            // try to send the buildin sensor data 5 minutes  after the last failure
-            Delay(Ticks::SecondsToTicks(60 * 5));
-            continue;
+            if (!SendBuildinSensorData()) {
+                // try to send the buildin sensor data 5 minutes  after the last failure
+                Delay(Ticks::SecondsToTicks(60 * 5));
+                continue;
+            }
+            if (!SendGroveSensorData()) {
+                // try to send the grove sensor data 5 minutes  after the last failure
+                Delay(Ticks::SecondsToTicks(60 * 5));
+                continue;
+            }
+            if (!SendVisionAIInfo()) {
+                // try to send the Ai Vision data 5 minutes  after the last failure
+                Delay(Ticks::SecondsToTicks(60 * 5));
+                continue;
+            }
+            if (!SendAiVisionData()) {
+                // try to send the Ai Vision data 5 minutes  after the last failure
+                Delay(Ticks::SecondsToTicks(60 * 5));
+                continue;
+            }
+            // clear all data in the lora_data queue
+            lora_data.clear();
+            lora_data.shrink_to_fit();
+            lora_data_ready = true;
         }
-        if (!SendGroveSensorData()) {
-            // try to send the grove sensor data 5 minutes  after the last failure
-            Delay(Ticks::SecondsToTicks(60 * 5));
-            continue;
-        }
-        if (!SendVisionAIInfo()) {
-            // try to send the Ai Vision data 5 minutes  after the last failure
-            Delay(Ticks::SecondsToTicks(60 * 5));
-            continue;
-        }
-        if (!SendAiVisionData()) {
-            // try to send the Ai Vision data 5 minutes  after the last failure
-            Delay(Ticks::SecondsToTicks(60 * 5));
-            continue;
-        }
-        // clear all data in the lora_data queue
-        lora_data.clear();
-        lora_data.shrink_to_fit();
-        lora_data_ready = true;
         Delay(Ticks::SecondsToTicks(60 * 5));
     }
 }

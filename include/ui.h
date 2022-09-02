@@ -17,7 +17,7 @@ using namespace cpp_freertos;
 
 #define LINE_DATA_MAX_SIZE 30 // maximum size of data
 #define DRAW_LINE_MAX_NUM 3   // maximum num of draw line
-#define SHOW_LOG_MAX_SIZE 11 // maximum size of log
+#define SHOW_LOG_MAX_SIZE 11  // maximum size of log
 
 enum page_state { NETWORKPAGE, PROCESSPAGE, SENSEPAGE };
 
@@ -107,6 +107,7 @@ class UI : public Thread {
     bool                Network_3_0(uint8_t select); // lora
     bool                Network_3_1(uint8_t select); // wifi
     bool                Network_4_0(uint8_t select); // lora
+    bool                Network_5_0(uint8_t select); // lora
     bool                NetworkSubtitles(uint8_t keys);
     void NetworkLoRaBandSelect(uint8_t location, struct LoRaBandInfo lbi, uint8_t select);
 
@@ -126,7 +127,8 @@ class UI : public Thread {
 
     typedef bool (UI::*page_t)(uint8_t key);
 
-    page_t l_network[4] = {&UI::Network_1, &UI::Network_2_0, &UI::Network_3_0, &UI::Network_4_0};
+    page_t l_network[5] = {&UI::Network_1, &UI::Network_2_0, &UI::Network_3_0, &UI::Network_4_0,
+                           &UI::Network_5_0};
     page_t w_network[3] = {&UI::Network_1, &UI::Network_2_1, &UI::Network_3_1};
 
     page_t process[2] = {&UI::Process_1, &UI::Process_2};
