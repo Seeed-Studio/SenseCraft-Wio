@@ -15,7 +15,7 @@ class Sht4x : public Thread {
 
   public:
     Sht4x();
-    int     data[2];
+    int32_t     data[2];
     uint8_t dsize;
     bool    status;
 	SHT4x  sht4x_dev;

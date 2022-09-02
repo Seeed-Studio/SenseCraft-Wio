@@ -33,11 +33,12 @@ void grove_sgp30_sensor::init() {
 
 bool grove_sgp30_sensor::read(struct sensor_data *sdata) {
 
-    sdata->data   = sgp30->data;
-    sdata->size   = sizeof(sgp30->data);
-    sdata->id     = GROVE_SGP30;
-    sdata->name   = name;
-    sdata->status = sgp30->status;
+    sdata->data      = sgp30->data;
+    sdata->data_type = SENSOR_DATA_TYPE_INT32;
+    sdata->size      = sizeof(sgp30->data);
+    sdata->id        = GROVE_SGP30;
+    sdata->name      = name;
+    sdata->status    = sgp30->status;
     return sdata->status;
 }
 

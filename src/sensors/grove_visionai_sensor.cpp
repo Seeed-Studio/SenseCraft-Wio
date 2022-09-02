@@ -77,6 +77,7 @@ void grove_visionai_sensor::init() {
 
 bool grove_visionai_sensor::read(struct sensor_data *sdata) {
     sdata->size                 = visionai->dsize * sizeof(visionai->data[0]);
+    sdata->data_type            = SENSOR_DATA_TYPE_INT32;
     sdata->data                 = &visionai->data;
     sdata->id                   = GROVE_VISIONAI;
     sdata->name                 = name;

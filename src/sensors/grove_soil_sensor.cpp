@@ -43,12 +43,13 @@ bool grove_soil_sensor::read(struct sensor_data *sdata) {
 
     if (variance > DATA_VARIANCE_MAX || sum / READ_NUM > SOIL_DATA_MAX)
         return false;
-    soil_value    = sum / READ_NUM;
-    sdata->data   = &soil_value;
-    sdata->size   = sizeof(soil_value);
-    sdata->id     = GROVE_SOIL;
-    sdata->name   = name;
-    sdata->status = true;
+    soil_value       = sum / READ_NUM;
+    sdata->data      = &soil_value;
+    sdata->data_type = SENSOR_DATA_TYPE_INT32;
+    sdata->size      = sizeof(soil_value);
+    sdata->id        = GROVE_SOIL;
+    sdata->name      = name;
+    sdata->status    = true;
     return true;
 }
 

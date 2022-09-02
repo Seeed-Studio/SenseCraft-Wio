@@ -14,17 +14,29 @@ enum button_state {
     SELECT_PRESSED,
 };
 
+enum sensor_data_type {
+    SENSOR_DATA_TYPE_INT32 = 0,
+    SENSOR_DATA_TYPE_FLOAT,
+};
+
+enum sensor_ui_type {
+    SENSOR_UI_TYPE_NORMAL = 0,
+    SENSOR_UI_TYPE_AVERAGE,
+};
+
 struct sensor_data {
     const char   *name;
     const void   *data;
     unsigned char size;
     uint8_t       id;
-    bool          status; // 0: normal, 1: error
+    bool          status;        // 0: normal, 1: error
+    uint8_t       data_type = 0; // 0: int32_t, 1: float(*100)
+    uint8_t       ui_type   = 0; // 0: normal, 1: average value
 };
 
 struct log_data {
-    char data[64];
-    uint16_t    time;
+    char     data[64];
+    uint16_t time;
 };
 
 enum sensor_type {
