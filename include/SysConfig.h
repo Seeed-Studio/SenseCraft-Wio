@@ -20,13 +20,14 @@ public:
 	String mqtt_client_name;
 	String token;
 	String device_label;
-	String lora_frequency;
+	uint8_t  lora_frequency;
 	bool  lora_on = false;
 	bool  wifi_on = false;
-	bool  is_lorae5_init = false;
-	bool  is_lorae5_join = false;
-	bool  loraconnected = false;
 	bool  wificonnected = false;
+	lora_status_type lora_status = LORA_INIT_FAILED;
+	int16_t lora_rssi = 0;
+	int16_t lora_fcnt = 0;
+	int16_t lora_sucess_cnt = 0;
 
 
 	static SemaphoreHandle_t lock;

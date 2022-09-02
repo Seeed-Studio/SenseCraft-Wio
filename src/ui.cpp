@@ -481,23 +481,24 @@ bool UI::Network_2_0(uint8_t select) {
     TitleDisplay(2);
     // NetworkSubtitles(n_state.current_network);
 
-    if (true){// cfg.is_lorae5_init) {
+    if (!cfg.lora_on) { // cfg.is_lorae5_init) {
         for (uint8_t i = 0; i < 3; i++) {
             NetworkLoRaBandSelect(i, lora_band_info[i], select);
         }
         ret = true;
     } else {
-        spr.createSprite(260, 55);
-        spr.setTextColor(TFT_WHITE);
-        spr.drawString("Please Connect the Grove - Wio-E5 to", 3, 6, 2);
-        spr.drawString("the Grove Connetor on the bottom right", 3, 20, 2);
-        spr.drawString("side of the screen", 3, 34, 2);
-        // spr.drawString("(which is included in the kit) to bind", 0, 48, 2);
-        // spr.drawString("your device to the cloud.", 0, 62, 2);
+        //     spr.createSprite(260, 55);
+        //     spr.setTextColor(TFT_WHITE);
+        //     spr.drawString("Please Connect the Grove - Wio-E5 to", 3, 6, 2);
+        //     spr.drawString("the Grove Connetor on the bottom right", 3, 20, 2);
+        //     spr.drawString("side of the screen", 3, 34, 2);
+        //     // spr.drawString("(which is included in the kit) to bind", 0, 48, 2);
+        //     // spr.drawString("your device to the cloud.", 0, 62, 2);
 
-        spr.pushSprite(25, 100);
-        spr.deleteSprite();
-        ret = false;
+        //     spr.pushSprite(25, 100);
+        //     spr.deleteSprite();
+        n_state.nl_state.current_page += 2;
+        ret = true;
     }
     Status1Display(0);
     return ret;
@@ -553,20 +554,25 @@ bool UI::Network_2_1(uint8_t select) {
 bool UI::Network_3_0(uint8_t select) {
     TitleDisplay(2);
     // NetworkSubtitles(n_state.current_network);
-    cfg.lora_frequency = lora_band_info[select].band;
-    cfg.lora_on        = true;
-    cfg.wifi_on        = false;
-    spr.createSprite(300, 80);
-    spr.setTextColor(TFT_WHITE);
-    spr.drawString("Please download and register an account", 0, 6, 2);
-    spr.drawString("on our SenseCAP Mate APP, then scan the", 0, 20, 2);
-    spr.drawString("QR code on the back of Grove-Wio E5", 0, 34, 2);
-    spr.drawString("(which is included in the kit) to bind", 0, 48, 2);
-    spr.drawString("your device to the cloud.", 0, 62, 2);
-
-    spr.pushSprite(25, 90);
-    spr.deleteSprite();
-    Status1Display(0);
+    if (!cfg.lora_on) {
+        cfg.lora_frequency  = lora_band_info[select].band;
+        cfg.lora_status     = LORA_INIT_FAILED;
+        cfg.lora_fcnt       = 0;
+        cfg.lora_sucess_cnt = 0;
+        cfg.wifi_on         = false;
+        spr.createSprite(300, 80);
+        spr.setTextColor(TFT_WHITE);
+        spr.drawString("Please download and register an account", 0, 6, 2);
+        spr.drawString("on our SenseCAP Mate APP, then scan the", 0, 20, 2);
+        spr.drawString("QR code on the back of Grove-Wio E5", 0, 34, 2);
+        spr.drawString("(which is included in the kit) to bind", 0, 48, 2);
+        spr.drawString("your device to the cloud.", 0, 62, 2);
+        spr.pushSprite(25, 90);
+        spr.deleteSprite();
+        Status1Display(0);
+    } else {
+        n_state.nl_state.current_page -= 2;
+    }
     return true;
 }
 
@@ -581,8 +587,8 @@ bool UI::Network_3_1(uint8_t select) {
 bool UI::Network_4_0(uint8_t select) {
     TitleDisplay(2);
     NetworkSubtitles(n_state.current_network);
+    cfg.lora_on = true;
     spr.createSprite(188, 95);
-
     spr.setTextColor(TFT_WHITE);
     spr.drawString("Connected: LoRa  ", 5, 3.8 * FONT_ROW_HEIGHT - 80, 2);
     spr.drawString("Signal:", 5, 4.8 * FONT_ROW_HEIGHT - 75, 2);
@@ -593,64 +599,86 @@ bool UI::Network_4_0(uint8_t select) {
 
     spr.setFreeFont(FSSB9);
     spr.setTextColor(tft.color565(0, 139, 0));
-    spr.drawString("10000", 65, 5.8 * FONT_ROW_HEIGHT - 75,
+    spr.drawString(String(cfg.lora_fcnt), 65, 5.8 * FONT_ROW_HEIGHT - 75,
                    2); // Show total number of packages issued
-    spr.drawString("999", 65, 6.8 * FONT_ROW_HEIGHT - 75,
+    spr.drawString(String(cfg.lora_sucess_cnt), 65, 6.8 * FONT_ROW_HEIGHT - 75,
                    2); // Shows the number of successful deliveries
 
-    switch (3) {
-    case 0:
-        spr.fillRect(53, 110 - 75, 3, 11, tft.color565(140, 42, 42)); // No signal
-        spr.fillRect(59, 107 - 75, 3, 14, tft.color565(140, 42, 42));
-        spr.fillRect(65, 104 - 75, 3, 17, tft.color565(140, 42, 42));
-        spr.fillRect(71, 101 - 75, 3, 20, tft.color565(140, 42, 42));
-        break;
-    case 1:
-        spr.fillRect(53, 110 - 75, 3, 11, tft.color565(0, 139, 0)); // One frame signal
-        spr.fillRect(59, 107 - 75, 3, 14, tft.color565(100, 100, 100));
-        spr.fillRect(65, 104 - 75, 3, 17, tft.color565(100, 100, 100));
-        spr.fillRect(71, 101 - 75, 3, 20, tft.color565(100, 100, 100));
-        break;
-    case 2:
-        spr.fillRect(53, 110 - 75, 3, 11, tft.color565(0, 139, 0)); // Two-frame signal
-        spr.fillRect(59, 107 - 75, 3, 14, tft.color565(0, 139, 0));
-        spr.fillRect(65, 104 - 75, 3, 17, tft.color565(100, 100, 100));
-        spr.fillRect(71, 101 - 75, 3, 20, tft.color565(100, 100, 100));
-        break;
-    case 3:
-        spr.fillRect(53, 110 - 75, 3, 11, tft.color565(0, 139, 0)); // Three-frame signal
-        spr.fillRect(59, 107 - 75, 3, 14, tft.color565(0, 139, 0));
-        spr.fillRect(65, 104 - 75, 3, 17, tft.color565(0, 139, 0));
-        spr.fillRect(71, 101 - 75, 3, 20, tft.color565(100, 100, 100));
-        break;
-    case 4:
+    if (cfg.lora_rssi > -80 && cfg.lora_rssi < 0) {
         spr.fillRect(53, 110 - 75, 3, 11, tft.color565(0, 139, 0)); // Four-frame signal
         spr.fillRect(59, 107 - 75, 3, 14, tft.color565(0, 139, 0));
         spr.fillRect(65, 104 - 75, 3, 17, tft.color565(0, 139, 0));
         spr.fillRect(71, 101 - 75, 3, 20, tft.color565(0, 139, 0));
-        break;
-
-    default:;
+    } else if (cfg.lora_rssi > -100 && cfg.lora_rssi < -80) {
+        spr.fillRect(53, 110 - 75, 3, 11, tft.color565(0, 139, 0)); // Three-frame signal
+        spr.fillRect(59, 107 - 75, 3, 14, tft.color565(0, 139, 0));
+        spr.fillRect(65, 104 - 75, 3, 17, tft.color565(0, 139, 0));
+        spr.fillRect(71, 101 - 75, 3, 20, tft.color565(100, 100, 100));
+    } else if (cfg.lora_rssi > -100 && cfg.lora_rssi < -80) {
+        spr.fillRect(53, 110 - 75, 3, 11, tft.color565(0, 139, 0)); // Two-frame signal
+        spr.fillRect(59, 107 - 75, 3, 14, tft.color565(0, 139, 0));
+        spr.fillRect(65, 104 - 75, 3, 17, tft.color565(100, 100, 100));
+        spr.fillRect(71, 101 - 75, 3, 20, tft.color565(100, 100, 100));
+    } else if (cfg.lora_rssi > -100 && cfg.lora_rssi < -80) {
+        spr.fillRect(53, 110 - 75, 3, 11, tft.color565(0, 139, 0)); // One frame signal
+        spr.fillRect(59, 107 - 75, 3, 14, tft.color565(100, 100, 100));
+        spr.fillRect(65, 104 - 75, 3, 17, tft.color565(100, 100, 100));
+        spr.fillRect(71, 101 - 75, 3, 20, tft.color565(100, 100, 100));
+    } else {
+        spr.fillRect(53, 110 - 75, 3, 11, tft.color565(140, 42, 42)); // No signal
+        spr.fillRect(59, 107 - 75, 3, 14, tft.color565(140, 42, 42));
+        spr.fillRect(65, 104 - 75, 3, 17, tft.color565(140, 42, 42));
+        spr.fillRect(71, 101 - 75, 3, 20, tft.color565(140, 42, 42));
     }
     spr.pushSprite(20, 100);
     spr.deleteSprite();
 
     spr.createSprite(90, 75);
-    switch (0) {
-    case 0:
-        // spr.fillCircle(265 - 220, 4.9 * FONT_ROW_HEIGHT - 90, 10, tft.color565(160, 34, 34)); //
-        // Data transmission status: join failed spr.setTextColor(TFT_WHITE); spr.drawString("Join
-        // LoRaWAN", 220 - 220, 5.8 * FONT_ROW_HEIGHT - 90, 2); spr.drawString("Failed", 250 -
-        // 220, 6.6 * FONT_ROW_HEIGHT - 90, 2);
+    switch (cfg.lora_status) {
+    case LORA_INIT_FAILED:
+        spr.fillCircle(265 - 220, 4.9 * FONT_ROW_HEIGHT - 90, 10,
+                       tft.color565(34, 139, 139)); // Data transmission status: init failed
+        spr.setTextColor(TFT_YELLOW);
+        spr.drawString("LoRaWAN INIT", 220 - 220, 5.8 * FONT_ROW_HEIGHT - 90, 2);
+        spr.drawString("Failed", 250 - 220, 6.6 * FONT_ROW_HEIGHT - 90, 2);
         break;
-    case 1:
+    case LORA_INIT_SUCCESS:
+        spr.fillCircle(265 - 220, 4.9 * FONT_ROW_HEIGHT - 90, 10,
+                       tft.color565(0, 139, 0)); // Data transmission status: init success
+        spr.setTextColor(TFT_GREEN);
+        spr.drawString("LoRaWAN INIT", 220 - 220, 5.8 * FONT_ROW_HEIGHT - 90, 2);
+        spr.drawString("Success", 250 - 220, 6.6 * FONT_ROW_HEIGHT - 90, 2);
+        break;
+    case LORA_JOIN_FAILED:
+        spr.fillCircle(265 - 220, 4.9 * FONT_ROW_HEIGHT - 90, 10,
+                       tft.color565(160, 34, 34)); // Data transmission status: join failed
+        spr.setTextColor(TFT_WHITE);
+        spr.drawString("Join LoRaWAN", 220 - 220, 5.8 * FONT_ROW_HEIGHT - 90, 2);
+        spr.drawString("Failed", 250 - 220, 6.6 * FONT_ROW_HEIGHT - 90, 2);
+        break;
+    case LORA_JOIN_SUCCESS:
+        spr.fillCircle(265 - 220, 4.9 * FONT_ROW_HEIGHT - 90, 10,
+                       tft.color565(0, 139, 0)); // Data transmission status: join success  
+        spr.setTextColor(TFT_GREEN);
+        spr.drawString("Join LoRaWAN", 220 - 220, 5.8 * FONT_ROW_HEIGHT - 90, 2);
+        spr.drawString("Success", 250 - 220, 6.6 * FONT_ROW_HEIGHT - 90, 2);
+        break;
+    case LORA_SEND_FAILED:
         spr.fillCircle(265 - 220, 4.9 * FONT_ROW_HEIGHT - 90, 10,
                        tft.color565(255, 165, 0)); // Data transmission status: Packet loss
         spr.setTextColor(TFT_WHITE);
         spr.drawString("Send", 253 - 220, 5.8 * FONT_ROW_HEIGHT - 90, 2);
         spr.drawString("Failed", 250 - 220, 6.6 * FONT_ROW_HEIGHT - 90, 2);
         break;
-    default:;
+    case LORA_SEND_SUCCESS:
+        spr.fillCircle(265 - 220, 4.9 * FONT_ROW_HEIGHT - 90, 10,
+                       tft.color565(0, 139, 0)); // Data transmission status: Packet success
+        spr.setTextColor(TFT_GREEN);
+        spr.drawString("Send", 253 - 220, 5.8 * FONT_ROW_HEIGHT - 90, 2);
+        spr.drawString("Success", 250 - 220, 6.6 * FONT_ROW_HEIGHT - 90, 2);
+        break;
+    default:
+        break;
     }
     spr.pushSprite(208, 100);
     spr.deleteSprite();
@@ -663,8 +691,7 @@ bool UI::Network_5_0(uint8_t select) {
     TitleDisplay(2);
     // NetworkSubtitles(n_state.current_network);
     NetworkSubtitles(n_state.current_network);
-    cfg.lora_on = false;
-    cfg.is_lorae5_init = false;
+    cfg.lora_on        = false;
     n_state.nl_state.current_page -= 3;
 }
 

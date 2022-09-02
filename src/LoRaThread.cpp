@@ -74,12 +74,12 @@ LoRaThread::LoRaThread(SysConfig &config) : Thread("LoRaThread", 256, 1), cfg(co
 void LoRaThread::Init() {
     Serial3.begin(9600);
     if (!lorae5->begin(DSKLORAE5_HWSERIAL_CUSTOM, &Serial3)) {
-        cfg.is_lorae5_init = false;
+        cfg.lora_status = LORA_INIT_FAILED;
         LOGSS.println("LoRa E5 Init Failed");
         return;
     }
 
-    frequency = cfg.lora_frequency.toInt();
+    frequency = cfg.lora_frequency;
     if (frequency <= 0 || frequency > 10) {
         return;
     }
@@ -87,13 +87,13 @@ void LoRaThread::Init() {
     // Setup the LoRaWan Credentials
     if (!lorae5->setup_sensecap(frequency, false,
                                 true)) { // Setup the LoRaWAN stack with the stored credentials
-        cfg.is_lorae5_init = false;
+        cfg.lora_status = LORA_INIT_FAILED;
         LOGSS.println("LoRa E5 Setup Sensecap Failed");
         return;
     }
 
     LOGSS.println("LoRa E5 Init OK");
-    cfg.is_lorae5_init = true;
+    cfg.lora_status = LORA_INIT_SUCCESS;
 
     // join network immediately
     Join();
@@ -101,11 +101,11 @@ void LoRaThread::Init() {
 
 void LoRaThread::Join() {
     if (!lorae5->join_sync()) {
-        cfg.is_lorae5_join = false;
+        cfg.lora_status = LORA_JOIN_FAILED;
         LOGSS.println("LoRa E5 Join Failed");
     } else {
         LOGSS.println("LoRa E5 Join Success");
-        cfg.is_lorae5_join = true;
+        cfg.lora_status = LORA_JOIN_SUCCESS;
         // Send Device Info first lorawan message
         SendDeviceInfo();
     }
@@ -115,15 +115,20 @@ void LoRaThread::Join() {
 bool LoRaThread::SendData(uint8_t *data, uint8_t len, uint8_t ver) {
     bool    ret   = true;
     uint8_t retry = 0;
+    cfg.lora_fcnt++;
     while (!lorae5->sendReceive_sync(ver, data, len, downlink_rxBuff, &downlink_rxSize,
                                      &downlink_rxPort, LORAE5_SF7, LORAE5_14DB, LORAE5_RETRY_3)) {
+        cfg.lora_status = LORA_SEND_FAILED;
+        cfg.lora_fcnt++;
         Delay(Ticks::SecondsToTicks(10));
         if (retry++ > 10) {
-            cfg.is_lorae5_join = false;
-            ret                = false;
+            cfg.lora_status = LORA_JOIN_FAILED;
+            ret             = false;
             break;
         }
     }
+    cfg.lora_status = LORA_SEND_SUCCESS;
+    cfg.lora_sucess_cnt++;
     return ret;
 }
 
@@ -326,14 +331,14 @@ void LoRaThread::Run() {
     while (true) {
         while (cfg.lora_on) {
             LOGSS.printf("LoRa Sensor number: %d  %d \r\n", lora_data.size(), lora_data.capacity());
-            if (!cfg.is_lorae5_init) {
+            if (cfg.lora_status  == LORA_INIT_FAILED) {
                 // try to init the LoRa E5 5s after the last failure
                 Delay(Ticks::SecondsToTicks(5));
                 Init();
                 continue;
             }
 
-            if (!cfg.is_lorae5_join) {
+            if (cfg.lora_status == LORA_INIT_SUCCESS || cfg.lora_status == LORA_JOIN_FAILED) {
                 // try to join the LoRa E5 5 minutes  after the last failure
                 Delay(Ticks::SecondsToTicks(30));
                 Join();
@@ -364,8 +369,10 @@ void LoRaThread::Run() {
             lora_data.clear();
             lora_data.shrink_to_fit();
             lora_data_ready = true;
+			Delay(Ticks::SecondsToTicks(60 * 5));
         }
-        Delay(Ticks::SecondsToTicks(60 * 5));
+		// 暂时延时处理
+        Delay(Ticks::SecondsToTicks(100));
     }
 }
 #elif

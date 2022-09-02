@@ -14,6 +14,15 @@ enum button_state {
     SELECT_PRESSED,
 };
 
+enum lora_status_type {
+    LORA_INIT_FAILED,
+    LORA_INIT_SUCCESS,
+    LORA_JOIN_FAILED,
+    LORA_JOIN_SUCCESS,
+    LORA_SEND_FAILED,
+    LORA_SEND_SUCCESS,
+};
+
 enum sensor_data_type {
     SENSOR_DATA_TYPE_INT32 = 0,
     SENSOR_DATA_TYPE_FLOAT,

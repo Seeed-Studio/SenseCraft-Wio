@@ -129,8 +129,6 @@ void SysConfig::ReadAllConfig() {
     ReadConfigParam("config.txt", "MQTT_CLIENT_NAME=", &this->mqtt_client_name);
     ReadConfigParam("config.txt", "TOKEN=", &this->token);
     ReadConfigParam("config.txt", "DEVICE_LABEL=", &this->device_label);
-    ReadConfigParam("config.txt", "FREQUENCY=", &this->lora_frequency);
-
 }
 
 void SysConfig::WriteConfigParam(char *filename, char *prefix_param, char *param) {
