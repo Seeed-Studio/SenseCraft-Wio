@@ -67,7 +67,7 @@ struct grove_ai_vision_data {
  * minutes
  */
 
-LoRaThread::LoRaThread(SysConfig &config) : Thread("LoRaThread", 256, 1), cfg(config) {
+LoRaThread::LoRaThread(SysConfig &config) : Thread("LoRaThread", 512, 1), cfg(config) {
     Start();
 };
 
