@@ -129,7 +129,7 @@ void UI::TitleDisplay(uint8_t t) {
     spr.setTextColor(TFT_BLACK);
     spr.drawString("Sense", 32, 11, GFXFF);
     spr.drawString("Process", 127, 11, GFXFF);
-    spr.drawString("Network", 231, 11, GFXFF);
+    spr.drawString("Uplink", 231, 11, GFXFF);
     spr.drawLine(0, 2 * FONT_ROW_HEIGHT, SCREEN_WIDTH, 2 * FONT_ROW_HEIGHT, TFT_WHITE);
 
     spr.pushSprite(0, 0);
@@ -140,10 +140,10 @@ void UI::Status1Display(uint8_t status) {
     spr.createSprite(140, 25);
     spr.setFreeFont(FSSB9);
     spr.fillSprite(TFT_BLACK);
-    if (cfg.lora_on == true) {
+    if (cfg.lora_status == LORA_JOIN_SUCCESS) {
         spr.setTextColor(TFT_GREEN, TFT_BLACK); // Networking status indication：ON
         spr.drawString("LoRa", 60, 0, 2);       // Show the network you are in
-    } else if (cfg.wifi_on == true) {
+    } else if (cfg.wificonnected == true) {
         spr.setTextColor(TFT_GREEN, TFT_BLACK); // Networking status indication：ON
         spr.drawString("WiFi", 60, 0, 2);       // Show the network you are in
     } else {
@@ -598,22 +598,22 @@ bool UI::Network_4_0(uint8_t select) {
     spr.drawString(String(cfg.lora_sucess_cnt), 65, 6.8 * FONT_ROW_HEIGHT - 75,
                    2); // Shows the number of successful deliveries
 
-    if (cfg.lora_rssi > -80 && cfg.lora_rssi < 0) {
+    if (cfg.lora_rssi > -70 && cfg.lora_rssi < 0) {
         spr.fillRect(53, 110 - 75, 3, 11, tft.color565(0, 139, 0)); // Four-frame signal
         spr.fillRect(59, 107 - 75, 3, 14, tft.color565(0, 139, 0));
         spr.fillRect(65, 104 - 75, 3, 17, tft.color565(0, 139, 0));
         spr.fillRect(71, 101 - 75, 3, 20, tft.color565(0, 139, 0));
-    } else if (cfg.lora_rssi > -100 && cfg.lora_rssi < -80) {
+    } else if (cfg.lora_rssi > -90 && cfg.lora_rssi < -70) {
         spr.fillRect(53, 110 - 75, 3, 11, tft.color565(0, 139, 0)); // Three-frame signal
         spr.fillRect(59, 107 - 75, 3, 14, tft.color565(0, 139, 0));
         spr.fillRect(65, 104 - 75, 3, 17, tft.color565(0, 139, 0));
         spr.fillRect(71, 101 - 75, 3, 20, tft.color565(100, 100, 100));
-    } else if (cfg.lora_rssi > -100 && cfg.lora_rssi < -80) {
+    } else if (cfg.lora_rssi > -110 && cfg.lora_rssi < -90) {
         spr.fillRect(53, 110 - 75, 3, 11, tft.color565(0, 139, 0)); // Two-frame signal
         spr.fillRect(59, 107 - 75, 3, 14, tft.color565(0, 139, 0));
         spr.fillRect(65, 104 - 75, 3, 17, tft.color565(100, 100, 100));
         spr.fillRect(71, 101 - 75, 3, 20, tft.color565(100, 100, 100));
-    } else if (cfg.lora_rssi > -120 && cfg.lora_rssi < -100) {
+    } else if (cfg.lora_rssi > -130 && cfg.lora_rssi < -110) {
         spr.fillRect(53, 110 - 75, 3, 11, tft.color565(0, 139, 0)); // One frame signal
         spr.fillRect(59, 107 - 75, 3, 14, tft.color565(100, 100, 100));
         spr.fillRect(65, 104 - 75, 3, 17, tft.color565(100, 100, 100));
