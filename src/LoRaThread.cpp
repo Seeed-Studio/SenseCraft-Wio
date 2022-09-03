@@ -115,7 +115,6 @@ void LoRaThread::Join() {
 bool LoRaThread::SendData(uint8_t *data, uint8_t len, uint8_t ver) {
     bool    ret   = true;
     uint8_t retry = 0;
-    cfg.lora_fcnt++;
     while (!lorae5->sendReceive_sync(ver, data, len, downlink_rxBuff, &downlink_rxSize,
                                      &downlink_rxPort, LORAE5_SF7, LORAE5_14DB, LORAE5_RETRY_3)) {
         cfg.lora_status = LORA_SEND_FAILED;
@@ -131,6 +130,7 @@ bool LoRaThread::SendData(uint8_t *data, uint8_t len, uint8_t ver) {
     }
     cfg.lora_status = LORA_SEND_SUCCESS;
     cfg.lora_rssi   = lorae5->getRssi();
+    cfg.lora_fcnt++;
     cfg.lora_sucess_cnt++;
     return ret;
 }
@@ -198,7 +198,6 @@ bool LoRaThread::SendBuildinSensorData() {
                 LOGSS.printf("X: %d, Y: %d, Z: %d\r\n", sdata.x, sdata.y, sdata.z);
                 break;
             default:
-                return ret;
                 break;
             }
         }
@@ -246,7 +245,6 @@ bool LoRaThread::SendGroveSensorData() {
                 LOGSS.printf("temperature: %d, humidity: %d\r\n", sdata.d0, sdata.d1);
                 break;
             default:
-                return ret;
                 break;
             }
         }
@@ -323,7 +321,6 @@ bool LoRaThread::SendAiVisionData() {
                 }
                 break;
             default:
-                return ret;
                 break;
             }
         }

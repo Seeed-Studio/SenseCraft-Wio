@@ -140,7 +140,7 @@ void UI::Status1Display(uint8_t status) {
     spr.createSprite(140, 25);
     spr.setFreeFont(FSSB9);
     spr.fillSprite(TFT_BLACK);
-    if (cfg.lora_status != LORA_JOIN_FAILED && cfg.lora_status != LORA_INIT_FAILED && cfg.lora_status != LORA_INIT_START) {
+    if (cfg.lora_status == LORA_JOIN_SUCCESS || cfg.lora_status == LORA_SEND_SUCCESS || cfg.lora_status == LORA_SEND_FAILED) {
         spr.setTextColor(TFT_GREEN, TFT_BLACK); // Networking status indication：ON
         spr.drawString("LoRa", 60, 0, 2);       // Show the network you are in
     } else if (cfg.wificonnected == true) {
