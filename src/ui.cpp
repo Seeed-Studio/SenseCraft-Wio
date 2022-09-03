@@ -140,21 +140,15 @@ void UI::Status1Display(uint8_t status) {
     spr.createSprite(140, 25);
     spr.setFreeFont(FSSB9);
     spr.fillSprite(TFT_BLACK);
-
-    switch (status) {
-    case 0:
-        spr.setTextColor(TFT_RED);
-        spr.drawString("OFF", 60, 0, 2);
-        break;
-    case 1:
+    if (cfg.lora_on == true) {
         spr.setTextColor(TFT_GREEN, TFT_BLACK); // Networking status indication：ON
         spr.drawString("LoRa", 60, 0, 2);       // Show the network you are in
-        break;
-    case 2:
+    } else if (cfg.wifi_on == true) {
         spr.setTextColor(TFT_GREEN, TFT_BLACK); // Networking status indication：ON
         spr.drawString("WiFi", 60, 0, 2);       // Show the network you are in
-        break;
-    default:;
+    } else {
+        spr.setTextColor(TFT_RED, TFT_BLACK); // Networking status indication：OFF
+        spr.drawString("OFF", 60, 0, 2);      // Show the network you are in
     }
     spr.setTextColor(TFT_WHITE);
     spr.drawString("Network:", 5, 0, 2);
@@ -619,7 +613,7 @@ bool UI::Network_4_0(uint8_t select) {
         spr.fillRect(59, 107 - 75, 3, 14, tft.color565(0, 139, 0));
         spr.fillRect(65, 104 - 75, 3, 17, tft.color565(100, 100, 100));
         spr.fillRect(71, 101 - 75, 3, 20, tft.color565(100, 100, 100));
-    } else if (cfg.lora_rssi > -100 && cfg.lora_rssi < -80) {
+    } else if (cfg.lora_rssi > -120 && cfg.lora_rssi < -100) {
         spr.fillRect(53, 110 - 75, 3, 11, tft.color565(0, 139, 0)); // One frame signal
         spr.fillRect(59, 107 - 75, 3, 14, tft.color565(100, 100, 100));
         spr.fillRect(65, 104 - 75, 3, 17, tft.color565(100, 100, 100));
@@ -658,7 +652,7 @@ bool UI::Network_4_0(uint8_t select) {
         break;
     case LORA_JOIN_SUCCESS:
         spr.fillCircle(265 - 220, 4.9 * FONT_ROW_HEIGHT - 90, 10,
-                       tft.color565(0, 139, 0)); // Data transmission status: join success  
+                       tft.color565(0, 139, 0)); // Data transmission status: join success
         spr.setTextColor(TFT_GREEN);
         spr.drawString("Join LoRaWAN", 220 - 220, 5.8 * FONT_ROW_HEIGHT - 90, 2);
         spr.drawString("Success", 250 - 220, 6.6 * FONT_ROW_HEIGHT - 90, 2);
@@ -691,7 +685,7 @@ bool UI::Network_5_0(uint8_t select) {
     TitleDisplay(2);
     // NetworkSubtitles(n_state.current_network);
     NetworkSubtitles(n_state.current_network);
-    cfg.lora_on        = false;
+    cfg.lora_on = false;
     n_state.nl_state.current_page -= 3;
 }
 
