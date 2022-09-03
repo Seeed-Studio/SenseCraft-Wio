@@ -341,7 +341,7 @@ void LoRaThread::Run() {
     while (true) {
         while (cfg.lora_on) {
             LOGSS.printf("LoRa Sensor number: %d  %d \r\n", lora_data.size(), lora_data.capacity());
-            if (cfg.lora_status == LORA_INIT_FAILED) {
+            if (cfg.lora_status == LORA_INIT_START|| cfg.lora_status == LORA_JOIN_FAILED) {
                 // try to init the LoRa E5 5s after the last failure
                 Delay(Ticks::SecondsToTicks(5));
                 Init();
@@ -377,7 +377,7 @@ void LoRaThread::Run() {
             Delay(Ticks::SecondsToTicks(60 * 5));
         }
         // 暂时延时处理
-        Delay(Ticks::SecondsToTicks(100));
+        Delay(Ticks::SecondsToTicks(1));
     }
 }
 #elif

@@ -15,6 +15,7 @@ enum button_state {
 };
 
 enum lora_status_type {
+    LORA_INIT_START,
     LORA_INIT_FAILED,
     LORA_INIT_SUCCESS,
     LORA_JOIN_FAILED,

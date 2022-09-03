@@ -140,7 +140,7 @@ void UI::Status1Display(uint8_t status) {
     spr.createSprite(140, 25);
     spr.setFreeFont(FSSB9);
     spr.fillSprite(TFT_BLACK);
-    if (cfg.lora_status != LORA_JOIN_FAILED && cfg.lora_status != LORA_INIT_FAILED) {
+    if (cfg.lora_status != LORA_JOIN_FAILED && cfg.lora_status != LORA_INIT_FAILED && cfg.lora_status != LORA_INIT_START) {
         spr.setTextColor(TFT_GREEN, TFT_BLACK); // Networking status indication：ON
         spr.drawString("LoRa", 60, 0, 2);       // Show the network you are in
     } else if (cfg.wificonnected == true) {
@@ -550,7 +550,7 @@ bool UI::Network_3_0(uint8_t select) {
     // NetworkSubtitles(n_state.current_network);
     if (!cfg.lora_on) {
         cfg.lora_frequency  = lora_band_info[select].band;
-        cfg.lora_status     = LORA_INIT_FAILED;
+        cfg.lora_status     = LORA_INIT_START;
         cfg.lora_fcnt       = 0;
         cfg.lora_sucess_cnt = 0;
         cfg.wifi_on         = false;
@@ -586,16 +586,16 @@ bool UI::Network_4_0(uint8_t select) {
     spr.setTextColor(TFT_WHITE);
     spr.drawString("Connected: LoRa  ", 5, 3.8 * FONT_ROW_HEIGHT - 80, 2);
     spr.drawString("Signal:", 5, 4.8 * FONT_ROW_HEIGHT - 75, 2);
-    spr.drawString("All data:", 5, 5.8 * FONT_ROW_HEIGHT - 75, 2);
+    spr.drawString("Total Send:", 5, 5.8 * FONT_ROW_HEIGHT - 75, 2);
     spr.drawString("packets", 115, 5.8 * FONT_ROW_HEIGHT - 75, 2);
-    spr.drawString("Success:", 5, 6.8 * FONT_ROW_HEIGHT - 75, 2);
-    spr.drawString("packets", 115, 6.8 * FONT_ROW_HEIGHT - 75, 2);
+    spr.drawString("Succeed:", 5, 6.8 * FONT_ROW_HEIGHT - 75, 2);
+    spr.drawString("packets", 105, 6.8 * FONT_ROW_HEIGHT - 75, 2);
 
     spr.setFreeFont(FSSB9);
     spr.setTextColor(tft.color565(0, 139, 0));
-    spr.drawString(String(cfg.lora_fcnt), 65, 5.8 * FONT_ROW_HEIGHT - 75,
+    spr.drawString(String(cfg.lora_fcnt), 80, 5.8 * FONT_ROW_HEIGHT - 75,
                    2); // Show total number of packages issued
-    spr.drawString(String(cfg.lora_sucess_cnt), 65, 6.8 * FONT_ROW_HEIGHT - 75,
+    spr.drawString(String(cfg.lora_sucess_cnt), 70, 6.8 * FONT_ROW_HEIGHT - 75,
                    2); // Shows the number of successful deliveries
 
     if (cfg.lora_rssi > -70 && cfg.lora_rssi < 0) {
@@ -629,10 +629,16 @@ bool UI::Network_4_0(uint8_t select) {
 
     spr.createSprite(90, 75);
     switch (cfg.lora_status) {
+    case LORA_INIT_START:
+        spr.fillCircle(265 - 220, 4.9 * FONT_ROW_HEIGHT - 90, 10,
+                       tft.color565(139, 139, 0)); // Data transmission status: init failed
+        spr.setTextColor(TFT_YELLOW);
+        spr.drawString("LoRaWAN INIT", 220 - 220, 5.8 * FONT_ROW_HEIGHT - 90, 2);
+        break;
     case LORA_INIT_FAILED:
         spr.fillCircle(265 - 220, 4.9 * FONT_ROW_HEIGHT - 90, 10,
                        tft.color565(34, 139, 139)); // Data transmission status: init failed
-        spr.setTextColor(TFT_YELLOW);
+        spr.setTextColor(TFT_RED);
         spr.drawString("LoRaWAN INIT", 220 - 220, 5.8 * FONT_ROW_HEIGHT - 90, 2);
         spr.drawString("Failed", 250 - 220, 6.6 * FONT_ROW_HEIGHT - 90, 2);
         break;
@@ -646,7 +652,7 @@ bool UI::Network_4_0(uint8_t select) {
     case LORA_JOIN_FAILED:
         spr.fillCircle(265 - 220, 4.9 * FONT_ROW_HEIGHT - 90, 10,
                        tft.color565(160, 34, 34)); // Data transmission status: join failed
-        spr.setTextColor(TFT_WHITE);
+        spr.setTextColor(TFT_RED);
         spr.drawString("Join LoRaWAN", 220 - 220, 5.8 * FONT_ROW_HEIGHT - 90, 2);
         spr.drawString("Failed", 250 - 220, 6.6 * FONT_ROW_HEIGHT - 90, 2);
         break;
@@ -660,7 +666,7 @@ bool UI::Network_4_0(uint8_t select) {
     case LORA_SEND_FAILED:
         spr.fillCircle(265 - 220, 4.9 * FONT_ROW_HEIGHT - 90, 10,
                        tft.color565(255, 165, 0)); // Data transmission status: Packet loss
-        spr.setTextColor(TFT_WHITE);
+        spr.setTextColor(TFT_RED);
         spr.drawString("Send", 253 - 220, 5.8 * FONT_ROW_HEIGHT - 90, 2);
         spr.drawString("Failed", 250 - 220, 6.6 * FONT_ROW_HEIGHT - 90, 2);
         break;
