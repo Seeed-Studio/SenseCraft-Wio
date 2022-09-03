@@ -246,6 +246,7 @@ bool LoRaThread::SendGroveSensorData() {
                 LOGSS.printf("temperature: %d, humidity: %d\r\n", sdata.d0, sdata.d1);
                 break;
             default:
+                return ret;
                 break;
             }
         }
