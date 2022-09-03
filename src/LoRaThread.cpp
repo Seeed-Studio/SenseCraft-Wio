@@ -198,6 +198,7 @@ bool LoRaThread::SendBuildinSensorData() {
                 LOGSS.printf("X: %d, Y: %d, Z: %d\r\n", sdata.x, sdata.y, sdata.z);
                 break;
             default:
+                return ret;
                 break;
             }
         }
@@ -274,6 +275,10 @@ bool LoRaThread::SendAiVisionData() {
             {
             case GROVE_VISIONAI:
                 /* code */
+                if (!SendVisionAIInfo()) {
+                    // try to send the Ai Vision data 5 minutes  after the last failure
+                    return false;
+                }
                 if (data.size / 4 < 5) {
                     sdata.precode = 0x44;
                     for (int i = 0; i < data.size / 4; i++) {
@@ -317,6 +322,7 @@ bool LoRaThread::SendAiVisionData() {
                 }
                 break;
             default:
+                return ret;
                 break;
             }
         }
@@ -355,11 +361,6 @@ void LoRaThread::Run() {
             }
             if (!SendGroveSensorData()) {
                 // try to send the grove sensor data 5 minutes  after the last failure
-                Delay(Ticks::SecondsToTicks(60 * 5));
-                continue;
-            }
-            if (!SendVisionAIInfo()) {
-                // try to send the Ai Vision data 5 minutes  after the last failure
                 Delay(Ticks::SecondsToTicks(60 * 5));
                 continue;
             }
