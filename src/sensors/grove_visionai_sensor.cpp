@@ -54,7 +54,7 @@ void Visionai::Run() {
                     pushlog(log);
                 }
             } else {
-                dsize   = 1;
+                dsize   = 0;
                 data[0] = 0;
                 pushlog("No identification");
             }
@@ -82,6 +82,7 @@ bool grove_visionai_sensor::read(struct sensor_data *sdata) {
     sdata->id                   = GROVE_VISIONAI;
     sdata->name                 = name;
     sdata->status               = visionai->status;
+    sdata->ui_type              = SENSOR_UI_TYPE_AVERAGE;
     grove_visionai_sensor::slog = visionai->ai_log;
     return sdata->status;
 }

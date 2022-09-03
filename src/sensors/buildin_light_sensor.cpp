@@ -15,6 +15,7 @@ bool buildin_light_sensor::read(struct sensor_data *sdata) {
     sdata->size      = sizeof(light_value);
     sdata->id        = BUILDIN_LIGHT;
     sdata->name      = name;
+    sdata->ui_type   = SENSOR_UI_TYPE_NORMAL;
     sdata->status    = true;
     return true;
 }

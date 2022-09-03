@@ -13,6 +13,7 @@ bool buildin_mic::read(struct sensor_data *sdata) {
     sdata->size      = sizeof(mic_value);
     sdata->id        = BUILDIN_MIC;
     sdata->name      = name;
+    sdata->ui_type   = SENSOR_UI_TYPE_NORMAL;
     sdata->status    = true;
     return true;
 }

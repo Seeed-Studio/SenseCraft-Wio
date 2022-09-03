@@ -39,6 +39,7 @@ bool grove_sgp30_sensor::read(struct sensor_data *sdata) {
     sdata->id        = GROVE_SGP30;
     sdata->name      = name;
     sdata->status    = sgp30->status;
+    sdata->ui_type   = SENSOR_UI_TYPE_NORMAL;
     return sdata->status;
 }
 

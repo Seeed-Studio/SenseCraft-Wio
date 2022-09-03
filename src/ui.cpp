@@ -1029,30 +1029,39 @@ bool UI::Sensor_1(uint8_t select) {
         if (index >= s_data.size()) {
             SensorADDDisplay(si == select % 3);
         } else {
-            //如果有多于4条数据，显示数据条数和平均值（主要满足Ai vision显示要求）
-            if (s_data[index].size > 4 * 4) {
-                sense_display_num = 2 * 4;
-                uint32_t temp;
-                for (int i = 0; i < s_data[index].size / 4; i++) {
-                    temp += ((uint32_t *)s_data[index].data)[i];
+            //显示数据： 0正常显示 1显示平均值
+            if (s_data[index].ui_type == SENSOR_UI_TYPE_NORMAL) {
+                //一次只显示4个数据，每个测量数据4个byte
+                if (s_data[index].size > 4 * 4)
+                    sense_display_num = 4 * 4;
+                else
+                    sense_display_num = s_data[index].size;
+                //把框分成4行，每行显示一个数据
+                for (int i = 0; i < sense_display_num; i += 4) {
+                    int32_t dd = ((uint8_t *)s_data[index].data)[i] << 0 |
+                                 ((uint8_t *)s_data[index].data)[i + 1] << 8 |
+                                 ((uint8_t *)s_data[index].data)[i + 2] << 16 |
+                                 ((uint8_t *)s_data[index].data)[i + 3] << 24;
+                    if (s_data[index].data_type == SENSOR_DATA_TYPE_INT32)
+                        spr.drawString(String(dd), 2, 5 + 24 * i / 4,
+                                       2 * (4 - sense_display_num / 4));
+                    else if (s_data[index].data_type == SENSOR_DATA_TYPE_FLOAT)
+                        spr.drawFloat((float)dd / 100, 2, 2, 5 + 24 * i / 4,
+                                      2 * (4 - sense_display_num / 4));
+                    // todo，数据单位，暂时显示为空
+                    spr.drawString("  ", 68, 5 + 24 * i, 2);
                 }
-                ((uint32_t *)s_data[index].data)[1] = temp / (s_data[index].size / 4);
-                ((uint32_t *)s_data[index].data)[0] = s_data[index].size / 4;
-            } else
-                sense_display_num = s_data[index].size;
-
-            //把框分成4行，每行显示一个数据
-            for (int i = 0; i < sense_display_num; i += 4) {
-                int32_t dd = ((uint8_t *)s_data[index].data)[i] << 0 |
-                             ((uint8_t *)s_data[index].data)[i + 1] << 8 |
-                             ((uint8_t *)s_data[index].data)[i + 2] << 16 |
-                             ((uint8_t *)s_data[index].data)[i + 3] << 24;
+            } else {
+                int32_t temp = 0;
+                for (int i = 0; i < s_data[index].size; i += 4) {
+                    temp += *(int32_t *)(s_data[index].data + i);
+                }
+                temp /= s_data[index].size / 4;
+                spr.drawString(String(s_data[index].size / 4), 2, 5, 4);
                 if (s_data[index].data_type == SENSOR_DATA_TYPE_INT32)
-                    spr.drawString(String(dd), 2, 5 + 24 * i / 4, 2);
+                    spr.drawString(String(temp), 2, 5 + 24, 4);
                 else if (s_data[index].data_type == SENSOR_DATA_TYPE_FLOAT)
-                    spr.drawFloat((float)dd / 100, 2, 2, 5 + 24 * i / 4, 2);
-                // todo，数据单位，暂时显示为空
-                spr.drawString("  ", 68, 5 + 24 * i, 2);
+                    spr.drawFloat((float)temp / 100, 2, 2, 5 + 24, 4);
             }
         }
         //根据数据的index，显示不同的位置，一个页面只能显示三个，页面不够补+号。
