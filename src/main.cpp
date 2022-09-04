@@ -27,8 +27,8 @@ void display_init() // Display initialization, black background rotation
     spr.createSprite(320, 25);
     spr.setFreeFont(FSS9);
     // code to view the tutorial
-    spr.drawString("Hi Wio", 120, 0, GFXFF);
-    spr.pushSprite(0, 100);
+    spr.drawString("SenseCAP K1100", 90, 0, GFXFF);
+    spr.pushSprite(0, 110);
     spr.deleteSprite();
 }
 

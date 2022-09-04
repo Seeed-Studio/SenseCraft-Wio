@@ -16,6 +16,9 @@ UI::UI(TFT_eSPI &lcd, TFT_eSprite &display, SysConfig &config, Message &m1)
 };
 
 void UI::init() {
+    // 显示2s的开机logo
+    Delay(Ticks::MsToTicks(2000));
+    tft.fillScreen(TFT_BLACK);
 }
 
 void UI::Run() {
@@ -400,7 +403,7 @@ bool UI::Network_1(uint8_t select) {
         spr.fillSprite(TFT_BLACK);
         spr.setFreeFont(FSS9);
         spr.setTextColor(TFT_WHITE);
-        spr.drawString("LoRa", 6, 6, GFXFF);
+        spr.drawString("   LoRa", 6, 6, GFXFF);
         // spr.drawString("(SenseCAP)", 5, 36, GFXFF);
         spr.pushSprite(30, 95);
         spr.deleteSprite();
@@ -409,7 +412,7 @@ bool UI::Network_1(uint8_t select) {
         spr.fillSprite(tft.color565(0, 139, 0));
         spr.setFreeFont(FSS9);
         spr.setTextColor(TFT_WHITE);
-        spr.drawString("WiFi", 6, 6, GFXFF);
+        spr.drawString("   WiFi", 6, 6, GFXFF);
         // spr.drawString("(Ubidots)", 6, 36, GFXFF);
         spr.pushSprite(200, 95);
         spr.deleteSprite();
@@ -418,8 +421,8 @@ bool UI::Network_1(uint8_t select) {
         spr.fillSprite(TFT_BLACK);
         spr.setFreeFont(FSS9);
         spr.setTextColor(TFT_WHITE);
-        spr.drawString("Please refer to the wikito modify the", 6, 6, 2);
-        spr.drawString("configuration file and send it to this device.", 6, 26, 2);
+        spr.drawString("Please put your WiFi name and password into the ", 6, 6, 2);
+        spr.drawString("config.txt file. You can find it in the USB drive.", 0, 26, 2);
         spr.pushSprite(15, 160);
         spr.deleteSprite();
         break;
