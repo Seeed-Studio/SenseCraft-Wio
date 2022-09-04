@@ -60,22 +60,26 @@ void UI::Run() {
 void UI::UIPushData(std::vector<sensor_data *> d) {
     // A loop to deep copy param of d vector into new lora_data queue
     // by Iterative method
+    // ui刷新时不更新数据
     if (s_data_ready) {
+        s_data.clear();
+        s_data.shrink_to_fit();
         for (auto data : d)
             s_data.push_back(*data);
-        s_data_ready = false;
     }
 }
 
 void UI::UIPushLog(std::vector<log_data> d) {
+    // ui刷新时不更新数据
     if (log_ready) {
         int log_num = d.size();
         // 最多只显示11条日志
         if (log_num > SHOW_LOG_MAX_SIZE)
             log_num = SHOW_LOG_MAX_SIZE;
+        a_log.clear();
+        a_log.shrink_to_fit();
         for (int i = 0; i < log_num; i++)
             a_log.push_back(d.at(d.size() - log_num + i));
-        log_ready = false;
     }
 }
 
@@ -834,11 +838,11 @@ bool UI::Process_2(uint8_t select) {
     case 0: {
         // 270*80 = 21600
         // check all data if vision ai is running
+        log_ready = false;
         if (a_log.size() == 0) {
             log_ready = true;
             break;
         }
-
         spr.createSprite(320, 120);
         spr.setFreeFont(FSS9);
         for (auto data : a_log) {
@@ -851,8 +855,6 @@ bool UI::Process_2(uint8_t select) {
         }
         spr.pushSprite(0, 80);
         spr.deleteSprite();
-        a_log.clear();
-        a_log.shrink_to_fit();
         log_ready = true;
         break;
     }
@@ -902,11 +904,6 @@ bool UI::Process_2(uint8_t select) {
 
 void UI::SensePageManager(uint8_t key) {
 
-    if (s_data.size() == 0) {
-        s_data_ready = true;
-        return;
-    }
-
     switch (key) {
     case LEFT_PRESSED:
         s_state.s_select--;
@@ -941,9 +938,6 @@ void UI::SensePageManager(uint8_t key) {
     // LOGSS.printf("\r\n>>>>>UI Sensor number: %d  %d  %d\r\n", s_state.s_select ,
     // s_data.size(), key);
     s_state.is_next = (this->*sense[s_state.current_page])(s_state.s_select);
-    s_data.clear();
-    s_data.shrink_to_fit();
-    s_data_ready = true;
 }
 
 void UI::SensorSubTitle(String value) {
@@ -1003,7 +997,12 @@ bool UI::Sensor_1(uint8_t select) {
     bool    ret;
     uint8_t sense_display_num = 0;
     uint8_t index             = 0;
-
+    s_data_ready              = false;
+    s_data_ready = false;
+    if (s_data.size() == 0) {
+        s_data_ready = true;
+        return false;
+    }
     TitleDisplay(0);
     if (select < s_data.size()) {
         Status2Display(0xff);
@@ -1072,8 +1071,10 @@ bool UI::Sensor_1(uint8_t select) {
     }
     // SensorADDDisplay(1);
     SensorPageState(s_data.size() / 3 + 1, select / 3);
+    s_data_ready = true;
     Status1Display(0);
-    return ret;
+    // 暂时不支持折线图
+    return false;
 }
 
 bool UI::Sensor_2(uint8_t select) {

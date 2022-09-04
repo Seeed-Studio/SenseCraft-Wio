@@ -62,7 +62,7 @@ void SamplerThread::Run() {
         }
         datas.clear();
         datas.shrink_to_fit();
-        Delay(Ticks::MsToTicks(100));
+        Delay(Ticks::MsToTicks(1000));
         // LOGSS.printf("SamplerThread Stacks Free Bytes Remaining %d\r\n",
         // uxTaskGetStackHighWaterMark(GetHandle()));
     }
