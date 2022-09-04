@@ -24,6 +24,12 @@ void display_init() // Display initialization, black background rotation
     tft.begin();
     tft.setRotation(3);
     tft.fillScreen(TFT_BLACK);
+    spr.createSprite(320, 25);
+    spr.setFreeFont(FSS9);
+    // code to view the tutorial
+    spr.drawString("Hi Wio", 120, 0, GFXFF);
+    spr.pushSprite(0, 100);
+    spr.deleteSprite();
 }
 
 void setup() {
