@@ -98,13 +98,18 @@ void WiFiThread::Run() {
             }
             LOGSS.println("WIFI -  wifi connected");
             cfg.wificonnected = true;
+            cfg.wifi_rssi    = WiFi.RSSI();
             send_data(); // Sending data to Ubidots
             wifi_data.clear();
             wifi_data.shrink_to_fit();
             wifi_data_ready = true;
             Delay(Ticks::MsToTicks(5000));
         } else
+        {
+            WiFi.disconnect();
+            cfg.wificonnected = false;
             Delay(Ticks::MsToTicks(1000));
+        }
     }
 }
 

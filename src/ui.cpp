@@ -505,6 +505,36 @@ bool UI::Network_2_0(uint8_t select) {
     Status1Display(0);
     return ret;
 }
+
+void UI::NetworkSignal(int16_t signal) {
+    if (signal > -70 && signal < 0) {
+        spr.fillRect(53, 110 - 75, 3, 11, tft.color565(0, 139, 0)); // Four-frame signal
+        spr.fillRect(59, 107 - 75, 3, 14, tft.color565(0, 139, 0));
+        spr.fillRect(65, 104 - 75, 3, 17, tft.color565(0, 139, 0));
+        spr.fillRect(71, 101 - 75, 3, 20, tft.color565(0, 139, 0));
+    } else if (signal > -90 && signal < -70) {
+        spr.fillRect(53, 110 - 75, 3, 11, tft.color565(0, 139, 0)); // Three-frame signal
+        spr.fillRect(59, 107 - 75, 3, 14, tft.color565(0, 139, 0));
+        spr.fillRect(65, 104 - 75, 3, 17, tft.color565(0, 139, 0));
+        spr.fillRect(71, 101 - 75, 3, 20, tft.color565(100, 100, 100));
+    } else if (signal > -110 && signal < -90) {
+        spr.fillRect(53, 110 - 75, 3, 11, tft.color565(0, 139, 0)); // Two-frame signal
+        spr.fillRect(59, 107 - 75, 3, 14, tft.color565(0, 139, 0));
+        spr.fillRect(65, 104 - 75, 3, 17, tft.color565(100, 100, 100));
+        spr.fillRect(71, 101 - 75, 3, 20, tft.color565(100, 100, 100));
+    } else if (signal > -130 && signal < -110) {
+        spr.fillRect(53, 110 - 75, 3, 11, tft.color565(0, 139, 0)); // One frame signal
+        spr.fillRect(59, 107 - 75, 3, 14, tft.color565(100, 100, 100));
+        spr.fillRect(65, 104 - 75, 3, 17, tft.color565(100, 100, 100));
+        spr.fillRect(71, 101 - 75, 3, 20, tft.color565(100, 100, 100));
+    } else {
+        spr.fillRect(53, 110 - 75, 3, 11, tft.color565(140, 42, 42)); // No signal
+        spr.fillRect(59, 107 - 75, 3, 14, tft.color565(140, 42, 42));
+        spr.fillRect(65, 104 - 75, 3, 17, tft.color565(140, 42, 42));
+        spr.fillRect(71, 101 - 75, 3, 20, tft.color565(140, 42, 42));
+    }
+}
+
 bool UI::Network_2_1(uint8_t select) {
     TitleDisplay(2);
     NetworkSubtitles(n_state.current_network);
@@ -522,19 +552,16 @@ bool UI::Network_2_1(uint8_t select) {
         spr.drawString(cfg.ssid, 38, 26, 2);
 
         spr.drawString("Account:", 6, 46, 2);
-        spr.drawString("user1", 60, 46, 2);
+        spr.drawString(cfg.device_label, 60, 46, 2);
 
         spr.pushSprite(20, 80);
         spr.deleteSprite();
 
-        spr.createSprite(80, 40);
+        spr.createSprite(188, 95);
         spr.setFreeFont(FSS9);
         spr.setTextColor(TFT_WHITE);
-        spr.drawString("Signal:", 6, 15, 2);
-        spr.fillRect(51, 16, 3, 11, tft.color565(0, 139, 0)); // No signal
-        spr.fillRect(57, 13, 3, 14, tft.color565(0, 139, 0));
-        spr.fillRect(63, 10, 3, 17, tft.color565(100, 100, 100));
-        spr.fillRect(69, 7, 3, 20, tft.color565(100, 100, 100));
+        spr.drawString("Signal:", 6, 30, 2);
+        NetworkSignal(cfg.wifi_rssi);
         spr.pushSprite(20, 150);
         spr.deleteSprite();
 
@@ -606,32 +633,7 @@ bool UI::Network_4_0(uint8_t select) {
     spr.drawString(String(cfg.lora_sucess_cnt), 70, 6.8 * FONT_ROW_HEIGHT - 75,
                    2); // Shows the number of successful deliveries
 
-    if (cfg.lora_rssi > -70 && cfg.lora_rssi < 0) {
-        spr.fillRect(53, 110 - 75, 3, 11, tft.color565(0, 139, 0)); // Four-frame signal
-        spr.fillRect(59, 107 - 75, 3, 14, tft.color565(0, 139, 0));
-        spr.fillRect(65, 104 - 75, 3, 17, tft.color565(0, 139, 0));
-        spr.fillRect(71, 101 - 75, 3, 20, tft.color565(0, 139, 0));
-    } else if (cfg.lora_rssi > -90 && cfg.lora_rssi < -70) {
-        spr.fillRect(53, 110 - 75, 3, 11, tft.color565(0, 139, 0)); // Three-frame signal
-        spr.fillRect(59, 107 - 75, 3, 14, tft.color565(0, 139, 0));
-        spr.fillRect(65, 104 - 75, 3, 17, tft.color565(0, 139, 0));
-        spr.fillRect(71, 101 - 75, 3, 20, tft.color565(100, 100, 100));
-    } else if (cfg.lora_rssi > -110 && cfg.lora_rssi < -90) {
-        spr.fillRect(53, 110 - 75, 3, 11, tft.color565(0, 139, 0)); // Two-frame signal
-        spr.fillRect(59, 107 - 75, 3, 14, tft.color565(0, 139, 0));
-        spr.fillRect(65, 104 - 75, 3, 17, tft.color565(100, 100, 100));
-        spr.fillRect(71, 101 - 75, 3, 20, tft.color565(100, 100, 100));
-    } else if (cfg.lora_rssi > -130 && cfg.lora_rssi < -110) {
-        spr.fillRect(53, 110 - 75, 3, 11, tft.color565(0, 139, 0)); // One frame signal
-        spr.fillRect(59, 107 - 75, 3, 14, tft.color565(100, 100, 100));
-        spr.fillRect(65, 104 - 75, 3, 17, tft.color565(100, 100, 100));
-        spr.fillRect(71, 101 - 75, 3, 20, tft.color565(100, 100, 100));
-    } else {
-        spr.fillRect(53, 110 - 75, 3, 11, tft.color565(140, 42, 42)); // No signal
-        spr.fillRect(59, 107 - 75, 3, 14, tft.color565(140, 42, 42));
-        spr.fillRect(65, 104 - 75, 3, 17, tft.color565(140, 42, 42));
-        spr.fillRect(71, 101 - 75, 3, 20, tft.color565(140, 42, 42));
-    }
+    NetworkSignal(cfg.lora_rssi);
     spr.pushSprite(20, 100);
     spr.deleteSprite();
 
@@ -1024,7 +1026,7 @@ bool UI::Sensor_1(uint8_t select) {
         Status2Display(0);
         ret = false;
     }
-        //获取显示数据的位置
+    //获取显示数据的位置
     if (select >= index + 3) {
         index += 1;
     }

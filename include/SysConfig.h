@@ -24,6 +24,7 @@ public:
 	bool  lora_on = false;
 	bool  wifi_on = false;
 	bool  wificonnected = false;
+	int16_t wifi_rssi = 0;
 	lora_status_type lora_status = LORA_INIT_START;
 	int16_t lora_rssi = 0;
 	int16_t lora_fcnt = 0;

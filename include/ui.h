@@ -109,6 +109,7 @@ class UI : public Thread {
     bool                Network_4_0(uint8_t select); // lora
     bool                Network_5_0(uint8_t select); // lora
     bool                NetworkSubtitles(uint8_t keys);
+    void                NetworkSignal(int16_t signal);
     void NetworkLoRaBandSelect(uint8_t location, struct LoRaBandInfo lbi, uint8_t select);
 
     struct State p_state = {0, true, 0};
