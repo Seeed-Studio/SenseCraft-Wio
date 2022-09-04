@@ -49,8 +49,12 @@ void Visionai::Run() {
                     sprintf(log, "Detecting and calculating: %d", i + 1);
                     pushlog(log);
                     ai.get_result(i, (uint8_t *)&g_data, sizeof(object_detection_t)); // get result
-                    data[i] = g_data.confidence;
-                    sprintf(log, "confidence: %d", g_data.confidence);
+                    if (g_data.confidence < 100) {
+                        data[i] = g_data.confidence;
+                    } else {
+                        data[i] = 100;
+                    }
+                    sprintf(log, "confidence: %d", data[i]);
                     pushlog(log);
                 }
             } else {

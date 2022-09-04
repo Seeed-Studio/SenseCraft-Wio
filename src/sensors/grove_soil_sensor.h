@@ -21,7 +21,7 @@ class grove_soil_sensor : public sensor_base {
     bool        read(struct sensor_data *data);
 
   private:
-    const char *name = "soil sensor"; /// buildin-light
+    const char *name = "Soil";
     int         soil_value;
     SoftwareI2C softwarei2c;
 };

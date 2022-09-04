@@ -38,7 +38,7 @@ class grove_visionai_sensor : public sensor_base {
     bool        read(struct sensor_data *data);
 
   private:
-    const char *name = "visionai sensor"; /// buildin-light
+    const char *name = "Vision";
     int         visionai_value[20];
     Visionai   *visionai;
 };

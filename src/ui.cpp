@@ -140,7 +140,8 @@ void UI::Status1Display(uint8_t status) {
     spr.createSprite(140, 25);
     spr.setFreeFont(FSSB9);
     spr.fillSprite(TFT_BLACK);
-    if (cfg.lora_status == LORA_JOIN_SUCCESS || cfg.lora_status == LORA_SEND_SUCCESS || cfg.lora_status == LORA_SEND_FAILED) {
+    if (cfg.lora_status == LORA_JOIN_SUCCESS || cfg.lora_status == LORA_SEND_SUCCESS ||
+        cfg.lora_status == LORA_SEND_FAILED) {
         spr.setTextColor(TFT_GREEN, TFT_BLACK); // Networking status indication：ON
         spr.drawString("LoRa", 60, 0, 2);       // Show the network you are in
     } else if (cfg.wificonnected == true) {
@@ -946,28 +947,29 @@ void UI::SensePageManager(uint8_t key) {
 }
 
 void UI::SensorSubTitle(String value) {
-    spr.createSprite(320, 15);
     spr.setFreeFont(FSSB9);
     spr.setTextColor(TFT_WHITE, tft.color565(100, 100, 100));
-    spr.drawString(value, 120, 0, GFXFF);
-    spr.pushSprite(0, 50);
-    spr.deleteSprite();
+    if (value.length() > 6) {
+        spr.drawString(value, 2 * (13 - value.length()), 0, FONT2);
+    } else {
+        spr.drawString(value, 6 * (7 - value.length()), 0, GFXFF);
+    }
 }
 
 void UI::SensorADDDisplay(uint8_t is_backgroud) {
     // spr.createSprite(90, 100);
 
     if (is_backgroud) {
-        spr.fillRect(0, 0, 90, 100, tft.color565(0, 139, 0));
+        spr.fillRect(0, 25, 90, 120, tft.color565(0, 139, 0));
     }
 
     spr.setFreeFont(FSS9);
     spr.setTextColor(TFT_WHITE);
-    spr.drawString("ADD", 14, 5, 4);
+    spr.drawString("ADD", 14, 27, 4);
 
-    spr.fillRect(20, 1.5 * FONT_ROW_HEIGHT, 40, 40, TFT_WHITE);
-    spr.fillRect(38, 1.5 * FONT_ROW_HEIGHT + 6, 3, 26, TFT_BLACK);
-    spr.fillRect(27, 1.5 * FONT_ROW_HEIGHT + 18, 26, 3, TFT_BLACK);
+    spr.fillRect(20, 22 + 1.5 * FONT_ROW_HEIGHT, 40, 40, TFT_WHITE);
+    spr.fillRect(38, 22 + 1.5 * FONT_ROW_HEIGHT + 6, 3, 26, TFT_BLACK);
+    spr.fillRect(27, 22 + 1.5 * FONT_ROW_HEIGHT + 18, 26, 3, TFT_BLACK);
 
     // spr.pushSprite(220, 90);
     // spr.deleteSprite();
@@ -1003,33 +1005,33 @@ bool UI::Sensor_1(uint8_t select) {
     uint8_t index             = 0;
 
     TitleDisplay(0);
-    // Display the sensor name
     if (select < s_data.size()) {
-        SensorSubTitle(s_data[select].name);
         Status2Display(0xff);
         ret = true;
     } else {
-        SensorSubTitle("MORE");
         Status2Display(0);
         ret = false;
     }
     //只显示select-1, select和select+1的数据
     //处理好特殊情况，第一个和最后一个
     for (int si = 0; si < 3; si++) {
-        spr.createSprite(90, 100);
+        spr.createSprite(90, 130);
         //高亮选择的数据
         if (si == select % 3) {
-            spr.fillRect(0, 0, 90, 100, tft.color565(0, 139, 0));
+            spr.fillRect(0, 25, 90, 130, tft.color565(0, 139, 0));
         }
-        spr.setFreeFont(FSS9);
-        spr.setTextColor(TFT_WHITE);
 
         //获取显示数据的位置
         index = select + si - select % 3;
+
         if (index >= s_data.size()) {
             SensorADDDisplay(si == select % 3);
         } else {
+            // Display the sensor name
+            SensorSubTitle(s_data[index].name);
             //显示数据： 0正常显示 1显示平均值
+            spr.setFreeFont(FSS9);
+            spr.setTextColor(TFT_WHITE);
             if (s_data[index].ui_type == SENSOR_UI_TYPE_NORMAL) {
                 //一次只显示4个数据，每个测量数据4个byte
                 if (s_data[index].size > 4 * 4)
@@ -1043,13 +1045,13 @@ bool UI::Sensor_1(uint8_t select) {
                                  ((uint8_t *)s_data[index].data)[i + 2] << 16 |
                                  ((uint8_t *)s_data[index].data)[i + 3] << 24;
                     if (s_data[index].data_type == SENSOR_DATA_TYPE_INT32)
-                        spr.drawString(String(dd), 2, 5 + 24 * i / 4,
+                        spr.drawString(String(dd), 2, 30 + 24 * i / 4,
                                        2 * (4 - sense_display_num / 4));
                     else if (s_data[index].data_type == SENSOR_DATA_TYPE_FLOAT)
-                        spr.drawFloat((float)dd / 100, 2, 2, 5 + 24 * i / 4,
+                        spr.drawFloat((float)dd / 100, 2, 2, 30 + 24 * i / 4,
                                       2 * (4 - sense_display_num / 4));
                     // todo，数据单位，暂时显示为空
-                    spr.drawString("  ", 68, 5 + 24 * i, 2);
+                    spr.drawString("  ", 68, 30 + 24 * i, 2);
                 }
             } else {
                 int32_t temp = 0;
@@ -1057,15 +1059,15 @@ bool UI::Sensor_1(uint8_t select) {
                     temp += *(int32_t *)(s_data[index].data + i);
                 }
                 temp /= s_data[index].size / 4;
-                spr.drawString(String(s_data[index].size / 4), 2, 5, 4);
+                spr.drawString(String(s_data[index].size / 4), 2, 30, 4);
                 if (s_data[index].data_type == SENSOR_DATA_TYPE_INT32)
-                    spr.drawString(String(temp), 2, 5 + 24, 4);
+                    spr.drawString(String(temp), 2, 30 + 24, 4);
                 else if (s_data[index].data_type == SENSOR_DATA_TYPE_FLOAT)
-                    spr.drawFloat((float)temp / 100, 2, 2, 5 + 24, 4);
+                    spr.drawFloat((float)temp / 100, 2, 2, 30 + 24, 4);
             }
         }
         //根据数据的index，显示不同的位置，一个页面只能显示三个，页面不够补+号。
-        spr.pushSprite(20 + si * 100, 90);
+        spr.pushSprite(20 + si * 100, 60);
         spr.deleteSprite();
     }
     // SensorADDDisplay(1);
