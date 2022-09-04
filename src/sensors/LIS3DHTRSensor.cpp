@@ -36,6 +36,7 @@ bool LIS3DHTRSensor::read(struct sensor_data *sdata) {
         sdata->size      = sizeof(data);
         sdata->id        = LIS3DHTRSENSOR;
         sdata->ui_type   = SENSOR_UI_TYPE_NORMAL;
+        sdata->data_unit = data_unit;
         sdata->status    = true;
         return true;
     } else {

@@ -87,6 +87,7 @@ bool grove_visionai_sensor::read(struct sensor_data *sdata) {
     sdata->name                 = name;
     sdata->status               = visionai->status;
     sdata->ui_type              = SENSOR_UI_TYPE_AVERAGE;
+    sdata->data_unit            = data_unit;
     grove_visionai_sensor::slog = visionai->ai_log;
     return sdata->status;
 }

@@ -14,6 +14,7 @@ bool buildin_mic::read(struct sensor_data *sdata) {
     sdata->id        = BUILDIN_MIC;
     sdata->name      = name;
     sdata->ui_type   = SENSOR_UI_TYPE_NORMAL;
+    sdata->data_unit = data_unit;
     sdata->status    = true;
     return true;
 }

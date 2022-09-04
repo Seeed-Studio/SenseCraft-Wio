@@ -36,6 +36,7 @@ enum sensor_ui_type {
 
 struct sensor_data {
     const char   *name;
+    const char   *data_unit;
     const void   *data;
     unsigned char size;
     uint8_t       id;

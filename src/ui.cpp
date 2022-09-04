@@ -950,6 +950,16 @@ void UI::SensorSubTitle(String value) {
     }
 }
 
+void UI::SensorUnit(String value) {
+    spr.setFreeFont(FSS9);
+    spr.setTextColor(TFT_WHITE);
+    if (value.length() > 6) {
+        spr.drawString(value, 2 * (13 - value.length()), 115, FONT2);
+    } else {
+        spr.drawString(value, 6 * (7 - value.length()), 115, GFXFF);
+    }
+}
+
 void UI::SensorADDDisplay(uint8_t is_backgroud) {
     // spr.createSprite(90, 100);
 
@@ -994,11 +1004,11 @@ void UI::SensorPageState(int pages_num, int page_select) {
 }
 
 bool UI::Sensor_1(uint8_t select) {
-    bool    ret;
-    uint8_t sense_display_num = 0;
-    uint8_t index             = 0;
-    s_data_ready              = false;
-    s_data_ready = false;
+    bool           ret;
+    uint8_t        sense_display_num = 0;
+    static uint8_t index             = 0;
+    s_data_ready                     = false;
+    s_data_ready                     = false;
     if (s_data.size() == 0) {
         s_data_ready = true;
         return false;
@@ -1011,42 +1021,47 @@ bool UI::Sensor_1(uint8_t select) {
         Status2Display(0);
         ret = false;
     }
+        //获取显示数据的位置
+    if (select >= index + 3) {
+        index += 1;
+    }
+    if (select < index) {
+        index = select;
+    }
     //只显示select-1, select和select+1的数据
     //处理好特殊情况，第一个和最后一个
     for (int si = 0; si < 3; si++) {
         spr.createSprite(90, 130);
         //高亮选择的数据
-        if (si == select % 3) {
+        if (index + si == select) {
             spr.fillRect(0, 25, 90, 130, tft.color565(0, 139, 0));
         }
 
-        //获取显示数据的位置
-        index = select + si - select % 3;
-
-        if (index >= s_data.size()) {
-            SensorADDDisplay(si == select % 3);
+        if (index + si >= s_data.size()) {
+            SensorADDDisplay(index + si == select);
         } else {
             // Display the sensor name
-            SensorSubTitle(s_data[index].name);
+            SensorSubTitle(s_data[index + si].name);
+            SensorUnit(s_data[index + si].data_unit);
             //显示数据： 0正常显示 1显示平均值
             spr.setFreeFont(FSS9);
             spr.setTextColor(TFT_WHITE);
-            if (s_data[index].ui_type == SENSOR_UI_TYPE_NORMAL) {
+            if (s_data[index + si].ui_type == SENSOR_UI_TYPE_NORMAL) {
                 //一次只显示4个数据，每个测量数据4个byte
-                if (s_data[index].size > 4 * 4)
+                if (s_data[index + si].size > 4 * 4)
                     sense_display_num = 4 * 4;
                 else
-                    sense_display_num = s_data[index].size;
+                    sense_display_num = s_data[index + si].size;
                 //把框分成4行，每行显示一个数据
                 for (int i = 0; i < sense_display_num; i += 4) {
-                    int32_t dd = ((uint8_t *)s_data[index].data)[i] << 0 |
-                                 ((uint8_t *)s_data[index].data)[i + 1] << 8 |
-                                 ((uint8_t *)s_data[index].data)[i + 2] << 16 |
-                                 ((uint8_t *)s_data[index].data)[i + 3] << 24;
-                    if (s_data[index].data_type == SENSOR_DATA_TYPE_INT32)
+                    int32_t dd = ((uint8_t *)s_data[index + si].data)[i] << 0 |
+                                 ((uint8_t *)s_data[index + si].data)[i + 1] << 8 |
+                                 ((uint8_t *)s_data[index + si].data)[i + 2] << 16 |
+                                 ((uint8_t *)s_data[index + si].data)[i + 3] << 24;
+                    if (s_data[index + si].data_type == SENSOR_DATA_TYPE_INT32)
                         spr.drawString(String(dd), 2, 30 + 24 * i / 4,
                                        2 * (4 - sense_display_num / 4));
-                    else if (s_data[index].data_type == SENSOR_DATA_TYPE_FLOAT)
+                    else if (s_data[index + si].data_type == SENSOR_DATA_TYPE_FLOAT)
                         spr.drawFloat((float)dd / 100, 2, 2, 30 + 24 * i / 4,
                                       2 * (4 - sense_display_num / 4));
                     // todo，数据单位，暂时显示为空
@@ -1054,14 +1069,14 @@ bool UI::Sensor_1(uint8_t select) {
                 }
             } else {
                 int32_t temp = 0;
-                for (int i = 0; i < s_data[index].size; i += 4) {
-                    temp += *(int32_t *)(s_data[index].data + i);
+                for (int i = 0; i < s_data[index + si].size; i += 4) {
+                    temp += *(int32_t *)(s_data[index + si].data + i);
                 }
-                temp /= s_data[index].size / 4;
-                spr.drawString(String(s_data[index].size / 4), 2, 30, 4);
-                if (s_data[index].data_type == SENSOR_DATA_TYPE_INT32)
+                temp /= s_data[index + si].size / 4;
+                spr.drawString(String(s_data[index + si].size / 4), 2, 30, 4);
+                if (s_data[index + si].data_type == SENSOR_DATA_TYPE_INT32)
                     spr.drawString(String(temp), 2, 30 + 24, 4);
-                else if (s_data[index].data_type == SENSOR_DATA_TYPE_FLOAT)
+                else if (s_data[index + si].data_type == SENSOR_DATA_TYPE_FLOAT)
                     spr.drawFloat((float)temp / 100, 2, 2, 30 + 24, 4);
             }
         }

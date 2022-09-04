@@ -49,6 +49,8 @@ bool grove_soil_sensor::read(struct sensor_data *sdata) {
     sdata->size      = sizeof(soil_value);
     sdata->id        = GROVE_SOIL;
     sdata->name      = name;
+    sdata->ui_type   = SENSOR_UI_TYPE_NORMAL;
+    sdata->data_unit = data_unit;
     sdata->status    = true;
     return true;
 }

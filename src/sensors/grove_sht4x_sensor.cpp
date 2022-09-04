@@ -1,7 +1,7 @@
 #include "grove_sht4x_sensor.h"
 #include "Arduino.h"
-#include "SoftwareI2C.h"
 #include "SensorsUtils.h"
+#include "SoftwareI2C.h"
 
 Sht4x::Sht4x() : Thread("Sht4x", 128, 1) {
 }
@@ -49,6 +49,8 @@ bool grove_sht4x_sensor::read(struct sensor_data *sdata) {
     sdata->id        = GROVE_SHT4X;
     sdata->name      = name;
     sdata->status    = sht4x->status;
+    sdata->ui_type   = SENSOR_UI_TYPE_NORMAL;
+    sdata->data_unit = data_unit;
     return sdata->status;
 }
 

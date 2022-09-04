@@ -13,6 +13,7 @@ public:
 	bool read(struct sensor_data *data);
 private:
 	const char *name = "Light"; /// buildin-light
+	const char *data_unit = "Lux";
 	int light_value;
 
 };

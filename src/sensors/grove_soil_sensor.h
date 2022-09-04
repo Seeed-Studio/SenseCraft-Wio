@@ -22,6 +22,7 @@ class grove_soil_sensor : public sensor_base {
 
   private:
     const char *name = "Soil";
+    const char *data_unit = " ";
     int         soil_value;
     SoftwareI2C softwarei2c;
 };

@@ -14,6 +14,7 @@ public:
 	const char *get_name();
 private:
 	const char *name = "Sound"; //buildin-mic
+	const char *data_unit = "dB";
 	int mic_value;
 
 };

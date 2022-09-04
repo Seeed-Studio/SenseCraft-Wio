@@ -39,6 +39,7 @@ class grove_visionai_sensor : public sensor_base {
 
   private:
     const char *name = "Vision";
+    const char *data_unit = "count,%";
     int         visionai_value[20];
     Visionai   *visionai;
 };

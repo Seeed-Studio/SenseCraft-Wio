@@ -16,6 +16,7 @@ public:
     const char *get_name();
 private:
     const char *name = "IMU"; //LIS3DHTR
+    const char *data_unit = "X-Y-Z";
     int data[3];
 
     bool status;

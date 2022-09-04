@@ -124,6 +124,7 @@ class UI : public Thread {
     void         SensorADDDisplay(uint8_t chose);
     void         SensorPageState(int PAGES, int _CHOOSE_PAGE);
     void         SensorSubTitle(String value);
+    void         SensorUnit(String value);
 
     typedef bool (UI::*page_t)(uint8_t key);
 
