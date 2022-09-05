@@ -3,13 +3,6 @@
 #include "PubSubClient.h"
 #include "utils.h"
 
-char         mqttBroker[] = "industrial.api.ubidots.com";
-WiFiClient   wifiClient;
-PubSubClient client(wifiClient);
-
-char payload[700];
-char topic[150];
-
 WiFiThread::WiFiThread(SysConfig &config) : Thread("WiFiThread", 2048, 1), cfg(config) {
     Start();
 }
@@ -25,17 +18,17 @@ void callback(char *topic, byte *payload, unsigned int length) {
 }
 void WiFiThread::reconnect() {
     // Loop until we're reconnected
-    while (!client.connected()) {
+    while (!client->connected()) {
         LOGSS.println("WIFI - Attempting MQTT connection...");
 
         // Attempt to connect
-        if (client.connect(cfg.mqtt_client_name.begin(), cfg.token.begin(), "")) {
+        if (client->connect(cfg.mqtt_client_name.begin(), cfg.token.begin(), "")) {
             LOGSS.println("WIFI - Attempting MQTT connected");
         } else {
             LOGSS.println(cfg.mqtt_client_name.begin());
             LOGSS.println(cfg.token.begin());
             LOGSS.print("WIFI - Attempting MQTT failed, rc=");
-            LOGSS.print(client.state());
+            LOGSS.print(client->state());
             LOGSS.println(" try again in 2 seconds");
             // Wait 2 seconds before retrying
             delay(2000);
@@ -45,7 +38,9 @@ void WiFiThread::reconnect() {
 
 // Sending data to Ubidots
 void WiFiThread::send_data() {
-    if (!client.connected()) {
+    char payload[700];
+    char topic[150];
+    if (!client->connected()) {
         reconnect();
     }
     // Builds the topic
@@ -53,38 +48,41 @@ void WiFiThread::send_data() {
     sprintf(topic, "%s%s", "/v2.0/devices/", cfg.device_label.begin());
     for (auto data : wifi_data) {
         // Builds the payload
-        sprintf(payload, "%s", ""); 
-        if(data.size / 4 <= 1)
-        {                 
-        sprintf(payload, "%s", "");                   // Cleans the payload
-        sprintf(payload, "{\"%s\":", data.name);                       // Adds the variable label
-        sprintf(payload, "%s %d", payload, ((int32_t *)data.data)[0]); // Adds the value
-        sprintf(payload, "%s}", payload); // Closes the dictionary brackets
-        client.publish(topic, payload);
-        // LOGSS.println(payload);
-        }
-        else
-        {
-            for(int i = 0; i < data.size / 4; i++)
-            {
-                sprintf(payload, "%s", ""); 
-                sprintf(payload, "{\"%s%d\":", data.name,i+1);                       // Adds the variable label
+        sprintf(payload, "%s", "");
+        if (data.size / 4 <= 1) {
+            sprintf(payload, "%s", "");              // Cleans the payload
+            sprintf(payload, "{\"%s\":", data.name); // Adds the variable label
+            if (data.data_type == SENSOR_DATA_TYPE_FLOAT)
+                sprintf(payload, "%s %f", payload, ((int32_t *)data.data)[0] / 100.0f);
+            else
+                sprintf(payload, "%s %d", payload, ((int32_t *)data.data)[0]); // Adds the value
+            sprintf(payload, "%s}", payload); // Closes the dictionary brackets
+            client->publish(topic, payload);
+            // LOGSS.println(payload);
+        } else {
+            for (int i = 0; i < data.size / 4; i++) {
+                sprintf(payload, "%s", "");
+                sprintf(payload, "{\"%s%d\":", data.name, i + 1); // Adds the variable label
+            if (data.data_type == SENSOR_DATA_TYPE_FLOAT)
+                sprintf(payload, "%s %f", payload, ((int32_t *)data.data)[i] / 100.0f);
+            else
                 sprintf(payload, "%s %d", payload, ((int32_t *)data.data)[i]); // Adds the value
                 sprintf(payload, "%s}", payload); // Closes the dictionary brackets
-                client.publish(topic, payload);
+                client->publish(topic, payload);
                 // LOGSS.println(payload);
                 delay(500);
             }
         }
-        
+
         delay(500);
     }
-    client.loop();
+    client->loop();
 }
 
 void WiFiThread::Run() {
     // LOGSS.println(cfg.ssid.begin());
     // LOGSS.println(cfg.password.begin());
+    client = new PubSubClient(wifiClient);
     while (true) {
         if (cfg.wifi_on) {
             while (WiFi.status() != WL_CONNECTED) {
@@ -92,20 +90,19 @@ void WiFiThread::Run() {
                 LOGSS.println("WIFI - Connecting to WiFi...");
                 Delay(Ticks::MsToTicks(1000));
                 if (WiFi.status() == WL_CONNECTED) {
-                    client.setServer(mqttBroker, 1883);
-                    client.setCallback(callback);
+                    client->setServer(MQTT_BROKER, 1883);
+                    client->setCallback(callback);
                 }
             }
             LOGSS.println("WIFI -  wifi connected");
             cfg.wificonnected = true;
-            cfg.wifi_rssi    = WiFi.RSSI();
+            cfg.wifi_rssi     = WiFi.RSSI();
             send_data(); // Sending data to Ubidots
             wifi_data.clear();
             wifi_data.shrink_to_fit();
             wifi_data_ready = true;
-            Delay(Ticks::MsToTicks(5000));
-        } else
-        {
+            Delay(Ticks::SecondsToTicks(60));
+        } else {
             WiFi.disconnect();
             cfg.wificonnected = false;
             Delay(Ticks::MsToTicks(1000));
