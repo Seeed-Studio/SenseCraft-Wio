@@ -585,9 +585,6 @@ bool UI::Network_3_0(uint8_t select) {
     // NetworkSubtitles(n_state.current_network);
     if (!cfg.lora_on) {
         cfg.lora_frequency  = lora_band_info[select].band;
-        cfg.lora_status     = LORA_INIT_START;
-        cfg.lora_fcnt       = 0;
-        cfg.lora_sucess_cnt = 0;
         cfg.wifi_on         = false;
         spr.createSprite(300, 80);
         spr.setTextColor(TFT_WHITE);
