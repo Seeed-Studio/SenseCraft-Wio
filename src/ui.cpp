@@ -147,13 +147,13 @@ void UI::Status1Display(uint8_t status) {
     spr.createSprite(140, 25);
     spr.setFreeFont(FSSB9);
     spr.fillSprite(TFT_BLACK);
-    if (cfg.lora_status == LORA_JOIN_SUCCESS || cfg.lora_status == LORA_SEND_SUCCESS ||
+    if (cfg.wificonnected == true) {
+        spr.setTextColor(TFT_GREEN, TFT_BLACK); // Networking status indication：ON
+        spr.drawString("WiFi", 60, 0, 2);       // Show the network you are in
+    } else if (cfg.lora_status == LORA_JOIN_SUCCESS || cfg.lora_status == LORA_SEND_SUCCESS ||
         cfg.lora_status == LORA_SEND_FAILED) {
         spr.setTextColor(TFT_GREEN, TFT_BLACK); // Networking status indication：ON
         spr.drawString("LoRa", 60, 0, 2);       // Show the network you are in
-    } else if (cfg.wificonnected == true) {
-        spr.setTextColor(TFT_GREEN, TFT_BLACK); // Networking status indication：ON
-        spr.drawString("WiFi", 60, 0, 2);       // Show the network you are in
     } else {
         spr.setTextColor(TFT_RED, TFT_BLACK); // Networking status indication：OFF
         spr.drawString("OFF", 60, 0, 2);      // Show the network you are in
@@ -383,7 +383,7 @@ bool UI::Network_1(uint8_t select) {
         spr.fillSprite(TFT_BLACK);
         spr.setFreeFont(FSS9);
         spr.setTextColor(TFT_WHITE);
-        spr.drawString("    WIFI", 6, 6, GFXFF);
+        spr.drawString("    WiFi", 6, 6, GFXFF);
         // spr.drawString("(Ubidots)", 6, 36, GFXFF);
         spr.pushSprite(200, 95);
         spr.deleteSprite();
@@ -421,8 +421,8 @@ bool UI::Network_1(uint8_t select) {
         spr.fillSprite(TFT_BLACK);
         spr.setFreeFont(FSS9);
         spr.setTextColor(TFT_WHITE);
-        spr.drawString("Please put your WiFi name and password into the ", 6, 6, 2);
-        spr.drawString("config.txt file. You can find it in the USB drive.", 0, 26, 2);
+        spr.drawString("Please put your WiFi name and password into the ", 0, 6, 2);
+        spr.drawString("config.txt file.Please find it in the USB drive.", 0, 26, 2);
         spr.pushSprite(15, 160);
         spr.deleteSprite();
         break;
@@ -546,7 +546,7 @@ bool UI::Network_2_1(uint8_t select) {
         spr.setFreeFont(FSS9);
         spr.setTextColor(TFT_WHITE);
         spr.drawString("Connected:", 6, 6, 2);
-        spr.drawString("    WIFI    ", 74, 6, 2);
+        spr.drawString("    WiFi    ", 74, 6, 2);
 
         spr.drawString("SSID:", 6, 26, 2);
         spr.drawString(cfg.ssid, 38, 26, 2);
@@ -570,8 +570,7 @@ bool UI::Network_2_1(uint8_t select) {
         spr.fillSprite(TFT_BLACK);
         spr.setFreeFont(FSS9);
         spr.setTextColor(TFT_WHITE);
-        spr.drawString("Waiting for  ", 6, 6, 2);
-        spr.drawString("configuration...", 76, 6, 2);
+        spr.drawString("Waiting for configuration...", 6, 6, 2);
         spr.pushSprite(20, 80);
         spr.deleteSprite();
     }
@@ -777,18 +776,18 @@ bool UI::Process_1(uint8_t select) {
         spr.setFreeFont(FSS9);
         spr.setTextColor(TFT_WHITE);
 
-        spr.fillRect(22, 0, 75, 60, tft.color565(0, 139, 0)); // Green
-        spr.drawString("Vision AI", 24, 0, GFXFF);
-        spr.drawString("real-time", 24, 22, GFXFF);
-        spr.drawString("analysis", 24, 44, GFXFF);
+        spr.fillRect(52, 0, 75, 60, tft.color565(0, 139, 0)); // Green
+        spr.drawString("Vision AI", 54, 0, GFXFF);
+        spr.drawString("real-time", 54, 22, GFXFF);
+        spr.drawString("analysis", 54, 44, GFXFF);
 
-        spr.drawString("TinyML", 120, 0, GFXFF);
-        spr.drawString("Example", 120, 22, GFXFF);
+        spr.drawString("TinyML", 180, 0, GFXFF);
+        spr.drawString("Example", 180, 25, GFXFF);
 
-        spr.drawString("Data", 205, 0, GFXFF);
-        spr.drawString("Filter (In ", 205, 20, GFXFF);
-        spr.drawString("Develop", 205, 40, GFXFF);
-        spr.drawString("ment)", 205, 60, GFXFF);
+        // spr.drawString("Data", 205, 0, GFXFF);
+        // spr.drawString("Filter (In ", 205, 20, GFXFF);
+        // spr.drawString("Develop", 205, 40, GFXFF);
+        // spr.drawString("ment)", 205, 60, GFXFF);
 
         spr.pushSprite(5, 100);
 
@@ -803,18 +802,18 @@ bool UI::Process_1(uint8_t select) {
         spr.setFreeFont(FSS9);
         spr.setTextColor(TFT_WHITE);
 
-        spr.drawString("Vision AI", 24, 0, GFXFF);
-        spr.drawString("real-time", 24, 22, GFXFF);
-        spr.drawString("analysis", 24, 44, GFXFF);
+        spr.drawString("Vision AI", 54, 0, GFXFF);
+        spr.drawString("real-time", 54, 22, GFXFF);
+        spr.drawString("analysis", 54, 44, GFXFF);
 
-        spr.fillRect(118, 0, 75, 40, tft.color565(0, 139, 0));
-        spr.drawString("TinyML", 120, 0, GFXFF);
-        spr.drawString("Example", 120, 25, GFXFF);
+        spr.fillRect(178, 0, 75, 40, tft.color565(0, 139, 0));
+        spr.drawString("TinyML", 180, 0, GFXFF);
+        spr.drawString("Example", 180, 25, GFXFF);
 
-        spr.drawString("Data", 205, 0, GFXFF);
-        spr.drawString("Filter (In ", 205, 20, GFXFF);
-        spr.drawString("Develop", 205, 40, GFXFF);
-        spr.drawString("ment)", 205, 60, GFXFF);
+        // spr.drawString("Data", 205, 0, GFXFF);
+        // spr.drawString("Filter (In ", 205, 20, GFXFF);
+        // spr.drawString("Develop", 205, 40, GFXFF);
+        // spr.drawString("ment)", 205, 60, GFXFF);
 
         spr.pushSprite(5, 100);
         spr.deleteSprite();
