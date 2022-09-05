@@ -915,8 +915,8 @@ void UI::SensePageManager(uint8_t key) {
         break;
     case RIGHT_PRESSED:
         s_state.s_select++;
-        if (s_state.s_select > s_data.size()) {
-            s_state.s_select = s_data.size();
+        if (s_state.s_select > 3) {
+            s_state.s_select = 3;
         }
         break;
     case UP_PRESSED:
