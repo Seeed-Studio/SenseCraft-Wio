@@ -11,7 +11,7 @@ void UI::uint8_to_float(uint8_t *data, float *destination) {
 }
 
 UI::UI(TFT_eSPI &lcd, TFT_eSprite &display, SysConfig &config, Message &m1)
-    : Thread("UIThread", 4096, 2), tft(lcd), spr(display), cfg(config), btnMail(m1) {
+    : Thread("UIThread", 2048, 2), tft(lcd), spr(display), cfg(config), btnMail(m1) {
     Start();
 };
 
