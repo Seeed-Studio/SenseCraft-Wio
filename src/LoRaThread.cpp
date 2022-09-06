@@ -351,25 +351,27 @@ void LoRaThread::Run() {
                 Join();
                 continue;
             }
-
+            lora_data_ready = false;
             if (!SendBuildinSensorData()) {
+                lora_data_ready = true;
                 // try to send the buildin sensor data 5 minutes  after the last failure
                 Delay(Ticks::SecondsToTicks(60 * 5));
                 continue;
             }
             if (!SendGroveSensorData()) {
+                lora_data_ready = true;
                 // try to send the grove sensor data 5 minutes  after the last failure
                 Delay(Ticks::SecondsToTicks(60 * 5));
                 continue;
             }
             if (!SendAiVisionData()) {
+                lora_data_ready = true;
                 // try to send the Ai Vision data 5 minutes  after the last failure
                 Delay(Ticks::SecondsToTicks(60 * 5));
                 continue;
             }
             // clear all data in the lora_data queue
-            lora_data.clear();
-            lora_data.shrink_to_fit();
+
             lora_data_ready = true;
             Delay(Ticks::SecondsToTicks(60 * 5));
         } else {
@@ -396,9 +398,9 @@ void LoRaThread::LoRaPushData(std::vector<sensor_data *> d) {
     // A loop to deep copy param of d vector into new lora_data queue
     // by Iterative method
     if (lora_data_ready) {
+        lora_data.clear();
+        lora_data.shrink_to_fit();
         for (auto data : d)
             lora_data.push_back(*data);
-
-        lora_data_ready = false;
     }
 }

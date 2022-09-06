@@ -58,18 +58,18 @@ void WiFiThread::send_data() {
                 sprintf(payload, "%s %d", payload, ((int32_t *)data.data)[0]); // Adds the value
             sprintf(payload, "%s}", payload); // Closes the dictionary brackets
             client->publish(topic, payload);
-            // LOGSS.println(payload);
+            LOGSS.println(payload);
         } else {
             for (int i = 0; i < data.size / 4; i++) {
                 sprintf(payload, "%s", "");
                 sprintf(payload, "{\"%s%d\":", data.name, i + 1); // Adds the variable label
-            if (data.data_type == SENSOR_DATA_TYPE_FLOAT)
-                sprintf(payload, "%s %f", payload, ((int32_t *)data.data)[i] / 100.0f);
-            else
-                sprintf(payload, "%s %d", payload, ((int32_t *)data.data)[i]); // Adds the value
+                if (data.data_type == SENSOR_DATA_TYPE_FLOAT)
+                    sprintf(payload, "%s %f", payload, ((int32_t *)data.data)[i] / 100.0f);
+                else
+                    sprintf(payload, "%s %d", payload, ((int32_t *)data.data)[i]); // Adds the value
                 sprintf(payload, "%s}", payload); // Closes the dictionary brackets
                 client->publish(topic, payload);
-                // LOGSS.println(payload);
+                LOGSS.println(payload);
                 delay(500);
             }
         }
@@ -97,9 +97,8 @@ void WiFiThread::Run() {
             LOGSS.println("WIFI -  wifi connected");
             cfg.wificonnected = true;
             cfg.wifi_rssi     = WiFi.RSSI();
+            wifi_data_ready   = false;
             send_data(); // Sending data to Ubidots
-            wifi_data.clear();
-            wifi_data.shrink_to_fit();
             wifi_data_ready = true;
             Delay(Ticks::SecondsToTicks(60));
         } else {
@@ -115,9 +114,9 @@ void WiFiThread::WiFiPushData(std::vector<sensor_data *> d) {
     // A loop to deep copy param of d vector into new wifi_data queue
     // by Iterative method
     if (wifi_data_ready) {
+        wifi_data.clear();
+        wifi_data.shrink_to_fit();
         for (auto data : d)
             wifi_data.push_back(*data);
-
-        wifi_data_ready = false;
     }
 }
