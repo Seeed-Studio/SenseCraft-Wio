@@ -844,14 +844,14 @@ bool UI::Process_2(uint8_t select) {
             log_ready = true;
             break;
         }
-        spr.createSprite(320, 120);
+        spr.createSprite(320, 130);
         spr.setFreeFont(FSS9);
         for (auto data : a_log) {
-            sprintf(buf, "[%d]:", data.time);
+            sprintf(buf, "[%02d:%02d:%02d]:", data.time / 1000 / 60 / 60 , data.time / 1000 / 60 % 60, data.time / 1000 % 60);
             spr.setTextColor(TFT_GREEN);
-            spr.drawString(buf, 4, i * 10, 2);
+            spr.drawString(buf, 4, i * 11, 2);
             spr.setTextColor(TFT_WHITE);
-            spr.drawString(data.data, 68, i * 10, 2);
+            spr.drawString(data.data, 82, i * 11, 2);
             i++;
         }
         spr.pushSprite(0, 80);

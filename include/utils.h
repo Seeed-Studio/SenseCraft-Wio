@@ -47,7 +47,7 @@ struct sensor_data {
 
 struct log_data {
     char     data[64];
-    uint16_t time;
+    uint32_t time;
 };
 
 enum sensor_type {
