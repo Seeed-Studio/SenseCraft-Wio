@@ -51,49 +51,42 @@ To get a sneak peak about how to use this at the current state, please follow [t
     <td>1</td>
     <td>Basic interaction logic of the user interface</td>
     <td>Switch between the homepage of Sense, Process, and Uplink (Network) by pressing the top 3 buttons. Press LEFT and RIGHT to select different options, press UP to return, and press ENTER to confirm. DOWN key is undefined</td>
-    <td>Implemented<br></td>
+    <td rowspan="8">Implemented<br></td>
   </tr>
   <tr>
     <td>2</td>
     <td>Real-time data display</td>
     <td>On the Sense homepage, the instantaneous data from different sensors can be updated and displayed in real-time with units</td>
-    <td></td>
   </tr>
   <tr>
     <td>3</td>
     <td>TinyML Tutorial link</td>
     <td>Display a QR code to let users jump to the wiki to follow the tutorial</td>
-    <td></td>
   </tr>
   <tr>
     <td>4</td>
     <td>LoRa® Communication (SenseCAP)</td>
     <td>All data is sent to the cloud via LoRa®</td>
-    <td></td>
   </tr>
   <tr>
     <td>5</td>
     <td>Automatic recognition of sensor connections</td>
     <td>When any sensor in the kit is connected, the screen shows that the sensor is connected and you can see the real-time data with units</td>
-    <td></td>
   </tr>
   <tr>
     <td>6</td>
     <td>Grove - Vision AI Module Logs</td>
     <td>Scroll real-time training logs of Grove - Vision AI Module with timestamps on the screen</td>
-    <td></td>
   </tr>
   <tr>
     <td>7</td>
     <td>Connect to Ubidots via WiFi</td>
     <td>The user fills in the WiFi account password and ubidots binding code through a config file, and then Wio Terminal automatically identifies the information and binds the device to the specified Ubidots account</td>
-    <td></td>
   </tr>
   <tr>
     <td>8</td>
     <td>LoRa® communication information panel display</td>
     <td>When the LoRa is successfully connected to send data, there is an information panel that displays the signal strength and the number of successful packets in real-time</td>
-    <td></td>
   </tr>
   <tr>
     <td>9</td>
