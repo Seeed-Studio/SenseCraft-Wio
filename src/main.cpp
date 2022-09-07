@@ -61,6 +61,6 @@ int freeMemory() {
 }
 
 void loop() {
-    LOGSS.printf("Main Stacks Free Bytes Remaining %d\r\n", uxTaskGetStackHighWaterMark(NULL));
+    // LOGSS.printf("Main Stacks Free Bytes Remaining %d\r\n", uxTaskGetStackHighWaterMark(NULL));
     delay(10000);
 }

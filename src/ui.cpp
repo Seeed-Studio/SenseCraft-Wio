@@ -136,7 +136,7 @@ void UI::TitleDisplay(uint8_t t) {
     spr.setTextColor(TFT_BLACK);
     spr.drawString("Sense", 32, 11, GFXFF);
     spr.drawString("Process", 127, 11, GFXFF);
-    spr.drawString("Uplink", 231, 11, GFXFF);
+    spr.drawString("Uplink", 237, 11, GFXFF);
     spr.drawLine(0, 2 * FONT_ROW_HEIGHT, SCREEN_WIDTH, 2 * FONT_ROW_HEIGHT, TFT_WHITE);
 
     spr.pushSprite(0, 0);
@@ -372,58 +372,58 @@ bool UI::Network_1(uint8_t select) {
     case 0:
         spr.createSprite(110, 60);
         spr.fillSprite(tft.color565(0, 139, 0));
-        spr.setFreeFont(FSS9);
+        spr.setFreeFont(FSSB9);
         spr.setTextColor(TFT_WHITE);
-        spr.drawString("    LoRa", 6, 6, GFXFF);
+        spr.drawString("LoRa", 30, 26, GFXFF);
         // spr.drawString("(SenseCAP)", 5, 36, GFXFF);
         spr.pushSprite(30, 95);
         spr.deleteSprite();
 
         spr.createSprite(110, 60);
         spr.fillSprite(TFT_BLACK);
-        spr.setFreeFont(FSS9);
+        spr.setFreeFont(FSSB9);
         spr.setTextColor(TFT_WHITE);
-        spr.drawString("    WiFi", 6, 6, GFXFF);
+        spr.drawString("WiFi", 30, 26, GFXFF);
         // spr.drawString("(Ubidots)", 6, 36, GFXFF);
-        spr.pushSprite(200, 95);
+        spr.pushSprite(180, 95);
         spr.deleteSprite();
 
-        spr.createSprite(240, 50);
+        spr.createSprite(320, 50);
         spr.fillSprite(TFT_BLACK);
         spr.setFreeFont(FSS9);
         spr.setTextColor(TFT_WHITE);
-        spr.drawString("Please press the bottom right button", 6, 6, 2);
-        spr.drawString("to confirm your network selection.", 6, 26, 2);
-        spr.pushSprite(35, 160);
+        spr.drawString(" Please press the bottom right button to confirm", 2, 6, 2);
+        spr.drawString("           your network selection.", 2, 26, 2);
+        spr.pushSprite(0, 160);
         spr.deleteSprite();
         break;
         // WiFi
     case 1:
         spr.createSprite(110, 60);
         spr.fillSprite(TFT_BLACK);
-        spr.setFreeFont(FSS9);
+        spr.setFreeFont(FSSB9);
         spr.setTextColor(TFT_WHITE);
-        spr.drawString("   LoRa", 6, 6, GFXFF);
+        spr.drawString("LoRa", 30, 26, GFXFF);
         // spr.drawString("(SenseCAP)", 5, 36, GFXFF);
         spr.pushSprite(30, 95);
         spr.deleteSprite();
 
         spr.createSprite(110, 60);
         spr.fillSprite(tft.color565(0, 139, 0));
-        spr.setFreeFont(FSS9);
+        spr.setFreeFont(FSSB9);
         spr.setTextColor(TFT_WHITE);
-        spr.drawString("   WiFi", 6, 6, GFXFF);
+        spr.drawString("WiFi", 30, 26, GFXFF);
         // spr.drawString("(Ubidots)", 6, 36, GFXFF);
-        spr.pushSprite(200, 95);
+        spr.pushSprite(180, 95);
         spr.deleteSprite();
 
-        spr.createSprite(300, 50);
+        spr.createSprite(320, 50);
         spr.fillSprite(TFT_BLACK);
         spr.setFreeFont(FSS9);
         spr.setTextColor(TFT_WHITE);
-        spr.drawString("Please put your WiFi name and password into the ", 0, 6, 2);
-        spr.drawString("config.txt file.Please find it in the USB drive.", 0, 26, 2);
-        spr.pushSprite(15, 160);
+        spr.drawString("Please refer to our wiki to configure the info in", 0, 6, 2);
+        spr.drawString(" config.txt,then save it and restart the K1100.", 0, 26, 2);
+        spr.pushSprite(8, 160);
         spr.deleteSprite();
         break;
     }
@@ -546,13 +546,13 @@ bool UI::Network_2_1(uint8_t select) {
         spr.setFreeFont(FSS9);
         spr.setTextColor(TFT_WHITE);
         spr.drawString("Connected:", 6, 6, 2);
-        spr.drawString("    WiFi    ", 74, 6, 2);
+        spr.drawString("WiFi", 74, 6, 2);
 
         spr.drawString("SSID:", 6, 26, 2);
-        spr.drawString(cfg.ssid, 38, 26, 2);
+        spr.drawString(cfg.ssid, 40, 26, 2);
 
-        spr.drawString("Account:", 6, 46, 2);
-        spr.drawString(cfg.device_label, 60, 46, 2);
+        spr.drawString("Device Name:", 6, 46, 2);
+        spr.drawString(cfg.device_label, 88, 46, 2);
 
         spr.pushSprite(20, 80);
         spr.deleteSprite();

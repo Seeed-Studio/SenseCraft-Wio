@@ -2,7 +2,7 @@
 #define __UTILS_H__
 #include <stdint.h>
 
-#define LOGSS Serial1
+#define LOGSS Serial
 enum button_state {
     NETWORK_PRESSED,
     PROCESS_PRESSED,
