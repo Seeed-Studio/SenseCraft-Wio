@@ -17,7 +17,7 @@ using namespace cpp_freertos;
 
 #define LINE_DATA_MAX_SIZE 30 // maximum size of data
 #define DRAW_LINE_MAX_NUM 3   // maximum num of draw line
-#define SHOW_LOG_MAX_SIZE 11 // maximum size of log
+#define SHOW_LOG_MAX_SIZE 11  // maximum size of log
 
 enum page_state { NETWORKPAGE, PROCESSPAGE, SENSEPAGE };
 
@@ -94,9 +94,9 @@ class UI : public Thread {
     void StatusMachine(struct State *ui_state, uint8_t key);
 
     struct LoRaBandInfo lora_band_info[3] = {
-        {"US", "915", "North America", 0},
+        {"US", "915", "North America", 2},
         {"EU", "868", "European Region", 1},
-        {"AU", "915", "Australia", 2},
+        {"AU", "915", "Australia", 9},
     };
 
     struct NetworkState n_state = {0, {0, false, 0}, {0, false, 0}};
@@ -107,7 +107,9 @@ class UI : public Thread {
     bool                Network_3_0(uint8_t select); // lora
     bool                Network_3_1(uint8_t select); // wifi
     bool                Network_4_0(uint8_t select); // lora
+    bool                Network_5_0(uint8_t select); // lora
     bool                NetworkSubtitles(uint8_t keys);
+    void                NetworkSignal(int16_t signal);
     void NetworkLoRaBandSelect(uint8_t location, struct LoRaBandInfo lbi, uint8_t select);
 
     struct State p_state = {0, true, 0};
@@ -123,10 +125,12 @@ class UI : public Thread {
     void         SensorADDDisplay(uint8_t chose);
     void         SensorPageState(int PAGES, int _CHOOSE_PAGE);
     void         SensorSubTitle(String value);
+    void         SensorUnit(String value);
 
     typedef bool (UI::*page_t)(uint8_t key);
 
-    page_t l_network[4] = {&UI::Network_1, &UI::Network_2_0, &UI::Network_3_0, &UI::Network_4_0};
+    page_t l_network[5] = {&UI::Network_1, &UI::Network_2_0, &UI::Network_3_0, &UI::Network_4_0,
+                           &UI::Network_5_0};
     page_t w_network[3] = {&UI::Network_1, &UI::Network_2_1, &UI::Network_3_1};
 
     page_t process[2] = {&UI::Process_1, &UI::Process_2};

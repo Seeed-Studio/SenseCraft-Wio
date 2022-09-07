@@ -124,9 +124,21 @@ void SysConfig::ReadConfigParam(const String filename, char *prefix_param, Strin
 }
 
 void SysConfig::ReadAllConfig() {
-    ReadConfigParam("config.txt", "SSID=", &this->ssid);
-    ReadConfigParam("config.txt", "PASSWORD=", &this->password);
-    ReadConfigParam("config.txt", "FREQUENCY=", &this->lora_frequency);
+    if (SFUD.exists("config.txt")) {
+        ReadConfigParam("config.txt", "SSID=", &this->ssid);
+        ReadConfigParam("config.txt", "PASSWORD=", &this->password);
+        ReadConfigParam("config.txt", "MQTT_CLIENT_NAME=", &this->mqtt_client_name);
+        ReadConfigParam("config.txt", "TOKEN=", &this->token);
+        ReadConfigParam("config.txt", "DEVICE_LABEL=", &this->device_label);
+    }
+    else
+    {
+        WriteConfigParam("config.txt", "SSID=", "WiFi_Name");
+        WriteConfigParam("config.txt", "PASSWORD=", "WiFi_Password");
+        WriteConfigParam("config.txt", "MQTT_CLIENT_NAME=", "Topic");
+        WriteConfigParam("config.txt", "TOKEN=", "Default_Token");
+        WriteConfigParam("config.txt", "DEVICE_LABEL=", "Device_Name");
+    }
 }
 
 void SysConfig::WriteConfigParam(char *filename, char *prefix_param, char *param) {
@@ -136,6 +148,7 @@ void SysConfig::WriteConfigParam(char *filename, char *prefix_param, char *param
         if (config) {
             if (-1 != config.find(prefix_param)) {
                 config.seek(config.position());
+                config.print(prefix_param);
                 config.print(param);
                 config.print("\n");
             }

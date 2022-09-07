@@ -53,7 +53,12 @@ struct grove_sensor_data {
     uint16_t d3;
     uint16_t d4;
 };
-
+#pragma pack(1)
+struct grove_ai_vision_data {
+    uint8_t  precode;
+    uint16_t data[5];
+};
+#pragma pack()
 /**
  * In case of no connection, Grove E5 will be detected every 5 seconds to see if there is a
  * connection, and will be connected to the network immediately after a successful connection.
@@ -62,19 +67,19 @@ struct grove_sensor_data {
  * minutes
  */
 
-LoRaThread::LoRaThread(SysConfig &config) : Thread("LoRaThread", 256, 1), cfg(config) {
+LoRaThread::LoRaThread(SysConfig &config) : Thread("LoRaThread", 512, 1), cfg(config) {
     Start();
 };
 
 void LoRaThread::Init() {
     Serial3.begin(9600);
     if (!lorae5->begin(DSKLORAE5_HWSERIAL_CUSTOM, &Serial3)) {
-        cfg.is_lorae5_init = false;
+        cfg.lora_status = LORA_INIT_FAILED;
         LOGSS.println("LoRa E5 Init Failed");
         return;
     }
 
-    frequency = cfg.lora_frequency.toInt();
+    frequency = cfg.lora_frequency;
     if (frequency <= 0 || frequency > 10) {
         return;
     }
@@ -82,13 +87,13 @@ void LoRaThread::Init() {
     // Setup the LoRaWan Credentials
     if (!lorae5->setup_sensecap(frequency, false,
                                 true)) { // Setup the LoRaWAN stack with the stored credentials
-        cfg.is_lorae5_init = false;
+        cfg.lora_status = LORA_INIT_FAILED;
         LOGSS.println("LoRa E5 Setup Sensecap Failed");
         return;
     }
 
     LOGSS.println("LoRa E5 Init OK");
-    cfg.is_lorae5_init = true;
+    cfg.lora_status = LORA_INIT_SUCCESS;
 
     // join network immediately
     Join();
@@ -96,11 +101,11 @@ void LoRaThread::Init() {
 
 void LoRaThread::Join() {
     if (!lorae5->join_sync()) {
-        cfg.is_lorae5_join = false;
+        cfg.lora_status = LORA_JOIN_FAILED;
         LOGSS.println("LoRa E5 Join Failed");
     } else {
         LOGSS.println("LoRa E5 Join Success");
-        cfg.is_lorae5_join = true;
+        cfg.lora_status = LORA_JOIN_SUCCESS;
         // Send Device Info first lorawan message
         SendDeviceInfo();
     }
@@ -112,13 +117,21 @@ bool LoRaThread::SendData(uint8_t *data, uint8_t len, uint8_t ver) {
     uint8_t retry = 0;
     while (!lorae5->sendReceive_sync(ver, data, len, downlink_rxBuff, &downlink_rxSize,
                                      &downlink_rxPort, LORAE5_SF7, LORAE5_14DB, LORAE5_RETRY_3)) {
+        cfg.lora_status = LORA_SEND_FAILED;
+        cfg.lora_rssi   = -120;
+        cfg.lora_fcnt++;
         Delay(Ticks::SecondsToTicks(10));
         if (retry++ > 10) {
-            cfg.is_lorae5_join = false;
-            ret                = false;
+            cfg.lora_status = LORA_JOIN_FAILED;
+            cfg.lora_rssi   = 0;
+            ret             = false;
             break;
         }
     }
+    cfg.lora_status = LORA_SEND_SUCCESS;
+    cfg.lora_rssi   = lorae5->getRssi();
+    cfg.lora_fcnt++;
+    cfg.lora_sucess_cnt++;
     return ret;
 }
 
@@ -139,6 +152,19 @@ bool LoRaThread::SendDeviceInfo() {
         return false;
     }
     LOGSS.println("LoRa E5 Send Version Info Success");
+    return true;
+}
+
+bool LoRaThread::SendVisionAIInfo() {
+    // Electricity information
+    uint8_t VisionAI_info[9] = {0x01, 0x09, 0x00, 0x00, 0x00, 0x11, 0x00, 0xEF, 0x36};
+
+    // Send electricity information
+    if (!SendData(VisionAI_info, 9, v1)) {
+        LOGSS.println("LoRa E5 Send VisionAI Info Failed");
+        return false;
+    }
+    LOGSS.println("LoRa E5 Send VisionAI Info Success");
     return true;
 }
 
@@ -167,8 +193,8 @@ bool LoRaThread::SendBuildinSensorData() {
             case LIS3DHTRSENSOR:
                 /* code */
                 sdata.x = BSWAP16(static_cast<uint16_t>(((int32_t *)data.data)[0]));
-                sdata.y = BSWAP16(static_cast<uint16_t>(((int32_t *)data.data)[4]));
-                sdata.z = BSWAP16(static_cast<uint16_t>(((int32_t *)data.data)[8]));
+                sdata.y = BSWAP16(static_cast<uint16_t>(((int32_t *)data.data)[1]));
+                sdata.z = BSWAP16(static_cast<uint16_t>(((int32_t *)data.data)[2]));
                 LOGSS.printf("X: %d, Y: %d, Z: %d\r\n", sdata.x, sdata.y, sdata.z);
                 break;
             default:
@@ -191,6 +217,11 @@ bool LoRaThread::SendGroveSensorData() {
     struct grove_sensor_data sdata = {0};
     bool                     ret   = true;
     sdata.precode                  = 0x42;
+    sdata.d0                       = 0x80;
+    sdata.d1                       = 0x80;
+    sdata.d2                       = 0x80;
+    sdata.d3                       = 0x80;
+    sdata.d4                       = 0x80;
     /*build sensor data*/
     for (auto data : lora_data) {
         // Copy the data to the buildin buffer in the order of the data id
@@ -198,13 +229,13 @@ bool LoRaThread::SendGroveSensorData() {
             {
             case GROVE_SOIL:
                 /* code */
-                sdata.d0 = BSWAP16(static_cast<uint16_t>(((int32_t *)data.data)[0]));
-                LOGSS.printf("Soil hum: %d\r\n, ", sdata.d0);
+                sdata.d4 = BSWAP16(static_cast<uint16_t>(((int32_t *)data.data)[0]));
+                LOGSS.printf("Soil hum: %d\r\n, ", sdata.d4);
                 break;
             case GROVE_SGP30:
-                sdata.d0 = BSWAP16(static_cast<uint16_t>(((int32_t *)data.data)[0]));
-                sdata.d1 = BSWAP16(static_cast<uint16_t>(((int32_t *)data.data)[1]));
-                LOGSS.printf("CO2: %d ,TVOC:%d\r\n, ", sdata.d0, sdata.d1);
+                sdata.d3 = BSWAP16(static_cast<uint16_t>(((int32_t *)data.data)[0]));
+                sdata.d2 = BSWAP16(static_cast<uint16_t>(((int32_t *)data.data)[1]));
+                LOGSS.printf("CO2: %d ,TVOC:%d\r\n, ", sdata.d2, sdata.d3);
                 /* code */
                 break;
             case GROVE_SHT4X:
@@ -212,12 +243,6 @@ bool LoRaThread::SendGroveSensorData() {
                 sdata.d0 = BSWAP16(static_cast<uint16_t>(((int32_t *)data.data)[0]));
                 sdata.d1 = BSWAP16(static_cast<uint16_t>(((int32_t *)data.data)[1]));
                 LOGSS.printf("temperature: %d, humidity: %d\r\n", sdata.d0, sdata.d1);
-                break;
-            case GROVE_VISIONAI:
-                /* code */
-                sdata.d0 = BSWAP16(static_cast<uint16_t>(((int32_t *)data.data)[0]));
-                sdata.d1 = BSWAP16(static_cast<uint16_t>(((int32_t *)data.data)[1]));
-                LOGSS.printf("count: %d, confidence: %d\r\n", sdata.d0, sdata.d1);
                 break;
             default:
                 break;
@@ -232,45 +257,131 @@ bool LoRaThread::SendGroveSensorData() {
     }
     return ret;
 }
+
+bool LoRaThread::SendAiVisionData() {
+    struct grove_ai_vision_data sdata = {0};
+    bool                        ret   = true;
+    sdata.precode                     = 0x43;
+    sdata.data[0]                     = 0xffff;
+    sdata.data[1]                     = 0xffff;
+    sdata.data[2]                     = 0xffff;
+    sdata.data[3]                     = 0xffff;
+    sdata.data[4]                     = 0xffff;
+    /*build sensor data*/
+    for (auto data : lora_data) {
+        // Copy the data to the buildin buffer in the order of the data id
+        switch (data.id) {
+            {
+            case GROVE_VISIONAI:
+                /* code */
+                if (!SendVisionAIInfo()) {
+                    // try to send the Ai Vision data 5 minutes  after the last failure
+                    return false;
+                }
+                if (data.size / 4 < 5) {
+                    sdata.precode = 0x44;
+                    for (int i = 0; i < data.size / 4; i++) {
+                        sdata.data[i] = BSWAP16(static_cast<uint16_t>(((int32_t *)data.data)[i]));
+                    }
+                    LOGSS.printf("data size %d\r\n", sizeof(sdata));
+                    LOGSS.println("====================================");
+                    if (!SendData((uint8_t *)&sdata, sizeof(sdata), v2)) {
+                        LOGSS.println("LoRa E5 Send Buildin Sensor Data Failed");
+                        ret = false;
+                    }
+                } else {
+                    sdata.precode = 0x43;
+                    for (int i = 0; i < 5; i++) {
+                        sdata.data[i] = BSWAP16(static_cast<uint16_t>(((int32_t *)data.data)[i]));
+                    }
+                    LOGSS.printf("data size %d\r\n", sizeof(sdata));
+                    LOGSS.println("====================================");
+                    if (!SendData((uint8_t *)&sdata, sizeof(sdata), v2)) {
+                        LOGSS.println("LoRa E5 Send Buildin Sensor Data Failed");
+                        ret = false;
+                    }
+                    sdata.precode = 0x45;
+                    for (int n = 5; n < (data.size / 4); n += 5) {
+                        sdata.data[0] = 0xffff;
+                        sdata.data[1] = 0xffff;
+                        sdata.data[2] = 0xffff;
+                        sdata.data[3] = 0xffff;
+                        sdata.data[4] = 0xffff;
+                        for (int i = 0; i < 5; i++) {
+                            sdata.data[i] =
+                                BSWAP16(static_cast<uint16_t>(((int32_t *)data.data)[n + i]));
+                        }
+                        LOGSS.printf("data size %d\r\n", sizeof(sdata));
+                        LOGSS.println("====================================");
+                        if (!SendData((uint8_t *)&sdata, sizeof(sdata), v2)) {
+                            LOGSS.println("LoRa E5 Send Buildin Sensor Data Failed");
+                            ret = false;
+                        }
+                    }
+                }
+                break;
+            default:
+                break;
+            }
+        }
+    }
+    return ret;
+}
+
 #if 1
 void LoRaThread::Run() {
     // init the library, search the LORAE5 over the different WIO port available
     Serial.begin(9600);
     Serial.println("LoRa E5 Run..");
     lorae5 = new Disk91_LoRaE5(&Serial);
-    Init();
+    // Init();
     while (true) {
-        LOGSS.printf("LoRa Sensor number: %d  %d \r\n", lora_data.size(), lora_data.capacity());
-        if (!cfg.is_lorae5_init) {
-            // try to init the LoRa E5 5s after the last failure
-            Delay(Ticks::SecondsToTicks(5));
-            Init();
-            continue;
-        }
+        if (cfg.lora_on) {
+            LOGSS.printf("LoRa Sensor number: %d  %d \r\n", lora_data.size(), lora_data.capacity());
+            if (cfg.lora_status == LORA_INIT_START || cfg.lora_status == LORA_JOIN_FAILED) {
+                // try to init the LoRa E5 5s after the last failure
+                Delay(Ticks::SecondsToTicks(5));
+                Init();
+                continue;
+            }
 
-        if (!cfg.is_lorae5_join) {
-            // try to join the LoRa E5 5 minutes  after the last failure
-            Delay(Ticks::SecondsToTicks(30));
-            Join();
-            continue;
-        }
+            if (cfg.lora_status == LORA_INIT_SUCCESS || cfg.lora_status == LORA_JOIN_FAILED) {
+                // try to join the LoRa E5 5 minutes  after the last failure
+                Delay(Ticks::SecondsToTicks(30));
+                Join();
+                continue;
+            }
+            lora_data_ready = false;
+            if (!SendBuildinSensorData()) {
+                lora_data_ready = true;
+                // try to send the buildin sensor data 5 minutes  after the last failure
+                Delay(Ticks::SecondsToTicks(60 * 5));
+                continue;
+            }
+            if (!SendGroveSensorData()) {
+                lora_data_ready = true;
+                // try to send the grove sensor data 5 minutes  after the last failure
+                Delay(Ticks::SecondsToTicks(60 * 5));
+                continue;
+            }
+            if (!SendAiVisionData()) {
+                lora_data_ready = true;
+                // try to send the Ai Vision data 5 minutes  after the last failure
+                Delay(Ticks::SecondsToTicks(60 * 5));
+                continue;
+            }
+            // clear all data in the lora_data queue
 
-        if (!SendBuildinSensorData()) {
-            // try to send the buildin sensor data 5 minutes  after the last failure
+            lora_data_ready = true;
             Delay(Ticks::SecondsToTicks(60 * 5));
-            continue;
+        } else {
+            cfg.lora_status     = LORA_INIT_START;
+            cfg.lora_fcnt       = 0;
+            cfg.lora_sucess_cnt = 0;
+            cfg.lora_rssi       = 0;
         }
-        if (!SendGroveSensorData()) {
-            // try to send the grove sensor data 5 minutes  after the last failure
-            Delay(Ticks::SecondsToTicks(60 * 5));
-            continue;
-        }
-
-        // clear all data in the lora_data queue
-        lora_data.clear();
-        lora_data.shrink_to_fit();
-        lora_data_ready = true;
-        Delay(Ticks::SecondsToTicks(60 * 5));
+        // 暂时延时处理
+        Delay(Ticks::SecondsToTicks(1));
     }
 }
 #elif
@@ -287,9 +398,9 @@ void LoRaThread::LoRaPushData(std::vector<sensor_data *> d) {
     // A loop to deep copy param of d vector into new lora_data queue
     // by Iterative method
     if (lora_data_ready) {
+        lora_data.clear();
+        lora_data.shrink_to_fit();
         for (auto data : d)
             lora_data.push_back(*data);
-
-        lora_data_ready = false;
     }
 }

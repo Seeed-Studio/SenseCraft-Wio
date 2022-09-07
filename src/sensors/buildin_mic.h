@@ -13,7 +13,8 @@ public:
 	bool read(struct sensor_data *data);
 	const char *get_name();
 private:
-	const char *name = "Sound sensor"; //buildin-mic
+	const char *name = "Sound"; //buildin-mic
+	const char *data_unit = "dB";
 	int mic_value;
 
 };

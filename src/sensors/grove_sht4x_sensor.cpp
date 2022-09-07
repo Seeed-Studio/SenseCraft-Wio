@@ -1,7 +1,7 @@
 #include "grove_sht4x_sensor.h"
 #include "Arduino.h"
-#include "SoftwareI2C.h"
 #include "SensorsUtils.h"
+#include "SoftwareI2C.h"
 
 Sht4x::Sht4x() : Thread("Sht4x", 128, 1) {
 }
@@ -18,14 +18,14 @@ void Sht4x::Run() {
             goto next;
         }
         if (sht4x_dev.TcrcOK) {
-            status = true;
-            data[0] = (uint8_t)sht4x_dev.TtoDegC();
+            status  = true;
+            data[0] = (int32_t)(sht4x_dev.TtoDegC() * 100);
         } else {
             data[0] = 0xFF;
         }
         if (sht4x_dev.RHcrcOK) {
-            status = true;
-            data[1] = (uint8_t)sht4x_dev.RHtoPercent();
+            status  = true;
+            data[1] = (int32_t)(sht4x_dev.RHtoPercent() * 100);
         } else {
             data[1] = 0xFF;
         }
@@ -43,11 +43,14 @@ void grove_sht4x_sensor::init() {
 
 bool grove_sht4x_sensor::read(struct sensor_data *sdata) {
 
-    sdata->data   = sht4x->data;
-    sdata->size   = sizeof(sht4x->data);
-    sdata->id     = GROVE_SHT4X;
-    sdata->name   = name;
-    sdata->status = sht4x->status;
+    sdata->data      = sht4x->data;
+    sdata->data_type = SENSOR_DATA_TYPE_FLOAT;
+    sdata->size      = sizeof(sht4x->data);
+    sdata->id        = GROVE_SHT4X;
+    sdata->name      = name;
+    sdata->status    = sht4x->status;
+    sdata->ui_type   = SENSOR_UI_TYPE_NORMAL;
+    sdata->data_unit = data_unit;
     return sdata->status;
 }
 

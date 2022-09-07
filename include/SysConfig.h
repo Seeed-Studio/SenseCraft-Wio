@@ -17,13 +17,18 @@ public:
 	/* lora */
 	String ssid;
 	String password;
-	String lora_frequency;
+	String mqtt_client_name;
+	String token;
+	String device_label;
+	uint8_t  lora_frequency;
 	bool  lora_on = false;
 	bool  wifi_on = false;
-	bool  is_lorae5_init = false;
-	bool  is_lorae5_join = false;
-	bool  loraconnected = false;
 	bool  wificonnected = false;
+	int16_t wifi_rssi = 0;
+	lora_status_type lora_status = LORA_INIT_START;
+	int16_t lora_rssi = 0;
+	int16_t lora_fcnt = 0;
+	int16_t lora_sucess_cnt = 0;
 
 
 	static SemaphoreHandle_t lock;

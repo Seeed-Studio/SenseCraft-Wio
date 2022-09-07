@@ -15,7 +15,7 @@ class Sht4x : public Thread {
 
   public:
     Sht4x();
-    int     data[2];
+    int32_t     data[2];
     uint8_t dsize;
     bool    status;
 	SHT4x  sht4x_dev;
@@ -34,7 +34,8 @@ public:
 	const char *get_name();
 	bool read(struct sensor_data *data);
 private:
-	const char *name = "Sht4x sensor"; /// buildin-light
+	const char *name = "Temp&Humi";
+	const char *data_unit = "C,%RH";
 	int sht4x_value[2];
 
 	Sht4x  *sht4x;

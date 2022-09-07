@@ -28,13 +28,16 @@ bool LIS3DHTRSensor::read(struct sensor_data *sdata) {
         }
 
         lis.getAcceleration(&x_values, &y_values, &z_values);
-        data[0]       = (int)(x_values * 100);
-        data[1]       = (int)(y_values * 100);
-        data[2]       = (int)(z_values * 100);
-        sdata->data   = data;
-        sdata->size   = sizeof(data);
-        sdata->id      = LIS3DHTRSENSOR;
-        sdata->status = true;
+        data[0]          = (int)(x_values * 100);
+        data[1]          = (int)(y_values * 100);
+        data[2]          = (int)(z_values * 100);
+        sdata->data      = data;
+        sdata->data_type = SENSOR_DATA_TYPE_FLOAT;
+        sdata->size      = sizeof(data);
+        sdata->id        = LIS3DHTRSENSOR;
+        sdata->ui_type   = SENSOR_UI_TYPE_NORMAL;
+        sdata->data_unit = data_unit;
+        sdata->status    = true;
         return true;
     } else {
         sdata->data   = NULL;

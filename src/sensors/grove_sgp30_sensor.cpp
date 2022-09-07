@@ -7,9 +7,7 @@ Sgp30::Sgp30() : Thread("Sgp30", 128, 1) {
 void Sgp30::Run() {
     softwarei2c.begin(SGP30_SDAPIN, SGP30_SCLPIN);
     // Initialize sensor
-    if (mySensor.begin(softwarei2c) == false) {
-        return;
-    }
+    mySensor.begin(softwarei2c);
     mySensor.initAirQuality();
     while (true) {
         softwarei2c.begin(SGP30_SDAPIN, SGP30_SCLPIN);
@@ -35,11 +33,14 @@ void grove_sgp30_sensor::init() {
 
 bool grove_sgp30_sensor::read(struct sensor_data *sdata) {
 
-    sdata->data   = sgp30->data;
-    sdata->size   = sizeof(sgp30->data);
-    sdata->id     = GROVE_SGP30;
-    sdata->name   = name;
-    sdata->status = sgp30->status;
+    sdata->data      = sgp30->data;
+    sdata->data_type = SENSOR_DATA_TYPE_INT32;
+    sdata->size      = sizeof(sgp30->data);
+    sdata->id        = GROVE_SGP30;
+    sdata->name      = name;
+    sdata->status    = sgp30->status;
+    sdata->ui_type   = SENSOR_UI_TYPE_NORMAL;
+    sdata->data_unit = data_unit;
     return sdata->status;
 }
 

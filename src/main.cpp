@@ -24,6 +24,12 @@ void display_init() // Display initialization, black background rotation
     tft.begin();
     tft.setRotation(3);
     tft.fillScreen(TFT_BLACK);
+    spr.createSprite(320, 25);
+    spr.setFreeFont(FSS9);
+    // code to view the tutorial
+    spr.drawString("SenseCAP K1100", 90, 0, GFXFF);
+    spr.pushSprite(0, 110);
+    spr.deleteSprite();
 }
 
 void setup() {
@@ -55,6 +61,6 @@ int freeMemory() {
 }
 
 void loop() {
-    LOGSS.printf("Main Stacks Free Bytes Remaining %d\r\n", uxTaskGetStackHighWaterMark(NULL));
+    // LOGSS.printf("Main Stacks Free Bytes Remaining %d\r\n", uxTaskGetStackHighWaterMark(NULL));
     delay(10000);
 }

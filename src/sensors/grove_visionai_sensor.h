@@ -12,13 +12,13 @@ using namespace cpp_freertos;
 
 #define VISIONAI_SDAPIN D1
 #define VISIONAI_SCLPIN D0
-#define MAX_DETECTION 3
+#define MAX_DETECTION 10
 
 class Visionai : public Thread {
 
   public:
     Visionai();
-    int                     data[2];
+    int                     data[20];
     uint8_t                 dsize;
     bool                    status;
     std::vector<log_data>   ai_log;
@@ -38,8 +38,9 @@ class grove_visionai_sensor : public sensor_base {
     bool        read(struct sensor_data *data);
 
   private:
-    const char *name = "visionai sensor"; /// buildin-light
-    int         visionai_value[2];
+    const char *name = "Vision";
+    const char *data_unit = "count,%";
+    int         visionai_value[20];
     Visionai   *visionai;
 };
 
