@@ -92,7 +92,7 @@ To get a sneak peak about how to use this at the current state, please follow [t
     <td>9</td>
     <td>Add WiFi connection to Azure IoT platform function</td>
     <td>Users can connect to the Azure IoT Central platform via WiFi and display data</td>
-    <td rowspan="6">Under development</td>
+    <td rowspan="6">Under development, to be released with v0.3</td>
   </tr>
   <tr>
     <td>10</td>
