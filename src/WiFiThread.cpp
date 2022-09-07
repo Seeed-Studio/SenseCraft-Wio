@@ -70,11 +70,11 @@ void WiFiThread::send_data() {
                 sprintf(payload, "%s}", payload); // Closes the dictionary brackets
                 client->publish(topic, payload);
                 LOGSS.println(payload);
-                delay(500);
+                delay(1000);
             }
         }
 
-        delay(500);
+        delay(1000);
     }
     client->loop();
 }
