@@ -35,20 +35,6 @@ Currently we have implemented several functions and they have already been teste
 
 To get a sneak peak about how to use this at the current state, please follow [this wiki](https://wiki.seeedstudio.com/K1100-quickstart)
 
-**Note:** Please note that you need to follow the steps below if you want to connect to SenseCAP platform via LoRa. This will not be needed in the future.
-
-- Step 4: When the Wio Terminal is connected to the PC with the above project loaded, you will see a new USB drive appear
-
-<div align=center><img width=230 src="https://files.seeedstudio.com/wiki/K1100-quick-start/30.png"/></div>
-
-- Step 5: Create a new file named **config.txt** inside this USB drive, add the following and save it
-
-```sh
-FREQUENCY=1
-```
-
-- Step 6: Turn OFF Wio Terminal and turn it back ON
-
 ## Functions list
 
 <table style="undefined;table-layout: fixed; width: 922px">
