@@ -61,7 +61,7 @@ To get a sneak peak about how to use this at the current state, please follow [t
   </tr>
   <tr>
     <td>2</td>
-    <td>Real-time data display with line charts</td>
+    <td>Real-time data display</td>
     <td>On the Sense homepage, the instantaneous data from different sensors can be updated and displayed in real-time with units</td>
   </tr>
   <tr>
