@@ -37,12 +37,12 @@ To get a sneak peak about how to use this at the current state, please follow [t
 
 ## Functions list
 
-<table style="undefined;table-layout: fixed; width: 922px">
+<table style="undefined;table-layout: fixed; width: 2640px">
 <colgroup>
-<col style="width: 30px">
-<col style="width: 338px">
-<col style="width: 331px">
-<col style="width: 223px">
+<col style="width: 29px">
+<col style="width: 354px">
+<col style="width: 1767px">
+<col style="width: 490px">
 </colgroup>
 <thead>
   <tr>
@@ -57,12 +57,12 @@ To get a sneak peak about how to use this at the current state, please follow [t
     <td>1</td>
     <td>Basic interaction logic of the user interface</td>
     <td>Switch between the homepage of Sense, Process, and Uplink (Network) by pressing the top 3 buttons. Press LEFT and RIGHT to select different options, press UP to return, and press ENTER to confirm. DOWN key is undefined</td>
-    <td rowspan="4">Implemented<br></td>
+    <td rowspan="9">Implemented<br></td>
   </tr>
   <tr>
     <td>2</td>
     <td>Real-time data display with line charts</td>
-    <td>On the Sense homepage, the instantaneous data from different sensors can be updated and displayed in real-time with units and as line charts</td>
+    <td>On the Sense homepage, the instantaneous data from different sensors can be updated and displayed in real-time with units</td>
   </tr>
   <tr>
     <td>3</td>
@@ -77,8 +77,7 @@ To get a sneak peak about how to use this at the current state, please follow [t
   <tr>
     <td>5</td>
     <td>Automatic recognition of sensor connections</td>
-    <td>When any sensor in the kit is connected, the screen shows that the sensor is connected and you can see the real-time data and line charts</td>
-    <td rowspan="7">Under development with an estimated release date on August 31</td>
+    <td>When any sensor in the kit is connected, the screen shows that the sensor is connected and you can see the real-time data with units</td>
   </tr>
   <tr>
     <td>6</td>
@@ -87,42 +86,63 @@ To get a sneak peak about how to use this at the current state, please follow [t
   </tr>
   <tr>
     <td>7</td>
-    <td>Connect to Ubidots via WiFi</td>
-    <td>The user fills in the WiFi account password and ubidots binding code through a config file, and then Wio Terminal automatically identifies the information and binds the device to the specified Ubidots account</td>
-  </tr>
-  <tr>
-    <td>8</td>
-    <td>Save sensor data to SD card</td>
-    <td>The user has a switch under each sensor, which can save the sensor data to an SD card when turned on</td>
-  </tr>
-  <tr>
-    <td>9</td>
     <td>Grove - Vision AI Module Logs</td>
     <td>Scroll real-time training logs of Grove - Vision AI Module with timestamps on the screen</td>
   </tr>
   <tr>
+    <td>8</td>
+    <td>Connect to Ubidots via WiFi</td>
+    <td>The user fills in the WiFi account password and ubidots binding code through a config file, and then Wio Terminal automatically identifies the information and binds the device to the specified Ubidots account</td>
+  </tr>
+  <tr>
+    <td>9</td>
+    <td>LoRa communication information panel display</td>
+    <td>When the LoRa is successfully connected to send data, there is an information panel that displays the signal strength and the number of successful packets in real-time</td>
+  </tr>
+  <tr>
     <td>10</td>
-    <td>Automatically rotate the screen</td>
-    <td>When Wio Terminal is held upside down, after more than 5 seconds, it will automatically rotate the screen orientation display. (only consider up and down, not left and right)</td>
+    <td>Add WiFi connection to Azure IoT platform function</td>
+    <td>Users can connect to the Azure IoT Central platform via WiFi and display data</td>
+    <td rowspan="6">Under development</td>
   </tr>
   <tr>
     <td>11</td>
+    <td>Live Sensor Line Chart</td>
+    <td>Display line charts in real-time by switching different sensors left and right</td>
+  </tr>
+  <tr>
+    <td>12</td>
+    <td>Save sensor data to SD card</td>
+    <td>The user has a switch under each sensor, which can save the sensor data to an SD card when turned on</td>
+  </tr>
+  <tr>
+    <td>13</td>
     <td>Disconnect secondary confirmation interface</td>
     <td>On the information display page after successfully connecting to LoRa or WiFi, a discontent button is provided. After clicking, a pop-up window appears to confirm whether it is disconnected or not.</td>
   </tr>
   <tr>
-    <td>12</td>
-    <td>Add threshold function (user can choose when the sensor value is greater or less than the set value and then choose to upload or not upload data)</td>
-    <td>The user can set in a sensor when the value is greater than/smaller than the threshold and then choose to send/not send the data to the cloud to complete a local data filtering function</td>
-    <td rowspan="3">to-be-developed functions that we’d love to invite the community to contribute</td>
+    <td>14</td>
+    <td>Add system information function to display the current firmware version and system running time</td>
+    <td>Add a system tab to the Process page and click to see the system information</td>
   </tr>
   <tr>
-    <td>13</td>
+    <td>15</td>
+    <td>Automatically rotate the screen</td>
+    <td>When Wio Terminal is held upside down, after more than 5 seconds, it will automatically rotate the screen orientation display. (only consider up and down, not left and right)</td>
+  </tr>
+  <tr>
+    <td>16</td>
+    <td>Add threshold function (user can choose when the sensor value is greater or less than the set value and then choose to upload or not upload data)</td>
+    <td>The user can set in a sensor when the value is greater than/smaller than the threshold and then choose to send/not send the data to the cloud to complete a local data filtering function</td>
+    <td rowspan="3">To-be-developed functions that we’d love to invite the community to contribute</td>
+  </tr>
+  <tr>
+    <td>17</td>
     <td>Grove sensor support continues to be added based on classification and popularity from the current 200 Grove Sensors</td>
     <td>In addition to the 4 supported sensors (Grove VOC and eCO2 Gas Sensor, Grove - Soil Moisture Sensor, Grove Temp&amp;Humi Sensor, Grove Vision AI Sensor), continue to add more Grove sensor support</td>
   </tr>
   <tr>
-    <td>14</td>
+    <td>18</td>
     <td>Other functional and optimization suggestions</td>
     <td>Provide optimization and bug feedback, and then classify the problems according to the problem. We try to fix the functions we wrote ourselves. For other suggestions and time-consuming problems raised by the community, we encourage the community to offer rewards to solve them.</td>
   </tr>
