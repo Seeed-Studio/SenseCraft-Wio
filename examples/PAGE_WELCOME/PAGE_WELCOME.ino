@@ -15,7 +15,7 @@ TFT_eSprite spr = TFT_eSprite(&tft); // Sprite
 LIS3DHTR<TwoWire> lis;
 
 
-// 显示尺寸设置
+// Display size settings
 #define SCREEN_WIDTH 320
 #define SCREEN_HIGH 240
 #define SCREEN_PADDING 10
@@ -36,7 +36,7 @@ void setup()
     tft.fillScreen(TFT_WHITE);
 }
 
-void PAGE()  //设置频段页面
+void PAGE()  //Set Band Page
 {
   tft.fillScreen(TFT_BLACK);
   tft.fillRect(0, 140, 320, 100, TFT_WHITE);

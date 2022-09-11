@@ -26,11 +26,11 @@ void DISPLAY_INIT() // Display initialization, black background rotation
 
 void Process_main(int page)
 {
-    //此处加入 page 0;  page3 为了方便测试 可以调用此函数 也可以独立调用 
+    //Add page 0 here; page3 For the convenience of testing, this function can be called, or it can be called independently
     //case 0   Vision AI log 
-    //case 1  Proccsee首页
-    //case 2  TinyML示例 
-    //case 3  TinyML已进入
+    //case 1  Proccsee Home
+    //case 2 TinyML example
+    //case 3 TinyML has entered
     switch (page)
     {
     case 0:

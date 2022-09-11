@@ -9,7 +9,7 @@ void grove_soil_sensor::init() {
 bool grove_soil_sensor::read(struct sensor_data *sdata) {
     uint16_t sum = 0, data[READ_NUM] = {0};
     double   variance = 0.0;
-    // 根据能否可以控制scl，判断是否接了I2C设备
+    // Check for I2C device connectivity and see if it's controllable.
     pinMode(SOFTWRIE_SCLPIN, OUTPUT);
     digitalWrite(SOFTWRIE_SCLPIN, HIGH);
     pinMode(SOFTWRIE_SCLPIN, INPUT);
@@ -29,13 +29,13 @@ bool grove_soil_sensor::read(struct sensor_data *sdata) {
     // }
     analogRead(SOILPIN);
     delay(2);
-    // 求和
+    // sum
     for (int i = 0; i < READ_NUM; i++) {
         data[i] = analogRead(SOILPIN);
         delayMicroseconds(2);
         sum += data[i];
     }
-    //求方差
+    //Find the variance
     for (int i = 0; i < READ_NUM; i++) {
         variance = variance + pow(data[i] - sum / READ_NUM, 2);
     }

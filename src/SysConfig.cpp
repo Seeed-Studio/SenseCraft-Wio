@@ -63,13 +63,13 @@ SysConfig::~SysConfig() {
 }
 
 void SysConfig::init() {
-    // 挂载文件系统
+    // mount filesystem
     if (SysConfig::lock == NULL) {
         SysConfig::lock = xSemaphoreCreateMutex();
     }
     spi_flash_mount = SFUD.begin();
 
-    // 如果flash挂载成功 则映射改空间
+//If the flash mount is successful, map the space
     if (spi_flash_mount) {
         const sfud_flash *_flash = sfud_get_device_table() + 0;
 

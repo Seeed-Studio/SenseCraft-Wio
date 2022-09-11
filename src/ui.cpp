@@ -16,7 +16,7 @@ UI::UI(TFT_eSPI &lcd, TFT_eSprite &display, SysConfig &config, Message &m1)
 };
 
 void UI::init() {
-    // 显示2s的开机logo
+    // Display the boot logo for 2s
     Delay(Ticks::MsToTicks(2000));
     tft.fillScreen(TFT_BLACK);
 }
@@ -54,7 +54,9 @@ void UI::Run() {
         // LOGSS.printf("UI Stacks Free Bytes Remaining %d\r\n",
         //              uxTaskGetStackHighWaterMark(GetHandle()));
         PageMangent(keys);
-        //主要是等数据，不然会Sensor会get不到数据，无法切换页面，未来需要加锁
+
+        //The main thing is to wait for the data, otherwise the sensor will not be able to get the communicate.
+        // When this happens the page cannot be switched. It will need to be locked in the future.
         Delay(Ticks::MsToTicks(50));
     }
 }
@@ -63,7 +65,7 @@ void UI::Run() {
 void UI::UIPushData(std::vector<sensor_data *> d) {
     // A loop to deep copy param of d vector into new lora_data queue
     // by Iterative method
-    // ui刷新时不更新数据
+    // Data is not updated when Ui refreshes
     if (s_data_ready) {
         s_data.clear();
         s_data.shrink_to_fit();
@@ -73,10 +75,10 @@ void UI::UIPushData(std::vector<sensor_data *> d) {
 }
 
 void UI::UIPushLog(std::vector<log_data> d) {
-    // ui刷新时不更新数据
+    // Data is not updated when Ui refreshes
     if (log_ready) {
         int log_num = d.size();
-        // 最多只显示11条日志
+        // Only show up to 11 logs
         if (log_num > SHOW_LOG_MAX_SIZE)
             log_num = SHOW_LOG_MAX_SIZE;
         a_log.clear();
@@ -240,7 +242,7 @@ bool UI::NetworkSubtitles(uint8_t keys) {
     }
 }
 
-// todo: 未启用，待完善
+// todo: Not enabled, to be improved
 void UI::StatusMachine(struct State *ui_state, uint8_t key) {
     switch (key) {
     case LEFT_PRESSED:
@@ -252,7 +254,7 @@ void UI::StatusMachine(struct State *ui_state, uint8_t key) {
         break;
     case RIGHT_PRESSED:
         ui_state->s_select++;
-        // 只有两个选择
+        // only two options
         if (ui_state->s_select > 2) {
             ui_state->s_select = 2;
         }
@@ -712,7 +714,7 @@ void UI::ProcessPageManager(uint8_t key) {
         break;
     case RIGHT_PRESSED:
         p_state.s_select++;
-        // 只有两个选择
+        // only two options
         if (p_state.s_select > 2) {
             p_state.s_select = 2;
         }
@@ -983,7 +985,7 @@ void UI::SensorADDDisplay(uint8_t is_backgroud) {
 void UI::SensorPageState(int pages_num, int page_select) {
 
     spr.createSprite(340, 10);
-    // 问题
+    // question
     int *page_location = new int[pages_num];
 
     int temp = 0;
@@ -1022,18 +1024,18 @@ bool UI::Sensor_1(uint8_t select) {
         Status2Display(0);
         ret = false;
     }
-    //获取显示数据的位置
+    // Get the location of the displayed data
     if (select >= index + 3) {
         index += 1;
     }
     if (select < index) {
         index = select;
     }
-    //只显示select-1, select和select+1的数据
-    //处理好特殊情况，第一个和最后一个
+// Only display the data of select-1, select and select+1
+// handle special cases, first and last
     for (int si = 0; si < 3; si++) {
         spr.createSprite(90, 130);
-        //高亮选择的数据
+        //Highlight selected data
         if (index + si == select) {
             spr.fillRect(0, 25, 90, 130, tft.color565(0, 139, 0));
         }
@@ -1044,16 +1046,16 @@ bool UI::Sensor_1(uint8_t select) {
             // Display the sensor name
             SensorSubTitle(s_data[index + si].name);
             SensorUnit(s_data[index + si].data_unit);
-            //显示数据： 0正常显示 1显示平均值
+            //Display data: 0 normal display 1 display average
             spr.setFreeFont(FSS9);
             spr.setTextColor(TFT_WHITE);
             if (s_data[index + si].ui_type == SENSOR_UI_TYPE_NORMAL) {
-                //一次只显示4个数据，每个测量数据4个byte
+                //Only 4 data are displayed at a time, each measurement data is 4 bytes
                 if (s_data[index + si].size > 4 * 4)
                     sense_display_num = 4 * 4;
                 else
                     sense_display_num = s_data[index + si].size;
-                //把框分成4行，每行显示一个数据
+//Divide the box into 4 lines, each line displays a data
                 for (int i = 0; i < sense_display_num; i += 4) {
                     int32_t dd = ((uint8_t *)s_data[index + si].data)[i] << 0 |
                                  ((uint8_t *)s_data[index + si].data)[i + 1] << 8 |
@@ -1065,7 +1067,7 @@ bool UI::Sensor_1(uint8_t select) {
                     else if (s_data[index + si].data_type == SENSOR_DATA_TYPE_FLOAT)
                         spr.drawFloat((float)dd / 100, 2, 2, 30 + 24 * i / 4,
                                       2 * (4 - sense_display_num / 4));
-                    // todo，数据单位，暂时显示为空
+                    // Todo, the data unit, is temporarily displayed as empty
                     spr.drawString("  ", 68, 30 + 24 * i, 2);
                 }
             } else {
@@ -1081,7 +1083,8 @@ bool UI::Sensor_1(uint8_t select) {
                     spr.drawFloat((float)temp / 100, 2, 2, 30 + 24, 4);
             }
         }
-        //根据数据的index，显示不同的位置，一个页面只能显示三个，页面不够补+号。
+        //According to the index of the data, different positions are displayed. 
+        //Only three pages can be displayed on one page, and the + sign is added if the page is not enough.
         spr.pushSprite(20 + si * 100, 60);
         spr.deleteSprite();
     }
@@ -1089,7 +1092,7 @@ bool UI::Sensor_1(uint8_t select) {
     SensorPageState(s_data.size() / 3 + 1, select / 3);
     s_data_ready = true;
     Status1Display(0);
-    // 暂时不支持折线图
+    // Line charts are not currently supported
     return false;
 }
 
