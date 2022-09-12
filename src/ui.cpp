@@ -932,12 +932,16 @@ void UI::SensePageManager(uint8_t key) {
         if (s_state.s_select < 0) {
             s_state.s_select = 0;
         }
+        if (s_state.current_page == 1)
+            tft.fillScreen(TFT_BLACK);
         break;
     case RIGHT_PRESSED:
         s_state.s_select++;
         if (s_state.s_select > 3) {
             s_state.s_select = 3;
         }
+        if (s_state.current_page == 1)
+            tft.fillScreen(TFT_BLACK);
         break;
     case UP_PRESSED:
         s_state.current_page--;
@@ -1110,8 +1114,7 @@ bool UI::Sensor_1(uint8_t select) {
     SensorPageState(s_data.size() / 3 + 1, select / 3);
     s_data_ready = true;
     Status1Display(0);
-    // 暂时不支持折线图
-    return false;
+    return ret;
 }
 
 bool UI::Sensor_2(uint8_t select) {
