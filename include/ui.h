@@ -82,6 +82,9 @@ class UI : public Thread {
     std::vector<log_data> a_log;
     bool                  log_ready = true;
 
+    uint8_t rotate_status = 0;
+    bool rotate_flag = false;
+
     uint8_t            buff[256];
     struct sensor_data sdata;
 

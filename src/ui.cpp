@@ -34,6 +34,15 @@ void UI::Run() {
 
     while (true) {
         nums = btnMail.Receive(&buff, 256, 0);
+        // Whether to rotate the screen
+        if (rotate_status != rotate_flag) {
+            rotate_status = rotate_flag;
+            tft.fillScreen(TFT_BLACK);
+            if (rotate_flag == true)
+                tft.setRotation(1);
+            else
+                tft.setRotation(3);
+        }
         if (nums > 0) {
             LOGSS.printf("btn Receive: %d ", nums);
             LOGSS.println(buff[0]);
@@ -67,8 +76,20 @@ void UI::UIPushData(std::vector<sensor_data *> d) {
     if (s_data_ready) {
         s_data.clear();
         s_data.shrink_to_fit();
-        for (auto data : d)
+        for (auto data : d) {
             s_data.push_back(*data);
+            // Whether to rotate the screen
+            if (data->name == "IMU") {
+                if (((int32_t *)data->data)[0] > 50)
+                    if (rotate_flag == true) {
+                        rotate_flag = false;
+                    }
+                if (((int32_t *)data->data)[0] < -50)
+                    if (rotate_flag == false) {
+                        rotate_flag = true;
+                    } 
+            }
+        }
     }
 }
 
