@@ -10,8 +10,8 @@ void UI::uint8_to_float(uint8_t *data, float *destination) {
     *reinterpret_cast<uint32_t *>(destination) = value;
 }
 
-UI::UI(TFT_eSPI &lcd, TFT_eSprite &display, SysConfig &config, Message &m1)
-    : Thread("UIThread", 2048, 2), tft(lcd), spr(display), cfg(config), btnMail(m1) {
+UI::UI(TFT_eSPI &lcd, TFT_eSprite &display, SysConfig &config, SDdata &sddata, Message &m1)
+    : Thread("UIThread", 2048, 2), tft(lcd), spr(display), cfg(config), sd(sddata), btnMail(m1) {
     Start();
 };
 
@@ -87,7 +87,14 @@ void UI::UIPushData(std::vector<sensor_data *> d) {
                 if (((int32_t *)data->data)[0] < -50)
                     if (rotate_flag == false) {
                         rotate_flag = true;
-                    } 
+                    }
+            }
+            // save data to sd card
+            if (sensor_save_flag & (1 << data->id)) {
+                sd_status = sd.status();
+                if (!sd_status) {
+                    sd.saveData(String(data->name), (int32_t *)data->data, data->size / 4);
+                }
             }
         }
     }
@@ -172,7 +179,7 @@ void UI::Status1Display(uint8_t status) {
         spr.setTextColor(TFT_GREEN, TFT_BLACK); // Networking status indication：ON
         spr.drawString("WiFi", 60, 0, 2);       // Show the network you are in
     } else if (cfg.lora_status == LORA_JOIN_SUCCESS || cfg.lora_status == LORA_SEND_SUCCESS ||
-        cfg.lora_status == LORA_SEND_FAILED) {
+               cfg.lora_status == LORA_SEND_FAILED) {
         spr.setTextColor(TFT_GREEN, TFT_BLACK); // Networking status indication：ON
         spr.drawString("LoRa", 60, 0, 2);       // Show the network you are in
     } else {
@@ -224,6 +231,12 @@ void UI::Status2Display(uint8_t status) {
         spr.setTextColor(TFT_YELLOW);
         spr.drawString("Please insert TF card", 22, 0, 2);
         spr.pushSprite(148, 215);
+        break;
+    case 5:
+        spr.setFreeFont(FSS9);
+        spr.setTextColor(TFT_YELLOW);
+        spr.drawString("No data needs to be stored", 22, 0, 2);
+        spr.pushSprite(124, 215);
         break;
 
     default:
@@ -604,8 +617,8 @@ bool UI::Network_3_0(uint8_t select) {
     TitleDisplay(2);
     // NetworkSubtitles(n_state.current_network);
     if (!cfg.lora_on) {
-        cfg.lora_frequency  = lora_band_info[select].band;
-        cfg.wifi_on         = false;
+        cfg.lora_frequency = lora_band_info[select].band;
+        cfg.wifi_on        = false;
         spr.createSprite(300, 80);
         spr.setTextColor(TFT_WHITE);
         spr.drawString("Please download and register an account", 0, 6, 2);
@@ -868,7 +881,8 @@ bool UI::Process_2(uint8_t select) {
         spr.createSprite(320, 130);
         spr.setFreeFont(FSS9);
         for (auto data : a_log) {
-            sprintf(buf, "[%02d:%02d:%02d]:", data.time / 1000 / 60 / 60 , data.time / 1000 / 60 % 60, data.time / 1000 % 60);
+            sprintf(buf, "[%02d:%02d:%02d]:", data.time / 1000 / 60 / 60,
+                    data.time / 1000 / 60 % 60, data.time / 1000 % 60);
             spr.setTextColor(TFT_GREEN);
             spr.drawString(buf, 4, i * 11, 2);
             spr.setTextColor(TFT_WHITE);
@@ -954,6 +968,12 @@ void UI::SensePageManager(uint8_t key) {
         if (s_state.is_next) {
             s_state.current_page++;
             if (s_state.current_page > countof(sense) - 1) {
+                // save sensor data to SD card
+                if (sensor_save_flag & 1 << s_data[s_state.s_select].id) {
+                    sensor_save_flag &= ~(1 << s_data[s_state.s_select].id);
+                } else {
+                    sensor_save_flag |= 1 << s_data[s_state.s_select].id;
+                }
                 s_state.current_page = countof(sense) - 1;
             }
         }
@@ -974,6 +994,19 @@ void UI::SensorSubTitle(String value) {
     } else {
         spr.drawString(value, 6 * (7 - value.length()), 0, GFXFF);
     }
+}
+
+void UI::SensorSubTitle2(String value) {
+    spr.createSprite(300, 25);
+    spr.setFreeFont(FSSB9);
+    spr.setTextColor(TFT_WHITE, tft.color565(100, 100, 100));
+    if (value.length() > 6) {
+        spr.drawString(value, 2 * (13 - value.length()), 0, FONT2);
+    } else {
+        spr.drawString(value, 6 * (7 - value.length()), 0, GFXFF);
+    }
+    spr.pushSprite(120, 50);
+    spr.deleteSprite();
 }
 
 void UI::SensorUnit(String value) {
@@ -1122,7 +1155,7 @@ bool UI::Sensor_2(uint8_t select) {
     uint8_t  data_num   = 0;
     TitleDisplay(0);
     // Display the sensor name
-    SensorSubTitle(s_data[select].name);
+    SensorSubTitle2(s_data[select].name);
 
     tft.fillRect(18, 78, 24, 90, TFT_WHITE);
 
@@ -1151,6 +1184,49 @@ bool UI::Sensor_2(uint8_t select) {
             .draw(&tft);
     }
     SensorPageState(s_data.size() / 3 + 1, select / 3);
+    Status1Display(0);
+    return true;
+}
+void UI::SensorSwitchButton(uint8_t button) {
+    spr.createSprite(320, 100);
+    spr.setTextColor(TFT_WHITE);
+    spr.drawString("Save to TF card ", 32, 48, FONT4);
+    unsigned int gg_switch_state_color[4] = {tft.color565(211, 211, 211), TFT_BLUE,
+                                             tft.color565(201, 201, 201),
+                                             tft.color565(65, 105, 235)};
+    if (button == 1) {
+        spr.fillCircle(240 + 22, 56, 14, gg_switch_state_color[button]);
+        spr.fillCircle(240, 56, 14 / 2, gg_switch_state_color[button + 2]);
+        spr.fillRect(240, 56 - 14 / 2, 22, 14 + 1, gg_switch_state_color[button + 2]);
+    } else {
+        spr.fillCircle(240, 56, 14, gg_switch_state_color[button]);
+        spr.fillCircle(240 + 22, 56, 14 / 2, gg_switch_state_color[button + 2]);
+        spr.fillRect(240, 56 - 14 / 2, 22, 14 + 1, gg_switch_state_color[button + 2]);
+    }
+    spr.pushSprite(0, 75);
+    spr.deleteSprite();
+}
+
+bool UI::Sensor_3(uint8_t select) {
+    TitleDisplay(0);
+    // Display the sensor name
+    SensorSubTitle2(s_data[select].name);
+    if (sensor_save_flag == 0) {
+        Status2Display(0x5);
+        SensorSwitchButton(0);
+    } else {
+        if (sd_status == 0) {
+            if (sensor_save_flag & 1 << s_data[select].id) {
+                SensorSwitchButton(1);
+            } else
+                SensorSwitchButton(0);
+            Status2Display(0x3);
+        } else if (sd_status == 2) {
+            Status2Display(0x1);
+        } else {
+            Status2Display(0x4);
+        }
+    }
     Status1Display(0);
     return true;
 }
