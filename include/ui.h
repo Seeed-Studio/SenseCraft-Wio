@@ -16,6 +16,7 @@ using namespace cpp_freertos;
 #define SCREEN_WIDTH 320 // Wio Terminal Maximum Width
 #define SCREEN_HIGH 240  // Wio Terminal Maximum Height
 
+#define SEMSOR_NUM_MAX 4      // Maximum number of sensors
 #define LINE_DATA_MAX_SIZE 30 // maximum size of data
 #define DRAW_LINE_MAX_NUM 3   // maximum num of draw line
 #define SHOW_LOG_MAX_SIZE 11  // maximum size of log
@@ -155,7 +156,7 @@ class UI : public Thread {
     // temp data
     int     temp_light;
     int     temp_mic;
-    doubles line_chart_data[4];
+    doubles line_chart_data[SEMSOR_NUM_MAX][4];
 };
 
 #endif // __UI_H__

@@ -951,8 +951,8 @@ void UI::SensePageManager(uint8_t key) {
         break;
     case RIGHT_PRESSED:
         s_state.s_select++;
-        if (s_state.s_select > 3) {
-            s_state.s_select = 3;
+        if (s_state.s_select > SEMSOR_NUM_MAX - 1) {
+            s_state.s_select = SEMSOR_NUM_MAX - 1;
         }
         if (s_state.current_page == 1)
             tft.fillScreen(TFT_BLACK);
@@ -1165,17 +1165,17 @@ bool UI::Sensor_2(uint8_t select) {
     if (data_num > DRAW_LINE_MAX_NUM)
         data_num = DRAW_LINE_MAX_NUM;
     for (int i = 0; i < data_num; i++) {
-        if (line_chart_data[i].size() > LINE_DATA_MAX_SIZE) // keep the old line chart front
+        if (line_chart_data[select][i].size() > LINE_DATA_MAX_SIZE) // keep the old line chart front
         {
-            line_chart_data[i].pop(); // this is used to remove the first read variable
+            line_chart_data[select][i].pop(); // this is used to remove the first read variable
         }
-        line_chart_data[i].push(((int32_t *)s_data[select].data)[i]);
+        line_chart_data[select][i].push(((int32_t *)s_data[select].data)[i]);
 
         content.height(85)
             .width(260)
             .based_on(0.0)             // Starting point of y-axis, must be a float
             .show_circle(false)        // drawing a cirle at each point, default is on.
-            .value(line_chart_data[i]) // passing through the data to line graph
+            .value(line_chart_data[select][i]) // passing through the data to line graph
             .max_size(LINE_DATA_MAX_SIZE)
             .color(line_col[i]) // Setting the color for the line
                                 //        .backgroud(tft.color565(0,0,0)) // Setting the color for
