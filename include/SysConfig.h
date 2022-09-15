@@ -14,12 +14,18 @@ using namespace cpp_freertos;
 class SysConfig
 {
 public:
-	/* lora */
+	/* wifi */
 	String ssid;
 	String password;
+	/* ubidots */
 	String mqtt_client_name;
 	String token;
 	String device_label;
+	/* azure */
+	String id_scope;
+	String registration_id;
+	String symmetric_key;
+	
 	uint8_t  lora_frequency;
 	bool  lora_on = false;
 	bool  wifi_on = false;
