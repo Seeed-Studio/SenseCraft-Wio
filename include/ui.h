@@ -156,7 +156,7 @@ class UI : public Thread {
     // temp data
     int     temp_light;
     int     temp_mic;
-    doubles line_chart_data[SEMSOR_NUM_MAX][4];
+    doubles line_chart_data[4];
 };
 
 #endif // __UI_H__

@@ -11,7 +11,8 @@ void UI::uint8_to_float(uint8_t *data, float *destination) {
 }
 
 UI::UI(TFT_eSPI &lcd, TFT_eSprite &display, SysConfig &config, SDdata &sddata, Message &m1)
-    : Thread("UIThread", 2048, 2), tft(lcd), spr(display), cfg(config), sd(sddata), btnMail(m1) {
+    : Thread("UIThread", 128 * 24, 2), tft(lcd), spr(display), cfg(config), sd(sddata),
+      btnMail(m1) {
     Start();
 };
 
@@ -1151,8 +1152,9 @@ bool UI::Sensor_1(uint8_t select) {
 }
 
 bool UI::Sensor_2(uint8_t select) {
-    uint16_t line_col[] = {TFT_GREEN, TFT_RED, TFT_BLUE, TFT_YELLOW};
-    uint8_t  data_num   = 0;
+    static uint8_t select_old = 0;
+    uint16_t       line_col[] = {TFT_GREEN, TFT_RED, TFT_BLUE, TFT_YELLOW};
+    uint8_t        data_num   = 0;
     TitleDisplay(0);
     // Display the sensor name
     SensorSubTitle2(s_data[select].name);
@@ -1164,18 +1166,24 @@ bool UI::Sensor_2(uint8_t select) {
     data_num     = s_data[select].size / 4;
     if (data_num > DRAW_LINE_MAX_NUM)
         data_num = DRAW_LINE_MAX_NUM;
+
     for (int i = 0; i < data_num; i++) {
-        if (line_chart_data[select][i].size() > LINE_DATA_MAX_SIZE) // keep the old line chart front
-        {
-            line_chart_data[select][i].pop(); // this is used to remove the first read variable
+        // clear the old line
+        if (select_old != select) {
+            std::queue<double> empty;
+            swap(empty, line_chart_data[i]);
         }
-        line_chart_data[select][i].push(((int32_t *)s_data[select].data)[i]);
+        if (line_chart_data[i].size() > LINE_DATA_MAX_SIZE) // keep the old line chart front
+        {
+            line_chart_data[i].pop(); // this is used to remove the first read variable
+        }
+        line_chart_data[i].push(((int32_t *)s_data[select].data)[i]);
 
         content.height(85)
             .width(260)
             .based_on(0.0)             // Starting point of y-axis, must be a float
             .show_circle(false)        // drawing a cirle at each point, default is on.
-            .value(line_chart_data[select][i]) // passing through the data to line graph
+            .value(line_chart_data[i]) // passing through the data to line graph
             .max_size(LINE_DATA_MAX_SIZE)
             .color(line_col[i]) // Setting the color for the line
                                 //        .backgroud(tft.color565(0,0,0)) // Setting the color for
@@ -1183,6 +1191,7 @@ bool UI::Sensor_2(uint8_t select) {
             .backgroud(tft.color565(0, 0, 0))
             .draw(&tft);
     }
+    select_old = select;
     SensorPageState(s_data.size() / 3 + 1, select / 3);
     Status1Display(0);
     return true;
