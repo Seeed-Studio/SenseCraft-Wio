@@ -3,6 +3,7 @@
 #include <stdint.h>
 
 #define LOGSS Serial
+#define VERSION "v0.3"
 enum button_state {
     NETWORK_PRESSED,
     PROCESS_PRESSED,
