@@ -12,6 +12,13 @@
         }                                                                                          \
     } while (0)
 
+#define AZ_SPAN_LITERAL_FROM_CHAR(STRING_LITERAL)                                                  \
+    {                                                                                              \
+        ._internal = {                                                                             \
+            .ptr  = (uint8_t *)(STRING_LITERAL),                                                   \
+            .size = strlen(STRING_LITERAL),                                                        \
+        },                                                                                         \
+    }
 const char *ROOT_CA_BALTIMORE = "-----BEGIN CERTIFICATE-----\n"
                                 "MIIDdzCCAl+gAwIBAgIEAgAAuTANBgkqhkiG9w0BAQUFADBaMQswCQYDVQQGEwJJ\n"
                                 "RTESMBAGA1UEChMJQmFsdGltb3JlMRMwEQYDVQQLEwpDeWJlclRydXN0MSIwIAYD\n"
@@ -139,9 +146,9 @@ int WiFiThread::ConnectToHub(az_iot_hub_client *iot_hub_client, const std::strin
     static std::string deviceIdCache;
     deviceIdCache = DeviceId;
 
-    const az_span hostSpan{az_span_create((uint8_t *)HubHost[0], HubHost.size())};
+    const az_span hostSpan{az_span_create((uint8_t *)&HubHost[0], HubHost.size())};
     LOGSS.printf("Hub:\r\n Host: %s\r\n", HubHost.c_str());
-    const az_span deviceIdSpan{az_span_create((uint8_t *)deviceIdCache[0], deviceIdCache.size())};
+    const az_span deviceIdSpan{az_span_create((uint8_t *)&deviceIdCache[0], deviceIdCache.size())};
     LOGSS.printf(" Device id = %s\r\n", deviceIdCache.c_str());
     az_iot_hub_client_options options = az_iot_hub_client_options_default();
     options.model_id                  = AZ_SPAN_LITERAL_FROM_STR(IOT_CONFIG_MODEL_ID);
@@ -234,12 +241,12 @@ void WiFiThread::HandleCommandMessage(az_span                           payload,
     } else {
         // Unsupported command
         LOGSS.printf("Unsupported command received: %.*s.\r\n", az_span_size(command_request->name),
-        az_span_ptr(command_request->name));
+                     az_span_ptr(command_request->name));
 
         int rc;
         if (az_result_failed(
                 rc = SendCommandResponse(command_request, 404, AZ_SPAN_LITERAL_FROM_STR("{}")))) {
-             LOGSS.printf("Unable to send %d response, status 0x%08x\n", 404, rc);
+            LOGSS.printf("Unable to send %d response, status 0x%08x\n", 404, rc);
         }
     }
 }
@@ -298,6 +305,7 @@ void WiFiThread::reconnect() {
 
 // Sending data to Ubidots
 az_result WiFiThread::send_data() {
+    char payload[16];
     if (!client->connected()) {
         reconnect();
     }
@@ -319,66 +327,49 @@ az_result WiFiThread::send_data() {
     char           telemetry_payload[200];
 
     // Builds the topic
+    AZ_RETURN_IF_FAILED(
+        az_json_writer_init(&json_builder, AZ_SPAN_FROM_BUFFER(telemetry_payload), NULL));
+    AZ_RETURN_IF_FAILED(az_json_writer_append_begin_object(&json_builder));
     for (auto data : wifi_data) {
         // Builds the payload
         if (data.size / 4 <= 1) {
-            AZ_RETURN_IF_FAILED(
-                az_json_writer_init(&json_builder, AZ_SPAN_FROM_BUFFER(telemetry_payload), NULL));
-            AZ_RETURN_IF_FAILED(az_json_writer_append_begin_object(&json_builder));
             if (data.data_type == SENSOR_DATA_TYPE_FLOAT) {
                 AZ_RETURN_IF_FAILED(az_json_writer_append_property_name(
-                    &json_builder, AZ_SPAN_LITERAL_FROM_STR("data.name")));
+                    &json_builder, AZ_SPAN_LITERAL_FROM_CHAR(data.name)));
                 AZ_RETURN_IF_FAILED(az_json_writer_append_double(
                     &json_builder, ((int32_t *)data.data)[0] / 100.0f, 2));
             } else {
                 AZ_RETURN_IF_FAILED(az_json_writer_append_property_name(
-                    &json_builder, AZ_SPAN_LITERAL_FROM_STR("data.name")));
+                    &json_builder, AZ_SPAN_LITERAL_FROM_CHAR(data.name)));
                 AZ_RETURN_IF_FAILED(
                     az_json_writer_append_int32(&json_builder, ((int32_t *)data.data)[0]));
             }
-            const az_span out_payload{az_json_writer_get_bytes_used_in_destination(&json_builder)};
-
-            static int sendCount = 0;
-            if (!client->publish(telemetry_topic, az_span_ptr(out_payload),
-                                 az_span_size(out_payload), false)) {
-                LOGSS.printf("ERROR: Send telemetry %d\r\n", sendCount);
-            } else {
-                ++sendCount;
-                LOGSS.printf("Sent telemetry %d\r\n", sendCount);
-            }
 
         } else {
-            AZ_RETURN_IF_FAILED(
-                az_json_writer_init(&json_builder, AZ_SPAN_FROM_BUFFER(telemetry_payload), NULL));
-            AZ_RETURN_IF_FAILED(az_json_writer_append_begin_object(&json_builder));
             for (int i = 0; i < data.size / 4; i++) {
+                sprintf(payload, "%s%d", data.name, i);
                 if (data.data_type == SENSOR_DATA_TYPE_FLOAT) {
                     AZ_RETURN_IF_FAILED(az_json_writer_append_property_name(
-                        &json_builder, AZ_SPAN_LITERAL_FROM_STR("data.name")));
+                        &json_builder, AZ_SPAN_LITERAL_FROM_CHAR(payload)));
                     AZ_RETURN_IF_FAILED(az_json_writer_append_double(
-                        &json_builder, ((int32_t *)data.data)[0] / 100.0f, 2));
+                        &json_builder, ((int32_t *)data.data)[i] / 100.0f, 2));
                 } else {
                     AZ_RETURN_IF_FAILED(az_json_writer_append_property_name(
-                        &json_builder, AZ_SPAN_LITERAL_FROM_STR("data.name")));
+                        &json_builder, AZ_SPAN_LITERAL_FROM_CHAR(payload)));
                     AZ_RETURN_IF_FAILED(
-                        az_json_writer_append_int32(&json_builder, ((int32_t *)data.data)[0]));
+                        az_json_writer_append_int32(&json_builder, ((int32_t *)data.data)[i]));
                 }
-                const az_span out_payload{
-                    az_json_writer_get_bytes_used_in_destination(&json_builder)};
-
-                static int sendCount = 0;
-                if (!client->publish(telemetry_topic, az_span_ptr(out_payload),
-                                     az_span_size(out_payload), false)) {
-                    LOGSS.printf("ERROR: Send telemetry %d\r\n", sendCount);
-                } else {
-                    ++sendCount;
-                    LOGSS.printf("Sent telemetry %d\r\n", sendCount);
-                }
-                delay(1000);
             }
         }
-
-        delay(1000);
+    }
+    const az_span out_payload{az_json_writer_get_bytes_used_in_destination(&json_builder)};
+    static int    sendCount = 0;
+    if (!client->publish(telemetry_topic, az_span_ptr(out_payload), az_span_size(out_payload),
+                         false)) {
+        LOGSS.printf("ERROR: Send telemetry %d\r\n", sendCount);
+    } else {
+        ++sendCount;
+        LOGSS.printf("Sent telemetry %d\r\n", sendCount);
     }
     client->loop();
 }
@@ -405,10 +396,10 @@ void WiFiThread::Run() {
 #else
                     HubHost  = IOT_CONFIG_IOTHUB;
                     DeviceId = IOT_CONFIG_DEVICE_ID;
-#endif //USE_DPS
+#endif // USE_DPS
                 }
             }
-            LOGSS.println("WIFI -  wifi connected");
+            // LOGSS.println("WIFI -  wifi connected");
             cfg.wificonnected = true;
             cfg.wifi_rssi     = WiFi.RSSI();
             wifi_data_ready   = false;
@@ -416,7 +407,9 @@ void WiFiThread::Run() {
             wifi_data_ready = true;
             Delay(Ticks::SecondsToTicks(60));
         } else {
+            client->disconnect();
             WiFi.disconnect();
+            LOGSS.println("WIFI - Disconnect");
             cfg.wificonnected = false;
             Delay(Ticks::MsToTicks(1000));
         }

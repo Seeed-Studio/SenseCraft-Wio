@@ -14,7 +14,7 @@
 #include <rpcWiFiClientSecure.h>
 #include <vector>
 
-// #define USE_DPS
+#define USE_DPS
 #define MQTT_PACKET_SIZE 1024
 #define TOKEN_LIFESPAN 3600
 #ifndef USE_DPS
