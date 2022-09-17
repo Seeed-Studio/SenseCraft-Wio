@@ -41,7 +41,7 @@ const char *ROOT_CA_BALTIMORE = "-----BEGIN CERTIFICATE-----\n"
                                 "R9I4LtD+gdwyah617jzV/OeBHRnDJELqYzmp\n"
                                 "-----END CERTIFICATE-----";
 
-WiFiThread::WiFiThread(SysConfig &config) : Thread("WiFiThread", 128 * 24, 1), cfg(config) {
+WiFiThread::WiFiThread(SysConfig &config) : Thread("WiFiThread", 128 * 6, 1), cfg(config) {
     Start();
 }
 
@@ -409,7 +409,7 @@ void WiFiThread::Run() {
         } else {
             client->disconnect();
             WiFi.disconnect();
-            LOGSS.println("WIFI - Disconnect");
+            // LOGSS.println("WIFI - Disconnect");
             cfg.wificonnected = false;
             Delay(Ticks::MsToTicks(1000));
         }

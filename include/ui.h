@@ -1,7 +1,6 @@
 #ifndef __UI_H__
 #define __UI_H__
 #include "Free_Fonts.h"
-#include "SDdata.h"
 #include "Seeed_Arduino_ooFreeRTOS.h"
 #include "SysConfig.h"
 #include "seeed_line_chart.h"
@@ -60,7 +59,7 @@ typedef bool (*page_t)(uint8_t key);
 
 class UI : public Thread {
   public:
-    UI(TFT_eSPI &lcd, TFT_eSprite &display, SysConfig &config, SDdata &sddata, Message &m1);
+    UI(TFT_eSPI &lcd, TFT_eSprite &display, SysConfig &config, Message &m1);
     void init();
 
   protected:
@@ -77,10 +76,6 @@ class UI : public Thread {
     Message &btnMail;
 
     SysConfig &cfg;
-    SDdata    &sd;
-
-    uint8_t sd_status;
-    uint8_t sensor_save_flag = 0;
 
     std::vector<sensor_data> s_data;
     bool                     s_data_ready = true;

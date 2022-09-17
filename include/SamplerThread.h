@@ -4,6 +4,7 @@
 #include "SysConfig.h"
 #include "WiFiThread.h"
 #include "LoRaThread.h"
+#include "SDThread.h"
 #include "ui.h"
 #include "sensor.h"
 #include "utils.h"
@@ -32,6 +33,7 @@ class SamplerThread : public Thread {
   private:
     WiFiThread *wifi;
     LoRaThread *lora;
+    SDThread   *sd;
 };
 
 #endif

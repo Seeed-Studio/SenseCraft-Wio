@@ -131,8 +131,8 @@ void SysConfig::ReadAllConfig() {
         ReadConfigParam("config.txt", "TOKEN=", &this->token);
         ReadConfigParam("config.txt", "DEVICE_LABEL=", &this->device_label);
         ReadConfigParam("config.txt", "ID_SCOPE=", &this->id_scope);
-        ReadConfigParam("config.txt", "REGISTRATION_ID=", &this->registration_id);
-        ReadConfigParam("config.txt", "SYMMETRIC_KEY=", &this->symmetric_key);
+        ReadConfigParam("config.txt", "DEVICE_ID=", &this->registration_id);
+        ReadConfigParam("config.txt", "PRIMARY_KEY=", &this->symmetric_key);
     }
     else
     {
@@ -142,8 +142,8 @@ void SysConfig::ReadAllConfig() {
         WriteConfigParam("config.txt", "TOKEN=", "Default_Token");
         WriteConfigParam("config.txt", "DEVICE_LABEL=", "Device_Name");
         WriteConfigParam("config.txt", "ID_SCOPE=", "Default_ID_Scope");
-        WriteConfigParam("config.txt", "REGISTRATION_ID=", "Registration_ID");
-        WriteConfigParam("config.txt", "SYMMETRIC_KEY=", "Symmetric_Key");
+        WriteConfigParam("config.txt", "DEVICE_ID=", "Default_Device_ID");
+        WriteConfigParam("config.txt", "PRIMARY_KEY=", "Default_Primay_Key");
     }
 }
 

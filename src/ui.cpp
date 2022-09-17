@@ -10,9 +10,8 @@ void UI::uint8_to_float(uint8_t *data, float *destination) {
     *reinterpret_cast<uint32_t *>(destination) = value;
 }
 
-UI::UI(TFT_eSPI &lcd, TFT_eSprite &display, SysConfig &config, SDdata &sddata, Message &m1)
-    : Thread("UIThread", 128 * 24, 2), tft(lcd), spr(display), cfg(config), sd(sddata),
-      btnMail(m1) {
+UI::UI(TFT_eSPI &lcd, TFT_eSprite &display, SysConfig &config, Message &m1)
+    : Thread("UIThread", 128 * 24, 2), tft(lcd), spr(display), cfg(config), btnMail(m1) {
     Start();
 };
 
@@ -89,13 +88,6 @@ void UI::UIPushData(std::vector<sensor_data *> d) {
                     if (rotate_flag == false) {
                         rotate_flag = true;
                     }
-            }
-            // save data to sd card
-            if (sensor_save_flag & (1 << data->id)) {
-                sd_status = sd.status();
-                if (!sd_status) {
-                    sd.saveData(String(data->name), (int32_t *)data->data, data->size / 4);
-                }
             }
         }
     }
@@ -970,10 +962,10 @@ void UI::SensePageManager(uint8_t key) {
             s_state.current_page++;
             if (s_state.current_page > countof(sense) - 1) {
                 // save sensor data to SD card
-                if (sensor_save_flag & 1 << s_data[s_state.s_select].id) {
-                    sensor_save_flag &= ~(1 << s_data[s_state.s_select].id);
+                if (cfg.sensor_save_flag & 1 << s_data[s_state.s_select].id) {
+                    cfg.sensor_save_flag &= ~(1 << s_data[s_state.s_select].id);
                 } else {
-                    sensor_save_flag |= 1 << s_data[s_state.s_select].id;
+                    cfg.sensor_save_flag |= 1 << s_data[s_state.s_select].id;
                 }
                 s_state.current_page = countof(sense) - 1;
             }
@@ -1155,6 +1147,9 @@ bool UI::Sensor_2(uint8_t select) {
     static uint8_t select_old = 0;
     uint16_t       line_col[] = {TFT_GREEN, TFT_RED, TFT_BLUE, TFT_YELLOW};
     uint8_t        data_num   = 0;
+
+    if (select > s_data.size() - 1)
+        select = s_data.size() - 1;
     TitleDisplay(0);
     // Display the sensor name
     SensorSubTitle2(s_data[select].name);
@@ -1217,23 +1212,27 @@ void UI::SensorSwitchButton(uint8_t button) {
 }
 
 bool UI::Sensor_3(uint8_t select) {
+    if (select > s_data.size() - 1) 
+        select = s_data.size() - 1;
     TitleDisplay(0);
     // Display the sensor name
     SensorSubTitle2(s_data[select].name);
-    if (sensor_save_flag == 0) {
+    if (cfg.sensor_save_flag == 0) {
         Status2Display(0x5);
         SensorSwitchButton(0);
     } else {
-        if (sd_status == 0) {
-            if (sensor_save_flag & 1 << s_data[select].id) {
+        if (cfg.sd_status == 1) {
+            if (cfg.sensor_save_flag & 1 << s_data[select].id) {
                 SensorSwitchButton(1);
             } else
                 SensorSwitchButton(0);
             Status2Display(0x3);
-        } else if (sd_status == 2) {
+        } else if (cfg.sd_status == 2) {
             Status2Display(0x1);
+            SensorSwitchButton(0);
         } else {
             Status2Display(0x4);
+            SensorSwitchButton(0);
         }
     }
     Status1Display(0);
