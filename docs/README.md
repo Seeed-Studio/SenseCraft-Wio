@@ -53,8 +53,8 @@ In the digital age where IoT and big data are becoming more prevalent, massive d
         <span class="headline" id="Quick Start">Quick Start</span>
     </h3>
     <div class="item">
-        <ul>
-            <li><a href="https://wiki.seeedstudio.com/K1100-quickstart/" target="_blank">Quick Start With SenseCAP - K1100</a>
+        <ul style="list-style-type: none; width: 100%;">
+            <li style="display: inline-block;"><a href="https://wiki.seeedstudio.com/K1100-quickstart/" target="_blank">Quick Start With SenseCAP - K1100</a>
         </ul>
     </div>
 	<h3>
