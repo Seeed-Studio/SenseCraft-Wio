@@ -1,13 +1,3 @@
-# SenseCAP - The Sensor Prototype Kit Overview
-
-In the digital age where IoT and big data are becoming more prevalent, massive data collection through sensors is required to facilitate digital transformation. Under such a background, SenseCAP K1100 comes with all the essential sensors and devices, including a Wio Terminal, an AI Vision Sensor, and a LoRa®-enabled module - that together allows users of all backgrounds and levels to create DIY sensors for data collection and solving real-world challenges.
-
-<div align=center><img width = 800 src="https://files.seeedstudio.com/wiki/K1100/banner.png"/></div>
-
-**SenseCAP - The Sensor Prototype Kit with LoRa® and AI** enables you to rapidly digitize the world using LoRaWAN® and solve real-world challenges. With this plug-and-play toolkit, anyone can add AI to their edge devices and unlock the potential of AIoT.
-
-<p style=":center"><a href="https://www.seeedstudio.com/Seeed-Studio-LoRaWAN-Dev-Kit-p-5370.html?queryID=a88444c7c4ccfa5dddd4d2a84db3dd5e&objectID=5370&indexName=bazaar_retailer_products" target="_blank"><img src="https://files.seeedstudio.com/wiki/Seeed-WiKi/docs/images/get_one_now.png" /></a></p>
-
 <style>
 td, th {
    border: none!important;
@@ -45,6 +35,16 @@ td, th {
 }
 
 </style>
+
+# SenseCAP - The Sensor Prototype Kit Overview
+
+In the digital age where IoT and big data are becoming more prevalent, massive data collection through sensors is required to facilitate digital transformation. Under such a background, SenseCAP K1100 comes with all the essential sensors and devices, including a Wio Terminal, an AI Vision Sensor, and a LoRa®-enabled module - that together allows users of all backgrounds and levels to create DIY sensors for data collection and solving real-world challenges.
+
+<div align=center><img width = 800 src="https://files.seeedstudio.com/wiki/K1100/banner.png"/></div>
+
+**SenseCAP - The Sensor Prototype Kit with LoRa® and AI** enables you to rapidly digitize the world using LoRaWAN® and solve real-world challenges. With this plug-and-play toolkit, anyone can add AI to their edge devices and unlock the potential of AIoT.
+
+<p align=center><a href="https://www.seeedstudio.com/Seeed-Studio-LoRaWAN-Dev-Kit-p-5370.html?queryID=a88444c7c4ccfa5dddd4d2a84db3dd5e&objectID=5370&indexName=bazaar_retailer_products" target="_blank"><img src="https://files.seeedstudio.com/wiki/Seeed-WiKi/docs/images/get_one_now.png" /></a></p>
 
 ## Catalogue
 
