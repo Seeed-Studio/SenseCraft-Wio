@@ -125,13 +125,13 @@ In the digital age where IoT and big data are becoming more prevalent, massive d
             <li><a href="https://github.com/Seeed-Studio/SenseCraft/tree/main/docs/05-Helium/2-Integrate%20into%20Google%20Sheets%20via%20Helium" target="_blank">Integrate into Google Sheets via Helium</a></li>
         </ul>
         <ul>
-            <li><a href="https://wiki.seeedstudio.com/Connect_AWS_via_helium/" target="_blank">Connect AWS IOT Core via Helium (Helium)</a></li>
+            <li><a href="https://github.com/Seeed-Studio/SenseCraft/tree/main/docs/05-Helium/2-Connect%20AWS%20IOT%20Core%20via%20Helium" target="_blank">Connect AWS IOT Core via Helium (Helium)</a></li>
         </ul>
         <ul>
-            <li><a href="https://wiki.seeedstudio.com/Integrate-into-Azure-IoT-Hub/" target="_blank">Integrate into Azure IoT Hub</a></li>
+            <li><a href="https://github.com/Seeed-Studio/SenseCraft/tree/main/docs/05-Helium/2-Integrate%20into%20Azure%20IoT%20Hub" target="_blank">Integrate into Azure IoT Hub</a></li>
         </ul>
         <ul>
-            <li><a href="https://wiki.seeedstudio.com/Configuring-Web-APP-Visualization/" target="_blank">Configure Web APP Visualization</a></li>
+            <li><a href="https://github.com/Seeed-Studio/SenseCraft/tree/main/docs/05-Helium/3-Configure%20Web%20APP%20Visualization" target="_blank">Configure Web APP Visualization</a></li>
         </ul>
     </div>
     <h3>
@@ -139,10 +139,10 @@ In the digital age where IoT and big data are becoming more prevalent, massive d
     </h3>
     <div class="item">
         <ul>
-            <li><a href="https://wiki.seeedstudio.com/TTN-Introduction/" target="_blank">TTN Introduction</a></li>
+            <li><a href="https://github.com/Seeed-Studio/SenseCraft/blob/main/docs/06-TTN/0-TTN%20Introduction.md" target="_blank">TTN Introduction</a></li>
         </ul>
         <ul>
-            <li><a href="https://wiki.seeedstudio.com/Connecting-to-TTN/" target="_blank">Connect to TTN</a></li>
+            <li><a href="https://github.com/Seeed-Studio/SenseCraft/blob/main/docs/06-TTN/1-Connect%20to%20TTN.md" target="_blank">Connect to TTN</a></li>
         </ul>
     </div>
 	<h3>
@@ -150,22 +150,22 @@ In the digital age where IoT and big data are becoming more prevalent, massive d
     </h3>
     <div class="item">
         <ul>
-            <li><a href="https://wiki.seeedstudio.com/Getting_started_with_Ubidots/" target="_blank">Quickly Start with Ubidots</a></li>
+            <li><a href="https://github.com/Seeed-Studio/SenseCraft/tree/main/docs/07-WiFi/1-Quickly%20Start%20with%20Ubidots" target="_blank">Quickly Start with Ubidots</a></li>
         </ul>
         <ul>
-            <li><a href="https://wiki.seeedstudio.com/Quick-Start-to-using-Blynk/" target="_blank">Quick Start to Using Blynk</a></li>
+            <li><a href="https://github.com/Seeed-Studio/SenseCraft/tree/main/docs/07-WiFi/1-Quick%20Start%20to%20Using%20Blynk" target="_blank">Quick Start to Using Blynk</a></li>
         </ul>
         <ul>
-            <li><a href="https://wiki.seeedstudio.com/Wio-Terminal-Advanced-WiFi/" target="_blank">Advanced Wi-Fi Usage</a></li>
+            <li><a href="https://github.com/Seeed-Studio/SenseCraft/tree/main/docs/07-WiFi/0-Advanced%20Wi-Fi%20Usage" target="_blank">Advanced Wi-Fi Usage</a></li>
         </ul>
         <ul>
-            <li><a href="https://wiki.seeedstudio.com/Connect-Wio-Terminal-to-Google-Cloud/" target="_blank">Connect Wio Terminal to Google Cloud IoT Core</a></li>
+            <li><a href="https://github.com/Seeed-Studio/SenseCraft/tree/main/docs/07-WiFi/1-Connect%20Wio%20Terminal%20to%20Google%20Cloud%20IoT%20Core" target="_blank">Connect Wio Terminal to Google Cloud IoT Core</a></li>
         </ul>
         <ul>
-            <li><a href="https://wiki.seeedstudio.com/Connect-Wio-Terminal-to-Azure-IoT-Central/" target="_blank">Connect Wio Terminal to Microsoft Azure IoT Central</a></li>
+            <li><a href="https://github.com/Seeed-Studio/SenseCraft/tree/main/docs/07-WiFi/1-Connect%20Wio%20Terminal%20to%20Microsoft%20Azure%20IoT%20Central" target="_blank">Connect Wio Terminal to Microsoft Azure IoT Central</a></li>
         </ul>
         <ul>
-            <li><a href="https://wiki.seeedstudio.com/Wio-Terminal-Azure-IOT/" target="_blank">Connect the Wio Terminal to Microsoft Azure IoT Hub</a></li>
+            <li><a href="https://github.com/Seeed-Studio/SenseCraft/tree/main/docs/07-WiFi/1-Connect%20the%20Wio%20Terminal%20to%20Microsoft%20Azure%20IoT%20Hub" target="_blank">Connect the Wio Terminal to Microsoft Azure IoT Hub</a></li>
         </ul>
     </div>
 	<h3>
@@ -173,25 +173,25 @@ In the digital age where IoT and big data are becoming more prevalent, massive d
     </h3>
     <div class="item">
         <ul>
-            <li><a href="https://wiki.seeedstudio.com/Connect_AWS_via_helium/" target="_blank">Connect AWS IOT Core via Helium (Helium)</a></li>
+            <li><a href="https://github.com/Seeed-Studio/SenseCraft/tree/main/docs/08-Cloud/Connect%20AWS%20IOT%20Core%20via%20Helium%20(Helium)" target="_blank">Connect AWS IOT Core via Helium (Helium)</a></li>
         </ul>
         <ul>
-            <li><a href="https://wiki.seeedstudio.com/Integrate-into-Azure-IoT-Hub/" target="_blank">Integrate into Azure IoT Hub (Helium)</a></li>
+            <li><a href="https://github.com/Seeed-Studio/SenseCraft/tree/main/docs/08-Cloud/Integrate%20into%20Azure%20IoT%20Hub%20(Helium)" target="_blank">Integrate into Azure IoT Hub (Helium)</a></li>
         </ul>
         <ul>
-            <li><a href="https://wiki.seeedstudio.com/Connect-Wio-Terminal-to-Google-Cloud/" target="_blank">Connect Wio Terminal to Google Cloud IoT Core (WiFi)</a></li>
+            <li><a href="https://github.com/Seeed-Studio/SenseCraft/tree/main/docs/08-Cloud/Connect%20Wio%20Terminal%20to%20Google%20Cloud%20IoT%20Core%20(WiFi)" target="_blank">Connect Wio Terminal to Google Cloud IoT Core (WiFi)</a></li>
         </ul>
         <ul>
-            <li><a href="https://wiki.seeedstudio.com/Connect-Wio-Terminal-to-Azure-IoT-Central/" target="_blank">Connect Wio Terminal to Microsoft Azure IoT Central (WiFi)</a></li>
+            <li><a href="https://github.com/Seeed-Studio/SenseCraft/tree/main/docs/08-Cloud/Connect%20Wio%20Terminal%20to%20Microsoft%20Azure%20IoT%20Central%20(WiFi)" target="_blank">Connect Wio Terminal to Microsoft Azure IoT Central (WiFi)</a></li>
         </ul>
         <ul>
-            <li><a href="https://wiki.seeedstudio.com/Wio-Terminal-Azure-IOT/" target="_blank">Connect the Wio Terminal to Microsoft Azure IoT Hub (WiFi)</a></li>
+            <li><a href="https://github.com/Seeed-Studio/SenseCraft/tree/main/docs/08-Cloud/Connect%20the%20Wio%20Terminal%20to%20Microsoft%20Azure%20IoT%20Hub%20(WiFi)" target="_blank">Connect the Wio Terminal to Microsoft Azure IoT Hub (WiFi)</a></li>
         </ul>
         <ul>
-            <li><a href="https://wiki.seeedstudio.com/Getting_started_with_Ubidots/" target="_blank">Quickly Start with Ubidots (WiFi)</a></li>
+            <li><a href="https://github.com/Seeed-Studio/SenseCraft/tree/main/docs/08-Cloud/Quickly%20Start%20with%20Ubidots%20(WiFi)" target="_blank">Quickly Start with Ubidots (WiFi)</a></li>
         </ul>
         <ul>
-            <li><a href="https://wiki.seeedstudio.com/Quick-Start-to-using-Blynk/" target="_blank">Quick Start to Using Blynk (WiFi)</a></li>
+            <li><a href="https://github.com/Seeed-Studio/SenseCraft/tree/main/docs/08-Cloud/Quick%20Start%20to%20Using%20Blynk%20(WiFi)" target="_blank">Quick Start to Using Blynk (WiFi)</a></li>
         </ul>
     </div>
 	<h3>
@@ -199,13 +199,13 @@ In the digital age where IoT and big data are becoming more prevalent, massive d
     </h3>
     <div class="item">
         <ul>
-            <li><a href="https://wiki.seeedstudio.com/Wio-Terminal-TinyML-EI-1/" target="_blank">Wio Terminal Edge Impulse Getting Started (built-in sensor)</a></li>
+            <li><a href="https://github.com/Seeed-Studio/SenseCraft/tree/main/docs/09-TinyML/Wio%20Terminal%20Edge%20Impulse%20Getting%20Started%20(built-in%20sensor)" target="_blank">Wio Terminal Edge Impulse Getting Started (built-in sensor)</a></li>
         </ul>
         <ul>
-            <li><a href="https://wiki.seeedstudio.com/K1111-Edge-Impulse/" target="_blank">Develop Edge Impulse application to cloud via Helium (built-in sensor)</a></li>
+            <li><a href="https://github.com/Seeed-Studio/SenseCraft/tree/main/docs/09-TinyML/Develop%20Edge%20Impulse%20application%20to%20cloud%20via%20Helium%20(built-in%20sensor)" target="_blank">Develop Edge Impulse application to cloud via Helium (built-in sensor)</a></li>
         </ul>
         <ul>
-            <li><a href="https://wiki.seeedstudio.com/Train-Deploy-AI-Model/" target="_blank">Train and Deploy Your Own AI Model Into Grove - Vision AI</a></li>
+            <li><a href="https://github.com/Seeed-Studio/SenseCraft/tree/main/docs/09-TinyML/Train%20and%20Deploy%20Your%20Own%20AI%20Model%20Into%20Grove%20-%20Vision%20AI" target="_blank">Train and Deploy Your Own AI Model Into Grove - Vision AI</a></li>
         </ul>
     </div>
 	<h3>
@@ -213,7 +213,7 @@ In the digital age where IoT and big data are becoming more prevalent, massive d
     </h3>
     <div class="item">
         <ul>
-            <li><a href="https://wiki.seeedstudio.com/K1111-Quick-Start-Guide/" target="_blank">Soil moisture monitoring alarm system</a></li>
+            <li><a href="https://github.com/Seeed-Studio/SenseCraft/tree/main/docs/10-Project/Soil%20moisture%20monitoring%20alarm%20system" target="_blank">Soil moisture monitoring alarm system</a></li>
         </ul>
         <ul>
             <li><a href="https://www.hackster.io/hendra/environment-data-lora-node-c91415" target="_blank">Grove Wio E5 peer-to-peer communication</a></li>
