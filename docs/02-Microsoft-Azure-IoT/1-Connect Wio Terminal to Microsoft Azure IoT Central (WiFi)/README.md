@@ -74,28 +74,48 @@ If you are not already logged into Azure IoT Central, you will be asked to compl
     If you are a new user of Azure IoT Central, we recommend that you select **Free** as this will not consume your fees.
     <div align=center><img width = 500 src="https://files.seeedstudio.com/wiki/k1100_azure_central/9.png"/></div>
 
-**Step 3.** Click **Create** to create the new application. Now you have successfully set up Azure IoT Central!
+**Step 3.** Create a Device template
 
-<div align=center><img width = 800 src="https://files.seeedstudio.com/wiki/k1100_azure_central/3.png"/></div>
+Please create a new device template by clicking on **Device templates** in the left-hand menu bar.
 
-### Get the information to connect from Azure IoT Central
+<div align=center><img width = 800 src="https://files.seeedstudio.com/wiki/k1100_nodered_azure/2.png"/></div>
 
-Once we have created a new application according to the steps above, we go to the **Permissions** screen in the left-hand toolbar.
+Please select **Wio Terminal** as our template.
 
-<div align=center><img width = 800 src="https://files.seeedstudio.com/wiki/k1100_azure_central/10.png"/></div>
+<div align=center><img width = 800 src="https://files.seeedstudio.com/wiki/k1100_nodered_azure/3.png"/></div>
 
-You will then see that there are two Enrollment groups here.
+Then just click on **Create**.
 
-<div align=center><img width = 800 src="https://files.seeedstudio.com/wiki/k1100_azure_central/11.png"/></div>
+<div align=center><img width = 800 src="https://files.seeedstudio.com/wiki/k1100_nodered_azure/4.png"/></div>
 
-The choice we need to make is **SAS-IoT-Devices**.
+Then, a ready-made template is created.
+
+<div align=center><img width = 800 src="https://files.seeedstudio.com/wiki/k1100_nodered_azure/5.png"/></div>
+
+
+**Step 5.** Create a Device
+
+Click on **Devices -> Seeed Wio Terminal** under the left menu bar.
+
+<div align=center><img width = 800 src="https://files.seeedstudio.com/wiki/k1100_nodered_azure/6.png"/></div>
+
+Click on **New**.
+
+<div align=center><img width = 800 src="https://files.seeedstudio.com/wiki/k1100_nodered_azure/7.png"/></div>
+
+Click on the **Create** button to complete the creation of the device.
+
+<div align=center><img width = 800 src="https://files.seeedstudio.com/wiki/k1100_nodered_azure/8.png"/></div>
+
+Once you have created the device, you will see the device we have just created under **Device**, please tap into the device and click on the **Connect** button in the top left corner.
+
+<div align=center><img width = 800 src="https://files.seeedstudio.com/wiki/k1100_nodered_azure/9.png"/></div>
 
 Here we need the information there.
 
-<div align=center><img width = 800 src="https://files.seeedstudio.com/wiki/k1100_azure_central/12.png"/></div>
-
 ```
 ID scope
+Device ID
 Primary key
 ```
 
@@ -135,46 +155,65 @@ When we use the **SenseCraft** firmware, a USB stick appears as soon as the Wio 
 At this point, there will be a **config.txt** file inside the USB stick. Please open it with a suitable txt editor and add the required configuration to it.
 
 ```
-SSID=<YOUR-WIFISSD>                   // Put your WifiSSID here
-PASSWORD=<YOUR-WIFI-PASSWORD          // Put your wifi password here
-ID_SCOPE=<YOUR-DEVICE-ID-SCOPE>       // Put your device ID here
-PRIMAEY_KEY=<YOUR-DEVICE-PRIMAEY_KEY> // Put your device Primary key here
-DEVICE_NAME=<YOUR-DEVICE_NAME>        // Put your device name here
+SSID=WiFi_Name                        // Put your Wifi name here
+PASSWORD=WiFi_Password                // Put your wifi password here          
+ID_SCOPE=Default_ID_Scope             // Put your ID Scope here
+DEVICE_ID=Device_ID                   // Put your device ID here
+PRIMARY_KEY=Primary_Key               // Put your device Primary key here
 ```
 
-!!!Note
-    Where **DEVICE_NAME** is a freely fillable item according to your needs. Once you have successfully connected to Azure IoT Central, you will see the device with that name, appearing inside the **Device**.
-    <div align=center><img width = 800 src="https://files.seeedstudio.com/wiki/k1100_azure_central/13.png"/></div>
-
-
-Once you have completed the above, please save it.
-
+Once you have completed the above, please save it. Restart Wio Terminal to take effect.
 
 ### Display Telemetry Data on Microsoft Azure IoT Central 
 
-**Step 1.** View data dashboard
+**Step 1.** Wio Terminal connect to WiFi
 
-We will move on to displaying the incoming telemetry data from the 3-axis accelerometer, light sensor and 3 buttons of the Wio Terminal on Azure IoT Central Dashboard.
+Enter **Network** tab and select **WiFi**.
 
-Open Azure IoT Central Dashboard that you visited before. Click on **Devices** from the left navigation menu. You will see **Seeed Wio Terminal** appear under Devices. Click on it.
+<div align=center><img width=800 src="https://files.seeedstudio.com/wiki/K1100-quick-start/51.png"/></div>
 
-<div align=center><img width = 800 src="https://files.seeedstudio.com/wiki/k1100_azure_central/14.png"/></div>
+Now it will wait for the configuration to load.
 
-Click on the entry with the **device name** that you configured before. 
+<div align=center><img width=800 src="https://files.seeedstudio.com/wiki/K1100-quick-start/52.png"/></div>
 
-<div align=center><img width = 800 src="https://files.seeedstudio.com/wiki/k1100_azure_central/13.png"/></div>
+Once the loaded WiFi configuration is picked up, it will first connect with the WiFi network and then with the Azure IoT Central. If the connection with Azure IoT Central is successful, it will display the following.
 
-Now you will be able to visualize the data from the onboard 3-axis accelerometer on an interactive dashboard.
+<div align=center><img width=800 src="https://files.seeedstudio.com/wiki/K1100-quick-start/53.png"/></div>
 
-<div align=center><img width = 800 src="https://files.seeedstudio.com/wiki/k1100_azure_central/8.png"/></div>
+**Step 2.** Parsing Wio Terminal data
 
-This is the default view and we need to make some changes to display the other telemetry data as well.
+We need to change the template style displayed in the **template**.
 
-**Step 2.** Configure the template
+<div align=center><img width = 800 src="https://files.seeedstudio.com/wiki/k1100_nodered_azure/26.png"/></div>
 
-Click on **Device templates** from the left navigation menu and click **Seeed Wio Terminal** to configure the template.
+In order to adapt the data type of SenseCraft and achieve a suitable data presentation, here we need to fill in the raw data according to the table below.
 
-<div align=center><img width = 800 src="https://files.seeedstudio.com/wiki/k1100_azure_central/15.png"/></div>
+| Display name    | Name       | Capability type   | Semantic type   |
+|-----------------|------------|-------------------|-----------------|
+| Acceleration X  | IMU0       | Telemetry         | None            |
+| Acceleration Y  | IMU1       | Telemetry         | None            |
+| Acceleration Z  | IMU2       | Telemetry         | None            |
+| Light           | Light      | Telemetry         | None            |
+| Sound           | Sound      | Telemetry         | None            |
+| Temperature     | Temp_Humi0 | Telemetry         | None            |
+| Humidity        | Temp_Humi1 | Telemetry         | None            |
+| CO2             | CO2_VOC0   | Telemetry         | None            |
+| VOC             | CO2_VOC1   | Telemetry         | None            |
+| Soil Moisture   | Soil       | Telemetry         | None            |
+| Vision AI 1     | Vision     | Telemetry         | None            |
+| Vision AI 2     | Vision1    | Telemetry         | None            |
+| Vision AI 3     | Vision3    | Telemetry         | None            |
+| Vision AI 4     | Vision4    | Telemetry         | None            |
+| Vision AI 5     | Vision5    | Telemetry         | None            |
+| Vision AI 6     | Vision6    | Telemetry         | None            |
+| Vision AI 7     | Vision7    | Telemetry         | None            |
+| Vision AI 8     | Vision8    | Telemetry         | None            |
+| Vision AI 9     | Vision9    | Telemetry         | None            |
+| Vision AI 10    | Vision10   | Telemetry         | None            |
+
+<div align=center><img width = 800 src="https://files.seeedstudio.com/wiki/K1100-quick-start/68.png"/></div>
+
+Once you have completed the form, please click the **Save** button.
 
 Click on **Overview** on the left navigation menu.
 
@@ -182,30 +221,40 @@ Click on **Overview** on the left navigation menu.
 
 Collapse **select a telemetry** drop-down menu and select the telemetry that you want to visualize. 
 
-<div align=center><img width = 800 src="https://files.seeedstudio.com/wiki/k1100_azure_central/17.png"/></div>
+<div align=center><img width = 800 src="https://files.seeedstudio.com/wiki/K1100-quick-start/70.png"/></div>
 
 Click **Add tile** and you will see the tile added into the Azure IoT Central Dashboard.
 
-<div align=center><img width = 800 src="https://files.seeedstudio.com/wiki/k1100_azure_central/18.png"/></div>
+<div align=center><img width = 800 src="https://files.seeedstudio.com/wiki/K1100-quick-start/71.png"/></div>
 
 **Note:** You can resize or change the visualization of the tiles according to your preference
 
 <div align=center><img width = 400 src="https://files.seeedstudio.com/wiki/k1100_azure_central/19.png"/></div>
 
-Click **Save**.
+Click **Save** & Click **Publish**.
 
-<div align=center><img width = 800 src="https://files.seeedstudio.com/wiki/k1100_azure_central/20.png"/></div>
+<div align=center><img width = 800 src="https://files.seeedstudio.com/wiki/k1100_nodered_azure/27.png"/></div>
 
-Click **Publish**.
+Open Azure IoT Central Dashboard that you visited before. Click on **Devices** from the left navigation menu. You will see **Seeed Wio Terminal** appear under Devices. Click on it.
 
-<div align=center><img width = 800 src="https://files.seeedstudio.com/wiki/k1100_azure_central/21.png"/></div>
+<div align=center><img width = 800 src="https://files.seeedstudio.com/wiki/k1100_azure_central/14.png"/></div>
 
-**Step 3.** Observe changes in data
-
-Go back to Azure IoT Central dashboard and you will be able to visualize all the data coming in from the Wio Terminal.
+Click on the entry with the **device name** that you configured before. 
 
 <div align=center><img width = 800 src="https://files.seeedstudio.com/wiki/k1100_azure_central/23.png"/></div>
 
 You can also click on the **Raw data** tab to view all the telemetry data in real-time.
 
-<div align=center><img width = 800 src="https://files.seeedstudio.com/wiki/k1100_azure_central/22.png"/></div>
+<div align=center><img width = 800 src="https://files.seeedstudio.com/wiki/k1100_nodered_azure/28.png"/></div>
+
+
+## Tech Support
+
+Please do not hesitate to submit the issue into our [forum](https://forum.seeedstudio.com/).
+
+
+> **Upgradable to Industrial Sensors**
+SenseCAP K1100 serves as a gateway to the higher-end SenseCAP LoRaWAN® series of industrial outdoor sensors. Users can prototype multiple AIoT applications with this kit, after which they can scale them up to the robust, long-life, and industrial SenseCAP sensors.
+
+<div align=center><img width = 800 src="https://media-cdn.seeedstudio.com/media/wysiwyg/__16582252472624.png"/></div>
+

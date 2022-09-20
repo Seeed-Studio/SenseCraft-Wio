@@ -281,9 +281,9 @@ Once the Wio Terminal starts powering up and working and starts sending data to 
 
 However, as we have not set the type of the sensor, the data visible in the **Raw data** column are placed in **Unmodeled data**, so we need to parse the data according to the code above.
 
-We need to change the template style displayed in the **Device template**.
+We need to change the template style displayed in the **template**.
 
-<div align=center><img width = 800 src="https://files.seeedstudio.com/wiki/k1100_nodered_azure/20.png"/></div>
+<div align=center><img width = 800 src="https://files.seeedstudio.com/wiki/k1100_nodered_azure/26.png"/></div>
 
 Once you have made your changes, please just click on **Save** and then click on **Publish**. All changes in the **Device template** will need to be saved and Publish following this procedure before they will take effect.
 
@@ -298,7 +298,7 @@ Click on **Overview** on the left navigation menu.
 
 Collapse **select a telemetry** drop-down menu and select the telemetry that you want to visualize. 
 
-<div align=center><img width = 800 src="https://files.seeedstudio.com/wiki/k1100_nodered_azure/22.png"/></div>
+<div align=center><img width = 800 src="https://files.seeedstudio.com/wiki/K1100-quick-start/70.png"/></div>
 
 Click **Add tile** and you will see the tile added into the Azure IoT Central Dashboard.
 

@@ -226,6 +226,14 @@ If you are not connected to the Grove Wio E5 or if the LoRaWAN® is disconnected
 
 <div align=center><img width=800 src="https://files.seeedstudio.com/wiki/K1100-quick-start/50.png"/></div>
 
+## Send sensor data to Microsoft Azure IoT Central via WiFi
+
+Here the device will use WiFi communication to send the sensor data to the cloud. Microsoft Azure IoT Central will be used to visualize the data coming from the sensors connected to Wio Terminal via WiFi!
+
+For reasons of space, please skip to this link for the introduction to this part of the chapter.
+
+- [Connect Wio Terminal to Microsoft Azure IoT Central](https://wiki.seeedstudio.com/Connect-Wio-Terminal-to-Azure-IoT-Central/)
+
 
 ## Send sensor data to Ubidots via WiFi
 
@@ -422,241 +430,33 @@ Press the right arrow of the five-way button to select TinyML Example. Simply **
 
 <div align=center><img width=800 src="https://files.seeedstudio.com/wiki/K1100-quick-start/62.png"/></div>
 
-
-
-Stay tuned for more features of SenseCraft!
-
-<!-- ## Display data from built-in sensors
-
-### Sensor Overview
-
-As soon as you turn on the Wio Terminal, the following will be displayed.
-
-<div align=center><img width=400 src="https://files.seeedstudio.com/wiki/K1100-quick-start/2.png"/></div>
-
-This is first page under the **Sense** tab. In this tab, you have an overview of the data from the built-in sensors and Grove sensors connected to the Wio Terminal. The first page will display the data from built-in sensors such as **light sensor, sound sensor and IMU (3-axis accelerometer)**. Also, you will notice that the **Light** column is already highlighted in this page.
-
 ### Graph Visualization
 
-- **Step 1.** Since the light column is already highlighted, **middle press** on the 5-way button to enter graph visualization mode for the data from the light sensor.
+We have provided the Wio Terminal with a line graph display so that you can observe how the data changes in the values of each sensor.
 
-<div align=center><img width=400 src="https://files.seeedstudio.com/wiki/K1100-quick-start/3.png"/></div>
+Take the example of a line graph of light values.
 
-- **Step 2.** Now **press up** to go back to the previous page and **press right** to scroll through the other sensors. For example, if you press right once, it will select the sound sensor as follows.
+Since the Light column is already highlighted, **middle press** on the 5-way button to enter graph visualization mode for the data from the light sensor.
 
-<div align=center><img width=400 src="https://files.seeedstudio.com/wiki/K1100-quick-start/4.png"/></div>
+<div align=center><img width=800 src="https://files.seeedstudio.com/wiki/K1100-quick-start/63.png"/></div>
 
-- **Step 3.** After that, you can enter graph visualization mode for that sensor as well by pressing the middle button.
+### Save to TF Card
 
-<div align=center><img width=400 src="https://files.seeedstudio.com/wiki/K1100-quick-start/5.png"/></div>
+Considering that users may have the need to save offline to an TF card and only require subsequent data filtering or analysis, we have also designed the Wio Terminal with the ability to save data to a TF card.
 
-You can repeat the same selection process for the remaining sensors displayed on the **first page of Sense tab**.
+When in graph visualization mode as described before, **middle press** again to view this page.
 
-## Display data from external Grove sensors
+<div align=center><img width=800 src="https://files.seeedstudio.com/wiki/K1100-quick-start/65.png"/></div>
 
-Initially, it is expected to support all the Grove modules which comes with the K1100 Kit.
+This is where the data from the sensor can be saved to an TF card. First insert an TF card to the Wio Terminal.
 
-- **Step 1.** In the first page of the **Sense** tab, press **right button** three times to enter the second page.
+After that, press the **middle button** to select **Save to TF card** and it will show the message **Saving has been started**. Once this message dissappears, the saving is finished and it will save the data as a **.csv file**.
 
-<div align=center><img width=400 src="https://files.seeedstudio.com/wiki/K1100-quick-start/11.png"/></div>
-
-- **Step 2.** Plug-in a Grove sensor to the **Grove port on the right side** of the Wio Terminal and the data from the connected sensor can be displayed on the screen.
-
-<div align=center><img width=400 src="https://files.seeedstudio.com/wiki/K1100-quick-start/29.png"/></div>
-
-As soon as the sensor is connected, sensor data will be displayed on the screen. Data visualization can also be done just like before.
-
-<div align=center><img width=400 src="https://files.seeedstudio.com/wiki/K1100-quick-start/12.png"/></div>
-
-## Visualize results from Grove - Vision AI Module
-
-Enter the **Process** tab by pressing the top middle button.
-
-<div align=center><img width=400 src="https://files.seeedstudio.com/wiki/K1100-quick-start/28.png"/></div>
-
-This is first page under the **Process** tab. In this tab, real-time analysis of the Vision AI module can be done.
-
-More examples of Wio Terminal applications using TinyML can be found in the **TinyML Example** under the **Process** section.
-
-<div align=center><img width=400 src="https://files.seeedstudio.com/wiki/K1100-quick-start/37.png"/></div>
-
-## Connect to LoRaWAN®
-
-So far we have only visualized the sensor data locally on the Wio Terminal and saved the data to a connected TF card as well. Now we will move one step further where we will send the sensor data to the cloud via LoRaWAN®!
-
-Here we will use the Seeed SenseCAP platform to visualize the data coming from the sensors connected to Wio Terminal via LoRaWAN®!
-
-- **Step 1.** Confige **config.txt**.
-
-When we use the SenseCraft firmware, a USB stick appears as soon as the Wio Terminal is connected to the computer.
-
-!!!Attention
-    This means that the USB stick appears when the Wio Terminal is connected to the computer, **without the need to toggle the side button twice extra**!
-
-Normally there is a file called **config.txt** on the USB stick (if you don't have it, create it yourself), so open it.
-
-It holds the necessary information about the network connection, which we can modify to achieve automatic configuration at power-up.
-
-The contents of the **config.txt** file are in the following format.
-
-```
-FREQUENCY=<LORA_FREQUENCY>
-```
-
-An explanation of the above is set out below.
-
-- If you choose to connect to **LoRa®**, the following are required.
-    - **FREQUENCY**: Here is an indication of the frequency band of your chosen LoRa® network. Where the number **1** indicates **EU868** and the number **2** indicates **US915**.
-
-For example, if I want to use the EU868 band, then my content in config.txt would be:
-
-```
-FREQUENCY=1
-```
-
-!!!Tip
-    Don't forget to save the contents once the configuration is complete.
-
-
-
-## Connect to WiFi (Ubidots)
-
-Here the device will use WiFi communication to send the sensor data to the cloud. Ubidots platform will be used to visualize the data coming from the sensors connected to Wio Terminal via WiFi!
-
-- **Step 1.** Register and login to Ubidots
-
-If this is your first time using Ubidots, please go to the [Ubidots website](https://ubidots.com/) and register an account of your own.
-
-<td align="center"><div align=center><img width = 800 src="https://files.seeedstudio.com/wiki/k1100_ubidots/3.png"/></div></td>
-
-Once you have registered, please login to Ubidots using your registered account.
-
-- **Step 2.** Assign your unique **Ubidots TOKEN**
-
-Every request to Ubidots requires a TOKEN. The easiest way to get yours is clicking on “API Credentials” from the user dropdown.
-
-Go to you user dropdown and click on API credentials:
-
-<td align="center"><div align=center><img width = 250 src="https://files.seeedstudio.com/wiki/k1100_ubidots/4.png"/></div></td>
-
-**Tokens**: Temporary and revocable keys to be used in your API requests. Please save the TOKEN for now, we will use it later.
-
-<td align="center"><div align=center><img width = 800 src="https://files.seeedstudio.com/wiki/k1100_ubidots/5.png"/></div></td>
-
-!!!Attention
-	All API calls only accept your **TOKEN**. Don’t try to use your API Key, it won’t work! You can also access all of your Ubidots API Keys section of the My Profile settings in your User Dropdown. Select **My Profile** –> **API Credentials** to review the list of API TOKENS relating to your specific Ubidots Account.
-
-	<td align="center"><div align=center><img width = 800 src="https://files.seeedstudio.com/wiki/k1100_ubidots/6.png"/></div></td>
-
-- **Step 3.** Be prepared with the necessary information
-
-To establish an MQTT connection, we will need to prepare the following information in advance.
-
-- **WiFi SSID**
-	- Fill in the WiFi SSID to which Wio Terminal can connect. Wio Terminal will search for WiFi within its surroundings and try to connect to it.
-- **Password for WiFi SSID**
-	- Fill in the password for the WiFi SSID to which Wio Terminal can connect.
-- **Ubidots TOKEN**
-	- This is the TOKEN generated in **step 2**.
-- **Device label**
-	- This is the name of the device and the name of the device provided by the user will be used by Ubidots to identify the device. If the Device label don’t exist before the first dot is sent, Ubidots will create them automatically.
-- **MQTT client name**
-	- This is special because it is the ID with which your device will be identified by the broker so it **MUST** be unique. If your device tries to connect with the same ID that has already been taken by another device, the connection will be refused. Please create your own all alphanumeric 8-12+ character MQTT client name and input into the code accordingly.
-	Need some help creating a unique MQTT client name, check out this [random ascii builder](https://www.random.org/strings/), or simply use the MAC address of your device as every MAC address is globally unique.
-
-	<td align="center"><div align=center><img width = 600 src="https://files.seeedstudio.com/wiki/k1100_ubidots/7.png"/></div></td>
-
-Please have the above ready as we will use them in the next step.
-
-- **Step 4.** Confige **config.txt**.
-
-When we use the SenseCraft firmware, a USB stick appears as soon as the Wio Terminal is connected to the computer.
-
-!!!Attention
-    This means that the USB stick appears when the Wio Terminal is connected to the computer, **without the need to toggle the side button twice extra**!
-
-Normally there is a file called **config.txt** on the USB stick (if you don't have it, create it yourself), so open it.
-
-It holds the necessary information about the network connection, which we can modify to achieve automatic configuration at power-up.
-
-The contents of the **config.txt** file are in the following format.
-
-```
-SSID=<YOUR_SSID>
-PASSWORD=<YOUR_SSID_PASSWORD>
-MQTT_CLIENT_NAME=<YOUR_MQTT_CLIENT_NAME>
-TOKEN=<YOUR_UBIDOTS_TOKEN>
-DEVICE_LABEL=<YOUR_DEVICE_NAME>
-```
-
-Please fill in the required fields above, corresponding to the information we obtained in **step 3**. Once completed, the contents of your config.txt file should look similar to the example below.
-
-```
-SSID=CHCK
-PASSWORD=123456
-MQTT_CLIENT_NAME=al49mw880j
-TOKEN=BBFF-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-DEVICE_LABEL=Wio-Terminal
-```
-
-- **Step 5.** Enter **Network** tab and select **WiFi**.
-
-<div align=center><img width=400 src="https://files.seeedstudio.com/wiki/K1100-quick-start/21.png"/></div>
-
-Now it will wait for the configuration to load.
-
-<div align=center><img width=400 src="https://files.seeedstudio.com/wiki/K1100-quick-start/22.png"/></div>
-
-Once the loaded WiFi configuration is picked up, it will first connect with the WiFi network and then with the Ubidots platform. If the connection with Ubidots is successful, it will display the following.
-
-<div align=center><img width=400 src="https://files.seeedstudio.com/wiki/K1100-quick-start/23.png"/></div>
-
-If the signal strengh between the Wio Terminal and the WiFi router is weak, it will show a **low signal intensity** warning.
-
-<div align=center><img width=400 src="https://files.seeedstudio.com/wiki/K1100-quick-start/24.png"/></div>
-
-Also, if the above WiFi connection fails, it will show the following.
-
-<div align=center><img width=400 src="https://files.seeedstudio.com/wiki/K1100-quick-start/25.png"/></div>
-
-If you want to disconnect from the LoRaWAN® connection, you can click up arrow key for return.
-
-!!!Note
-    If you would like to use Ubidots for further independent development, please refer to our further [tutorials on Ubidots](https://wiki.seeedstudio.com/Getting_started_with_Ubidots/).
-
-
-## Functions to implement
-
-Eventhough the above interface has a lot more pages, the functions are not implemented yet. However, they will be implemented in the near future.
-
-The following is a list of functions that will be added to the interface:
-
-- Save all the sensor data to a connected SD card **(Under Development)**
-- UI and operation optimisation **(Under Development)**
-
-
-### Implementation expections
-
-The following is an overview of how the above-mentioned functions are expected to look like .
-
-#### Save to TF Card (Under Development)
-
-- **Step 1.** When in graph visualization mode as described before, **middle press** again to view this page.
-
-<div align=center><img width=400 src="https://files.seeedstudio.com/wiki/K1100-quick-start/6.png"/></div>
-
-- **Step 2.** This is where the data from the sensor can be saved to an SD card. First insert an SD card to the Wio Terminal.
-
-- **Step 3.** After that, press the **middle button** to select **Save to TF card** and it will show the message **Saving has been started**. Once this message dissappears, the saving is finished and it will save the data as a **.csv file**.
-
-<div align=center><img width=400 src="https://files.seeedstudio.com/wiki/K1100-quick-start/7.png"/></div>
-
-<div align=center><img width=400 src="https://files.seeedstudio.com/wiki/K1100-quick-start/8.png"/></div>
+<div align=center><img width=800 src="https://files.seeedstudio.com/wiki/K1100-quick-start/64.png"/></div>
 
 If the storage on the TF card is full, it will notify as follows.
 
-<div align=center><img width=400 src="https://files.seeedstudio.com/wiki/K1100-quick-start/9.png"/></div>
--->
+<div align=center><img width=800 src="https://files.seeedstudio.com/wiki/K1100-quick-start/66.png"/></div>
 
 
 ## What can I do next？
