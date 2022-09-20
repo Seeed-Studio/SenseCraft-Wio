@@ -16,7 +16,7 @@ In the digital age where IoT and big data are becoming more prevalent, massive d
     </h3>
     <div class="item">
         <ul>
-            <li><a href="https://wiki.seeedstudio.com/K1100-quickstart/" target="_blank">Quick Start With SenseCAP - K1100</a>
+            <li><a href="https://github.com/Seeed-Studio/SenseCraft/tree/main/docs/01-Quick-Start" target="_blank">Quick Start With SenseCAP - K1100</a>
         </ul>
     </div>
 	<h3>
@@ -24,25 +24,25 @@ In the digital age where IoT and big data are becoming more prevalent, massive d
     </h3>
     <div class="item">
         <ul>
-            <li><a href="https://wiki.seeedstudio.com/K1100_SenseCAP_to_Azure_IoT_Central/" target="_blank">Connect SenseCAP to Azure IoT Central via Node-RED (SenseCAP)</a></li>
+            <li><a href="https://github.com/Seeed-Studio/SenseCraft/tree/main/docs/02-Microsoft-Azure-IoT/1-Connect%20SenseCAP%20to%20Azure%20IoT%20Central%20via%20Node-RED%20(SenseCAP)" target="_blank">Connect SenseCAP to Azure IoT Central via Node-RED (SenseCAP)</a></li>
         </ul>
         <ul>
-            <li><a href="https://wiki.seeedstudio.com/Connect-Wio-Terminal-to-Azure-IoT-Central/" target="_blank">Connect Wio Terminal to Microsoft Azure IoT Central (WiFi)</a></li>
+            <li><a href="https://github.com/Seeed-Studio/SenseCraft/tree/main/docs/02-Microsoft-Azure-IoT/1-Connect%20Wio%20Terminal%20to%20Microsoft%20Azure%20IoT%20Central%20(WiFi)" target="_blank">Connect Wio Terminal to Microsoft Azure IoT Central (WiFi)</a></li>
         </ul>
         <ul>
-            <li><a href="https://wiki.seeedstudio.com/Wio-Terminal-Azure-IOT/" target="_blank">Connect the Wio Terminal to Microsoft Azure IoT Hub (WiFi)</a></li>
+            <li><a href="https://github.com/Seeed-Studio/SenseCraft/tree/main/docs/02-Microsoft-Azure-IoT/1-Connect%20the%20Wio%20Terminal%20to%20Microsoft%20Azure%20IoT%20Hub%20(WiFi)" target="_blank">Connect the Wio Terminal to Microsoft Azure IoT Hub (WiFi)</a></li>
         </ul>
         <ul>
-            <li><a href="https://wiki.seeedstudio.com/Integrate-into-Azure-IoT-Hub/" target="_blank">Integrate into Azure IoT Hub (Helium)</a></li>
+            <li><a href="https://github.com/Seeed-Studio/SenseCraft/tree/main/docs/02-Microsoft-Azure-IoT/1-Helium%20integrate%20into%20Azure%20IoT%20Hub" target="_blank">Integrate into Azure IoT Hub (Helium)</a></li>
         </ul>
         <ul>
-            <li><a href="https://wiki.seeedstudio.com/Develop-in-Microsoft-Azure-IoT-Central/" target="_blank">Develop in Microsoft Azure IoT Central</a></li>
+            <li><a href="https://github.com/Seeed-Studio/SenseCraft/tree/main/docs/02-Microsoft-Azure-IoT/2-Develop%20in%20Microsoft%20Azure%20IoT%20Central" target="_blank">Develop in Microsoft Azure IoT Central</a></li>
         </ul>
         <ul>
-            <li><a href="https://wiki.seeedstudio.com/Configuring-Web-APP-Visualization/" target="_blank">Configure Web APP Visualization</a></li>
+            <li><a href="https://github.com/Seeed-Studio/SenseCraft/tree/main/docs/02-Microsoft-Azure-IoT/3-Configure%20Web%20APP%20Visualization" target="_blank">Configure Web APP Visualization</a></li>
         </ul>
         <ul>
-            <li><a href="https://wiki.seeedstudio.com/K1100_Azure_to_PowerBI/" target="_blank">Microsoft Azure IoT Data visualisation with Power BI</a></li>
+            <li><a href="https://github.com/Seeed-Studio/SenseCraft/tree/main/docs/02-Microsoft-Azure-IoT/3-Microsoft%20Azure%20IoT%20Data%20visualisation%20with%20Power%20BI" target="_blank">Microsoft Azure IoT Data visualisation with Power BI</a></li>
         </ul>
         <ul>
             <li><a href="https://github.com/microsoft/IoT-For-Beginners" target="_blank">Microsoft IoT Hub for Beginners Course</a></li>
@@ -56,13 +56,13 @@ In the digital age where IoT and big data are becoming more prevalent, massive d
             <li><a href="https://sensecap-docs.seeed.cc/introduction.html" target="_blank">SenseCAP Documentation Centre</a></li>
         </ul>
         <ul>
-            <li><a href="https://wiki.seeedstudio.com/K1100_sensecap_node-red/" target="_blank">SenseCAP Console with Node-RED Quick Start</a>
+            <li><a href="https://github.com/Seeed-Studio/SenseCraft/tree/main/docs/03-SenseCAP/1-SenseCAP%20Console%20with%20Node-RED%20Quick%20Start" target="_blank">SenseCAP Console with Node-RED Quick Start</a>
         </ul>
         <ul>
-            <li><a href="https://wiki.seeedstudio.com/K1100_SenseCAP_to_Azure_IoT_Central/" target="_blank">Connect SenseCAP to Azure IoT Central via Node-RED</a></li>
+            <li><a href="https://github.com/Seeed-Studio/SenseCraft/tree/main/docs/03-SenseCAP/2-Connect%20SenseCAP%20to%20Azure%20IoT%20Central%20via%20Node-RED" target="_blank">Connect SenseCAP to Azure IoT Central via Node-RED</a></li>
         </ul>
         <ul>
-            <li><a href="https://wiki.seeedstudio.com/K1100_SenseCAP_to_influxdb/" target="_blank">Connect SenseCAP to InfluxDB via Node-RED</a></li>
+            <li><a href="https://github.com/Seeed-Studio/SenseCraft/tree/main/docs/03-SenseCAP/2-Connect%20SenseCAP%20to%20InfluxDB%20via%20Node-RED" target="_blank">Connect SenseCAP to InfluxDB via Node-RED</a></li>
         </ul>
     </div>
     <h3>
@@ -93,22 +93,22 @@ In the digital age where IoT and big data are becoming more prevalent, massive d
     </h3>
     <div class="item">
         <ul>
-            <li><a href="https://wiki.seeedstudio.com/K1100-Light-Sensor-Grove-LoRa-E5/" target="_blank">Wio Terminal Light Sensor</a></li>
+            <li><a href="https://github.com/Seeed-Studio/SenseCraft/tree/main/docs/04-Sensor-Helium-TTN-Arduino-Programme/Wio%20Terminal%20Light%20Sensor" target="_blank">Wio Terminal Light Sensor</a></li>
         </ul>
         <ul>
-            <li><a href="https://wiki.seeedstudio.com/K1100-IMU-Sensor-Grove-LoRa-E5/" target="_blank">Wio Terminal IMU Sensor</a></li>
+            <li><a href="https://github.com/Seeed-Studio/SenseCraft/tree/main/docs/04-Sensor-Helium-TTN-Arduino-Programme/Wio%20Terminal%20IMU%20Sensor" target="_blank">Wio Terminal IMU Sensor</a></li>
         </ul>
         <ul>
-            <li><a href="https://wiki.seeedstudio.com/K1100-Soil-Moisture-Sensor-Grove-LoRa-E5/" target="_blank">Grove Soil Moisture Sensor</a></li>
+            <li><a href="https://github.com/Seeed-Studio/SenseCraft/tree/main/docs/04-Sensor-Helium-TTN-Arduino-Programme/Grove%20Soil%20Moisture%20Sensor" target="_blank">Grove Soil Moisture Sensor</a></li>
         </ul>
         <ul>
-            <li><a href="https://wiki.seeedstudio.com/K1100-VOC-and-eCO2-Gas-Sensor-Grove-LoRa-E5/" target="_blank">Grove VOC and eCO2 Gas Sensor (SGP30)</a></li>
+            <li><a href="https://github.com/Seeed-Studio/SenseCraft/tree/main/docs/04-Sensor-Helium-TTN-Arduino-Programme/Grove%20VOC%20and%20eCO2%20Gas%20Sensor%20(SGP30)" target="_blank">Grove VOC and eCO2 Gas Sensor (SGP30)</a></li>
         </ul>
         <ul>
-            <li><a href="https://wiki.seeedstudio.com/K1100-Temp-Humi-Sensor-Grove-LoRa-E5/" target="_blank">Grove Temp&Humi Sensor (SHT40)</a></li>
+            <li><a href="https://github.com/Seeed-Studio/SenseCraft/tree/main/docs/04-Sensor-Helium-TTN-Arduino-Programme/Grove%20Temp%26Humi%20Sensor%20(SHT40)" target="_blank">Grove Temp&Humi Sensor (SHT40)</a></li>
         </ul>
         <ul>
-            <li><a href="https://wiki.seeedstudio.com/K1100-Vision-AI-Module-Grove-LoRa-E5/" target="_blank">Grove Vision AI Module</a></li>
+            <li><a href="https://github.com/Seeed-Studio/SenseCraft/tree/main/docs/04-Sensor-Helium-TTN-Arduino-Programme/Grove%20Vision%20AI%20Module" target="_blank">Grove Vision AI Module</a></li>
         </ul>
     </div>
     <h3>
@@ -116,13 +116,13 @@ In the digital age where IoT and big data are becoming more prevalent, massive d
     </h3>
     <div class="item">
         <ul>
-            <li><a href="https://wiki.seeedstudio.com/Helium-Introduction/" target="_blank">Helium Introduction</a></li>
+            <li><a href="https://github.com/Seeed-Studio/SenseCraft/tree/main/docs/05-Helium/0-Helium%20Introduction" target="_blank">Helium Introduction</a></li>
         </ul>
         <ul>
-            <li><a href="https://wiki.seeedstudio.com/Connecting-to-Helium/" target="_blank">Connect to Helium</a></li>
+            <li><a href="https://github.com/Seeed-Studio/SenseCraft/tree/main/docs/05-Helium/1-Connect%20to%20Helium" target="_blank">Connect to Helium</a></li>
         </ul>
         <ul>
-            <li><a href="https://wiki.seeedstudio.com/Integrate_into_Google_Sheets_via_Helium/" target="_blank">Integrate into Google Sheets via Helium</a></li>
+            <li><a href="https://github.com/Seeed-Studio/SenseCraft/tree/main/docs/05-Helium/2-Integrate%20into%20Google%20Sheets%20via%20Helium" target="_blank">Integrate into Google Sheets via Helium</a></li>
         </ul>
         <ul>
             <li><a href="https://wiki.seeedstudio.com/Connect_AWS_via_helium/" target="_blank">Connect AWS IOT Core via Helium (Helium)</a></li>
