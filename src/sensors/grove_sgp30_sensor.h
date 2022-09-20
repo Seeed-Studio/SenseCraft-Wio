@@ -33,7 +33,7 @@ class grove_sgp30_sensor : public sensor_base {
     bool        read(struct sensor_data *data);
 
   private:
-    const char *name = "CO2&VOC"; 
+    const char *name = "CO2_VOC"; 
     const char *data_unit = "ppm,ppb";
     int         sgp30_value[2];
 
