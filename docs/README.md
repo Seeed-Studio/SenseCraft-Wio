@@ -139,10 +139,10 @@ In the digital age where IoT and big data are becoming more prevalent, massive d
     </h3>
     <div class="item">
         <ul>
-            <li><a href="https://github.com/Seeed-Studio/SenseCraft/blob/main/docs/06-TTN/0-TTN%20Introduction.md" target="_blank">TTN Introduction</a></li>
+            <li><a href="https://github.com/Seeed-Studio/SenseCraft/tree/main/docs/06-TTN/0-TTN%20Introduction" target="_blank">TTN Introduction</a></li>
         </ul>
         <ul>
-            <li><a href="https://github.com/Seeed-Studio/SenseCraft/blob/main/docs/06-TTN/1-Connect%20to%20TTN.md" target="_blank">Connect to TTN</a></li>
+            <li><a href="https://github.com/Seeed-Studio/SenseCraft/tree/main/docs/06-TTN/1-Connect%20to%20TTN" target="_blank">Connect to TTN</a></li>
         </ul>
     </div>
 	<h3>
