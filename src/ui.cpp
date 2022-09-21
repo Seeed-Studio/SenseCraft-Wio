@@ -16,8 +16,6 @@ UI::UI(TFT_eSPI &lcd, TFT_eSprite &display, SysConfig &config, Message &m1)
 };
 
 void UI::init() {
-    // 显示2s的开机logo
-    Delay(Ticks::MsToTicks(2000));
     tft.fillScreen(TFT_BLACK);
 }
 

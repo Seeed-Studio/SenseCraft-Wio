@@ -17,7 +17,7 @@ using namespace cpp_freertos;
 
 #define SEMSOR_NUM_MAX 4      // Maximum number of sensors
 #define LINE_DATA_MAX_SIZE 30 // maximum size of data
-#define DRAW_LINE_MAX_NUM 3   // maximum num of draw line
+#define DRAW_LINE_MAX_NUM 1   // maximum num of draw line
 #define SHOW_LOG_MAX_SIZE 11  // maximum size of log
 
 enum page_state { NETWORKPAGE, PROCESSPAGE, SENSEPAGE };
