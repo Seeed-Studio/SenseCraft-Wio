@@ -200,16 +200,16 @@ In order to adapt the data type of SenseCraft and achieve a suitable data presen
 | CO2             | CO2_VOC0   | Telemetry         | None            |
 | VOC             | CO2_VOC1   | Telemetry         | None            |
 | Soil Moisture   | Soil       | Telemetry         | None            |
-| Vision AI 1     | Vision     | Telemetry         | None            |
+| Vision AI 1     | Vision0    | Telemetry         | None            |
 | Vision AI 2     | Vision1    | Telemetry         | None            |
-| Vision AI 3     | Vision3    | Telemetry         | None            |
-| Vision AI 4     | Vision4    | Telemetry         | None            |
-| Vision AI 5     | Vision5    | Telemetry         | None            |
-| Vision AI 6     | Vision6    | Telemetry         | None            |
-| Vision AI 7     | Vision7    | Telemetry         | None            |
-| Vision AI 8     | Vision8    | Telemetry         | None            |
-| Vision AI 9     | Vision9    | Telemetry         | None            |
-| Vision AI 10    | Vision10   | Telemetry         | None            |
+| Vision AI 3     | Vision2    | Telemetry         | None            |
+| Vision AI 4     | Vision3    | Telemetry         | None            |
+| Vision AI 5     | Vision4    | Telemetry         | None            |
+| Vision AI 6     | Vision5    | Telemetry         | None            |
+| Vision AI 7     | Vision6    | Telemetry         | None            |
+| Vision AI 8     | Vision7    | Telemetry         | None            |
+| Vision AI 9     | Vision8    | Telemetry         | None            |
+| Vision AI 10    | Vision9    | Telemetry         | None            |
 
 <div align=center><img width = 800 src="https://files.seeedstudio.com/wiki/K1100-quick-start/68.png"/></div>
 
