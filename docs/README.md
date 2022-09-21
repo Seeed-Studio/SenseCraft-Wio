@@ -62,6 +62,9 @@ In the digital age where IoT and big data are becoming more prevalent, massive d
             <li><a href="https://github.com/Seeed-Studio/SenseCraft/tree/main/docs/03-SenseCAP/2-Connect%20SenseCAP%20to%20Azure%20IoT%20Central%20via%20Node-RED" target="_blank">Connect SenseCAP to Azure IoT Central via Node-RED</a></li>
         </ul>
         <ul>
+            <li><a href="https://github.com/Seeed-Studio/SenseCraft/tree/main/docs/03-SenseCAP/2-Connect%20SenseCAP%20to%20Power%20BI%20via%20Node-RED" target="_blank">Connect SenseCAP to Power BI via Node-RED</a></li>
+        </ul>
+        <ul>
             <li><a href="https://github.com/Seeed-Studio/SenseCraft/tree/main/docs/03-SenseCAP/2-Connect%20SenseCAP%20to%20InfluxDB%20via%20Node-RED" target="_blank">Connect SenseCAP to InfluxDB via Node-RED</a></li>
         </ul>
     </div>
