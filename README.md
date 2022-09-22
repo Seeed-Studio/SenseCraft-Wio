@@ -37,7 +37,13 @@ To get a sneak peak about how to use this at the current state, please follow [t
 
 ## Functions list
 
-<table>
+<table style="undefined;table-layout: fixed; width: 1646px">
+<colgroup>
+<col style="width: 29px">
+<col style="width: 399px">
+<col style="width: 719px">
+<col style="width: 499px">
+</colgroup>
 <thead>
   <tr>
     <th>No</th>
@@ -51,7 +57,7 @@ To get a sneak peak about how to use this at the current state, please follow [t
     <td>1</td>
     <td>Basic interaction logic of the user interface</td>
     <td>Switch between the homepage of Sense, Process, and Uplink (Network) by pressing the top 3 buttons. Press LEFT and RIGHT to select different options, press UP to return, and press ENTER to confirm. DOWN key is undefined</td>
-    <td rowspan="8">Implemented<br></td>
+    <td rowspan="13">Implemented<br></td>
   </tr>
   <tr>
     <td>2</td>
@@ -90,14 +96,13 @@ To get a sneak peak about how to use this at the current state, please follow [t
   </tr>
   <tr>
     <td>9</td>
-    <td>Add WiFi connection to Azure IoT platform function</td>
-    <td>Users can connect to the Azure IoT Central platform via WiFi and display data</td>
-    <td rowspan="6">Under development, to be released with v0.3</td>
+    <td>Connect to Azure IoT Central via WiFi</td>
+    <td>Users can connect to the Azure IoT Central platform via WiFi and display data. Learn more <a href="https://wiki.seeedstudio.com/Connect-Wio-Terminal-to-Azure-IoT-Central" target="_blank" rel="noopener noreferrer">here</a>.</td>
   </tr>
   <tr>
     <td>10</td>
     <td>Live Sensor Line Chart</td>
-    <td>Display line charts in real-time by switching different sensors left and right</td>
+    <td>Display line charts in real-time by switching different sensors left and right. For sensors with multiple data, one line is currently shown.</td>
   </tr>
   <tr>
     <td>11</td>
@@ -106,18 +111,19 @@ To get a sneak peak about how to use this at the current state, please follow [t
   </tr>
   <tr>
     <td>12</td>
-    <td>Disconnect secondary confirmation interface</td>
-    <td>On the information display page after successfully connecting to LoRa or WiFi, a discontent button is provided. After clicking, a pop-up window appears to confirm whether it is disconnected or not.</td>
+    <td>Display the current firmware version</td>
+    <td>When Wio Terminal is turned on, the current firmware version is displayed</td>
   </tr>
   <tr>
     <td>13</td>
-    <td>Add system information function to display the current firmware version and system running time</td>
-    <td>Add a system tab to the Process page and click to see the system information</td>
+    <td>Automatically rotate the screen</td>
+    <td>When Wio Terminal is held upside down, it will automatically rotate the screen orientation display. (only consider up and down, not left and right)</td>
   </tr>
   <tr>
     <td>14</td>
-    <td>Automatically rotate the screen</td>
-    <td>When Wio Terminal is held upside down, after more than 5 seconds, it will automatically rotate the screen orientation display. (only consider up and down, not left and right)</td>
+    <td>Disconnect secondary confirmation interface</td>
+    <td>On the information display page after successfully connecting to LoRa or WiFi, a discontent button is provided. After clicking, a pop-up window appears to confirm whether it is disconnected or not.</td>
+    <td>Under development, to be released with v0.4</td>
   </tr>
   <tr>
     <td>15</td>
