@@ -150,7 +150,7 @@ Before moving further, please check [this wiki](https://wiki.seeedstudio.com/K11
 
 ## Would you like to contribute to this project? 
 
-You are all invited to experience this beta version toolkit by downloading the Release v0.1. Feel free to propose any other functions that you’d love to have by raising an Issue. Hunting the bugs by raising issues is much appreciated. A big shout-out in advance to those who will contribute to the project.
+You are all invited to experience this beta version toolkit by downloading the Release v0.3. Feel free to propose any other functions that you’d love to have by raising an Issue. Hunting the bugs by raising issues is much appreciated. A big shout-out in advance to those who will contribute to the project.
 
 ## Development Steps
 
