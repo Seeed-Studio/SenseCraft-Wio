@@ -11,13 +11,11 @@ void UI::uint8_to_float(uint8_t *data, float *destination) {
 }
 
 UI::UI(TFT_eSPI &lcd, TFT_eSprite &display, SysConfig &config, Message &m1)
-    : Thread("UIThread", 2048, 2), tft(lcd), spr(display), cfg(config), btnMail(m1) {
+    : Thread("UIThread", 128 * 24, 2), tft(lcd), spr(display), cfg(config), btnMail(m1) {
     Start();
 };
 
 void UI::init() {
-    // 显示2s的开机logo
-    Delay(Ticks::MsToTicks(2000));
     tft.fillScreen(TFT_BLACK);
 }
 
@@ -34,6 +32,15 @@ void UI::Run() {
 
     while (true) {
         nums = btnMail.Receive(&buff, 256, 0);
+        // Whether to rotate the screen
+        if (rotate_status != rotate_flag) {
+            rotate_status = rotate_flag;
+            tft.fillScreen(TFT_BLACK);
+            if (rotate_flag == true)
+                tft.setRotation(1);
+            else
+                tft.setRotation(3);
+        }
         if (nums > 0) {
             LOGSS.printf("btn Receive: %d ", nums);
             LOGSS.println(buff[0]);
@@ -67,8 +74,20 @@ void UI::UIPushData(std::vector<sensor_data *> d) {
     if (s_data_ready) {
         s_data.clear();
         s_data.shrink_to_fit();
-        for (auto data : d)
+        for (auto data : d) {
             s_data.push_back(*data);
+            // Whether to rotate the screen
+            if (data->name == "IMU") {
+                if (((int32_t *)data->data)[0] > 50)
+                    if (rotate_flag == true) {
+                        rotate_flag = false;
+                    }
+                if (((int32_t *)data->data)[0] < -50)
+                    if (rotate_flag == false) {
+                        rotate_flag = true;
+                    }
+            }
+        }
     }
 }
 
@@ -151,7 +170,7 @@ void UI::Status1Display(uint8_t status) {
         spr.setTextColor(TFT_GREEN, TFT_BLACK); // Networking status indication：ON
         spr.drawString("WiFi", 60, 0, 2);       // Show the network you are in
     } else if (cfg.lora_status == LORA_JOIN_SUCCESS || cfg.lora_status == LORA_SEND_SUCCESS ||
-        cfg.lora_status == LORA_SEND_FAILED) {
+               cfg.lora_status == LORA_SEND_FAILED) {
         spr.setTextColor(TFT_GREEN, TFT_BLACK); // Networking status indication：ON
         spr.drawString("LoRa", 60, 0, 2);       // Show the network you are in
     } else {
@@ -203,6 +222,12 @@ void UI::Status2Display(uint8_t status) {
         spr.setTextColor(TFT_YELLOW);
         spr.drawString("Please insert TF card", 22, 0, 2);
         spr.pushSprite(148, 215);
+        break;
+    case 5:
+        spr.setFreeFont(FSS9);
+        spr.setTextColor(TFT_YELLOW);
+        spr.drawString("No data needs to be stored", 22, 0, 2);
+        spr.pushSprite(124, 215);
         break;
 
     default:
@@ -583,8 +608,8 @@ bool UI::Network_3_0(uint8_t select) {
     TitleDisplay(2);
     // NetworkSubtitles(n_state.current_network);
     if (!cfg.lora_on) {
-        cfg.lora_frequency  = lora_band_info[select].band;
-        cfg.wifi_on         = false;
+        cfg.lora_frequency = lora_band_info[select].band;
+        cfg.wifi_on        = false;
         spr.createSprite(300, 80);
         spr.setTextColor(TFT_WHITE);
         spr.drawString("Please download and register an account", 0, 6, 2);
@@ -847,7 +872,8 @@ bool UI::Process_2(uint8_t select) {
         spr.createSprite(320, 130);
         spr.setFreeFont(FSS9);
         for (auto data : a_log) {
-            sprintf(buf, "[%02d:%02d:%02d]:", data.time / 1000 / 60 / 60 , data.time / 1000 / 60 % 60, data.time / 1000 % 60);
+            sprintf(buf, "[%02d:%02d:%02d]:", data.time / 1000 / 60 / 60,
+                    data.time / 1000 / 60 % 60, data.time / 1000 % 60);
             spr.setTextColor(TFT_GREEN);
             spr.drawString(buf, 4, i * 11, 2);
             spr.setTextColor(TFT_WHITE);
@@ -911,12 +937,16 @@ void UI::SensePageManager(uint8_t key) {
         if (s_state.s_select < 0) {
             s_state.s_select = 0;
         }
+        if (s_state.current_page == 1)
+            tft.fillScreen(TFT_BLACK);
         break;
     case RIGHT_PRESSED:
         s_state.s_select++;
-        if (s_state.s_select > 3) {
-            s_state.s_select = 3;
+        if (s_state.s_select > SEMSOR_NUM_MAX - 1) {
+            s_state.s_select = SEMSOR_NUM_MAX - 1;
         }
+        if (s_state.current_page == 1)
+            tft.fillScreen(TFT_BLACK);
         break;
     case UP_PRESSED:
         s_state.current_page--;
@@ -929,6 +959,12 @@ void UI::SensePageManager(uint8_t key) {
         if (s_state.is_next) {
             s_state.current_page++;
             if (s_state.current_page > countof(sense) - 1) {
+                // save sensor data to SD card
+                if (cfg.sensor_save_flag & 1 << s_data[s_state.s_select].id) {
+                    cfg.sensor_save_flag &= ~(1 << s_data[s_state.s_select].id);
+                } else {
+                    cfg.sensor_save_flag |= 1 << s_data[s_state.s_select].id;
+                }
                 s_state.current_page = countof(sense) - 1;
             }
         }
@@ -949,6 +985,19 @@ void UI::SensorSubTitle(String value) {
     } else {
         spr.drawString(value, 6 * (7 - value.length()), 0, GFXFF);
     }
+}
+
+void UI::SensorSubTitle2(String value) {
+    spr.createSprite(300, 25);
+    spr.setFreeFont(FSSB9);
+    spr.setTextColor(TFT_WHITE, tft.color565(100, 100, 100));
+    if (value.length() > 6) {
+        spr.drawString(value, 2 * (13 - value.length()), 0, FONT2);
+    } else {
+        spr.drawString(value, 6 * (7 - value.length()), 0, GFXFF);
+    }
+    spr.pushSprite(120, 50);
+    spr.deleteSprite();
 }
 
 void UI::SensorUnit(String value) {
@@ -1089,16 +1138,19 @@ bool UI::Sensor_1(uint8_t select) {
     SensorPageState(s_data.size() / 3 + 1, select / 3);
     s_data_ready = true;
     Status1Display(0);
-    // 暂时不支持折线图
-    return false;
+    return ret;
 }
 
 bool UI::Sensor_2(uint8_t select) {
-    uint16_t line_col[] = {TFT_GREEN, TFT_RED, TFT_BLUE, TFT_YELLOW};
-    uint8_t  data_num   = 0;
+    static uint8_t select_old = 0;
+    uint16_t       line_col[] = {TFT_GREEN, TFT_RED, TFT_BLUE, TFT_YELLOW};
+    uint8_t        data_num   = 0;
+
+    if (select > s_data.size() - 1)
+        select = s_data.size() - 1;
     TitleDisplay(0);
     // Display the sensor name
-    SensorSubTitle(s_data[select].name);
+    SensorSubTitle2(s_data[select].name);
 
     tft.fillRect(18, 78, 24, 90, TFT_WHITE);
 
@@ -1107,7 +1159,13 @@ bool UI::Sensor_2(uint8_t select) {
     data_num     = s_data[select].size / 4;
     if (data_num > DRAW_LINE_MAX_NUM)
         data_num = DRAW_LINE_MAX_NUM;
+
     for (int i = 0; i < data_num; i++) {
+        // clear the old line
+        if (select_old != select) {
+            std::queue<double> empty;
+            swap(empty, line_chart_data[i]);
+        }
         if (line_chart_data[i].size() > LINE_DATA_MAX_SIZE) // keep the old line chart front
         {
             line_chart_data[i].pop(); // this is used to remove the first read variable
@@ -1126,7 +1184,55 @@ bool UI::Sensor_2(uint8_t select) {
             .backgroud(tft.color565(0, 0, 0))
             .draw(&tft);
     }
+    select_old = select;
     SensorPageState(s_data.size() / 3 + 1, select / 3);
+    Status1Display(0);
+    return true;
+}
+void UI::SensorSwitchButton(uint8_t button) {
+    spr.createSprite(320, 100);
+    spr.setTextColor(TFT_WHITE);
+    spr.drawString("Save to TF card ", 32, 48, FONT4);
+    unsigned int gg_switch_state_color[4] = {tft.color565(211, 211, 211), TFT_BLUE,
+                                             tft.color565(201, 201, 201),
+                                             tft.color565(65, 105, 235)};
+    if (button == 1) {
+        spr.fillCircle(240 + 22, 56, 14, gg_switch_state_color[button]);
+        spr.fillCircle(240, 56, 14 / 2, gg_switch_state_color[button + 2]);
+        spr.fillRect(240, 56 - 14 / 2, 22, 14 + 1, gg_switch_state_color[button + 2]);
+    } else {
+        spr.fillCircle(240, 56, 14, gg_switch_state_color[button]);
+        spr.fillCircle(240 + 22, 56, 14 / 2, gg_switch_state_color[button + 2]);
+        spr.fillRect(240, 56 - 14 / 2, 22, 14 + 1, gg_switch_state_color[button + 2]);
+    }
+    spr.pushSprite(0, 75);
+    spr.deleteSprite();
+}
+
+bool UI::Sensor_3(uint8_t select) {
+    if (select > s_data.size() - 1) 
+        select = s_data.size() - 1;
+    TitleDisplay(0);
+    // Display the sensor name
+    SensorSubTitle2(s_data[select].name);
+    if (cfg.sensor_save_flag == 0) {
+        Status2Display(0x5);
+        SensorSwitchButton(0);
+    } else {
+        if (cfg.sd_status == 1) {
+            if (cfg.sensor_save_flag & 1 << s_data[select].id) {
+                SensorSwitchButton(1);
+            } else
+                SensorSwitchButton(0);
+            Status2Display(0x3);
+        } else if (cfg.sd_status == 2) {
+            Status2Display(0x1);
+            SensorSwitchButton(0);
+        } else {
+            Status2Display(0x4);
+            SensorSwitchButton(0);
+        }
+    }
     Status1Display(0);
     return true;
 }

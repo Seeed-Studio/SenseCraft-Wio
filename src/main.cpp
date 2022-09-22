@@ -24,10 +24,13 @@ void display_init() // Display initialization, black background rotation
     tft.begin();
     tft.setRotation(3);
     tft.fillScreen(TFT_BLACK);
-    spr.createSprite(320, 25);
-    spr.setFreeFont(FSS9);
+    spr.createSprite(320, 120);
+    spr.setTextColor(TFT_WHITE);
+    spr.setFreeFont(FSSB9);
     // code to view the tutorial
     spr.drawString("SenseCAP K1100", 90, 0, GFXFF);
+    spr.setFreeFont(FSS9);
+    spr.drawString(VERSION, 150, 40, FONT2);
     spr.pushSprite(0, 110);
     spr.deleteSprite();
 }
@@ -36,6 +39,7 @@ void setup() {
 
     SysConfig *cfg = new SysConfig();
     cfg->init();
+
 #ifdef CM_DEBUG
     cm_backtrace_init("Seeed K1100 dev kit", HARDWARE_VERSION, SOFTWARE_VERSION);
 #endif
@@ -62,5 +66,5 @@ int freeMemory() {
 
 void loop() {
     // LOGSS.printf("Main Stacks Free Bytes Remaining %d\r\n", uxTaskGetStackHighWaterMark(NULL));
-    delay(10000);
+    vTaskDelete(NULL);
 }
