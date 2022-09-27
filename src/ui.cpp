@@ -1002,7 +1002,7 @@ bool UI::Process_2(uint8_t select) {
 }
 
 void UI::SensePageManager(uint8_t key) {
-
+    uint8_t Sensor_num;
     switch (key) {
     case LEFT_PRESSED:
         s_state.s_select--;
@@ -1014,8 +1014,11 @@ void UI::SensePageManager(uint8_t key) {
         break;
     case RIGHT_PRESSED:
         s_state.s_select++;
-        if (s_state.s_select > SEMSOR_NUM_MAX - 1) {
-            s_state.s_select = SEMSOR_NUM_MAX - 1;
+        Sensor_num = s_data.size() - 1;
+        if(s_data.size() < SEMSOR_NUM_MAX)
+            Sensor_num = SEMSOR_NUM_MAX - 1;
+        if (s_state.s_select > Sensor_num) {
+            s_state.s_select = Sensor_num;
         }
         if (s_state.current_page == 1)
             tft.fillScreen(TFT_BLACK);
