@@ -355,29 +355,29 @@ void LoRaThread::Run() {
             if (!SendBuildinSensorData()) {
                 lora_data_ready = true;
                 // try to send the buildin sensor data 5 minutes  after the last failure
-                // Delay(Ticks::SecondsToTicks(60 * 5));
-                Delay(Ticks::SecondsToTicks(30));
+                Delay(Ticks::SecondsToTicks(60 * 5));
+                // Delay(Ticks::SecondsToTicks(30));
                 continue;
             }
             if (!SendGroveSensorData()) {
                 lora_data_ready = true;
                 // try to send the grove sensor data 5 minutes  after the last failure
-                // Delay(Ticks::SecondsToTicks(60 * 5));
-                Delay(Ticks::SecondsToTicks(30));
+                Delay(Ticks::SecondsToTicks(60 * 5));
+                // Delay(Ticks::SecondsToTicks(30));
                 continue;
             }
             if (!SendAiVisionData()) {
                 lora_data_ready = true;
                 // try to send the Ai Vision data 5 minutes  after the last failure
-                // Delay(Ticks::SecondsToTicks(60 * 5));
-                Delay(Ticks::SecondsToTicks(30));
+                Delay(Ticks::SecondsToTicks(60 * 5));
+                // Delay(Ticks::SecondsToTicks(30));
                 continue;
             }
             // clear all data in the lora_data queue
 
             lora_data_ready = true;
-            // Delay(Ticks::SecondsToTicks(60 * 5));
-            Delay(Ticks::SecondsToTicks(30));
+            Delay(Ticks::SecondsToTicks(60 * 5));
+            // Delay(Ticks::SecondsToTicks(30));
         } else {
             cfg.lora_status     = LORA_INIT_START;
             cfg.lora_fcnt       = 0;
