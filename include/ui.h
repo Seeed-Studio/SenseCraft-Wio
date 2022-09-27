@@ -110,9 +110,12 @@ class UI : public Thread {
     bool                Network_3_0(uint8_t select); // lora
     bool                Network_3_1(uint8_t select); // wifi
     bool                Network_4_0(uint8_t select); // lora
+    bool                Network_4_1(uint8_t select); // wifi
     bool                Network_5_0(uint8_t select); // lora
+    bool                Network_6_0(uint8_t select); // lora
     bool                NetworkSubtitles(uint8_t keys);
     void                NetworkSignal(int16_t signal);
+    void                DisconnectDisplay();
     void NetworkLoRaBandSelect(uint8_t location, struct LoRaBandInfo lbi, uint8_t select);
 
     struct State p_state = {0, true, 0};
@@ -135,9 +138,9 @@ class UI : public Thread {
 
     typedef bool (UI::*page_t)(uint8_t key);
 
-    page_t l_network[5] = {&UI::Network_1, &UI::Network_2_0, &UI::Network_3_0, &UI::Network_4_0,
-                           &UI::Network_5_0};
-    page_t w_network[3] = {&UI::Network_1, &UI::Network_2_1, &UI::Network_3_1};
+    page_t l_network[6] = {&UI::Network_1, &UI::Network_2_0, &UI::Network_3_0, &UI::Network_4_0,
+                           &UI::Network_5_0, &UI::Network_6_0};
+    page_t w_network[4] = {&UI::Network_1, &UI::Network_2_1, &UI::Network_3_1, &UI::Network_4_1};
 
     page_t process[2] = {&UI::Process_1, &UI::Process_2};
     page_t sense[3]   = {&UI::Sensor_1, &UI::Sensor_2, &UI::Sensor_3};

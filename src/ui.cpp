@@ -315,13 +315,18 @@ bool UI::NetworkPageManager(uint8_t keys) {
             if (n_state.nl_state.s_select < 0) {
                 n_state.nl_state.s_select = 0;
             }
+            if (n_state.nl_state.current_page < countof(l_network) - 2) {
+                tft.fillScreen(TFT_BLACK);
+            }
         } else { // WiFi
             n_state.nw_state.s_select--;
             if (n_state.nw_state.s_select < 0) {
                 n_state.nw_state.s_select = 0;
             }
+            if (n_state.nw_state.current_page != countof(w_network) - 2) {
+                tft.fillScreen(TFT_BLACK);
+            }
         }
-        tft.fillScreen(TFT_BLACK);
         break;
     case RIGHT_PRESSED:
         if (n_state.nl_state.current_page == FIRST_PAGE &&
@@ -335,13 +340,18 @@ bool UI::NetworkPageManager(uint8_t keys) {
                 sizeof(lora_band_info) / sizeof(lora_band_info[0]) - 1) {
                 n_state.nl_state.s_select = sizeof(lora_band_info) / sizeof(lora_band_info[0]) - 1;
             }
+            if (n_state.nl_state.current_page < countof(l_network) - 2) {
+                tft.fillScreen(TFT_BLACK);
+            }
         } else { // WiFi
             n_state.nw_state.s_select++;
             if (n_state.nw_state.s_select > 1) {
                 n_state.nw_state.s_select = 1;
             }
+            if (n_state.nw_state.current_page != countof(w_network) - 2) {
+                tft.fillScreen(TFT_BLACK);
+            }
         }
-        tft.fillScreen(TFT_BLACK);
         break;
     case UP_PRESSED:
         if (n_state.current_network == LORA_PAGE) {
@@ -364,6 +374,9 @@ bool UI::NetworkPageManager(uint8_t keys) {
                 if (n_state.nl_state.current_page > countof(l_network) - 1) {
                     n_state.nl_state.current_page = countof(l_network) - 1;
                 }
+                if (n_state.nl_state.current_page != countof(l_network) - 2) {
+                    tft.fillScreen(TFT_BLACK);
+                }
             }
         } else { // WiFi
             if (n_state.nw_state.is_next) {
@@ -371,9 +384,11 @@ bool UI::NetworkPageManager(uint8_t keys) {
                 if (n_state.nw_state.current_page > countof(w_network) - 1) {
                     n_state.nw_state.current_page = countof(w_network) - 1;
                 }
+                if (n_state.nw_state.current_page != countof(w_network) - 2) {
+                    tft.fillScreen(TFT_BLACK);
+                }
             }
         }
-        tft.fillScreen(TFT_BLACK);
         break;
     }
 
@@ -560,6 +575,16 @@ void UI::NetworkSignal(int16_t signal) {
     }
 }
 
+void UI::DisconnectDisplay() {
+    spr.createSprite(80, 18);
+    spr.fillRect(0, 0, 80, 18, TFT_RED);
+    spr.setFreeFont(FSS9);
+    spr.setTextColor(TFT_WHITE);
+    spr.drawString("Disconnect", 8, 2, 2);
+    spr.pushSprite(120, 192);
+    spr.deleteSprite();
+}
+
 bool UI::Network_2_1(uint8_t select) {
     TitleDisplay(2);
     NetworkSubtitles(n_state.current_network);
@@ -582,12 +607,12 @@ bool UI::Network_2_1(uint8_t select) {
         spr.pushSprite(20, 80);
         spr.deleteSprite();
 
-        spr.createSprite(188, 95);
+        spr.createSprite(188, 40);
         spr.setFreeFont(FSS9);
         spr.setTextColor(TFT_WHITE);
-        spr.drawString("Signal:", 6, 30, 2);
+        spr.drawString("Signal:", 6, 24, 2);
         NetworkSignal(cfg.wifi_rssi);
-        spr.pushSprite(20, 150);
+        spr.pushSprite(20, 146);
         spr.deleteSprite();
 
     } else {
@@ -600,6 +625,7 @@ bool UI::Network_2_1(uint8_t select) {
         spr.deleteSprite();
     }
 
+    DisconnectDisplay();
     Status1Display(0);
     return true;
 }
@@ -627,11 +653,33 @@ bool UI::Network_3_0(uint8_t select) {
 }
 
 bool UI::Network_3_1(uint8_t select) {
-    TitleDisplay(2);
-    // NetworkSubtitles(n_state.current_network);
-    NetworkSubtitles(n_state.current_network);
-    cfg.wifi_on = false;
-    n_state.nw_state.current_page -= 2;
+    spr.createSprite(160, 80);
+    spr.fillRect(0, 0, 160, 80, TFT_WHITE);
+    spr.setFreeFont(FSS9);
+    spr.setTextColor(TFT_BLACK);
+    spr.drawString("Disconnected?", 26, 10, GFXFF);
+    if (select == 0) {
+        spr.fillRect(24, 42, 40, 24, TFT_GREEN);
+    } else {
+        spr.fillRect(94, 42, 40, 24, TFT_GREEN);
+    }
+
+    spr.fillRect(26, 44, 36, 20, TFT_RED);
+    spr.drawString("Yes", 30, 46, 2);
+
+    spr.fillRect(96, 44, 36, 20, TFT_BLUE);
+    spr.drawString("No", 106, 46, 2);
+
+    spr.pushSprite(80, 80);
+    spr.deleteSprite();
+    return true;
+}
+bool UI::Network_4_1(uint8_t select) {
+    if (select == 0) {
+        cfg.wifi_on = false;
+        n_state.nw_state.current_page -= 3;
+    } else
+        n_state.nw_state.current_page -= 2;
 }
 
 bool UI::Network_4_0(uint8_t select) {
@@ -655,7 +703,7 @@ bool UI::Network_4_0(uint8_t select) {
                    2); // Shows the number of successful deliveries
 
     NetworkSignal(cfg.lora_rssi);
-    spr.pushSprite(20, 100);
+    spr.pushSprite(20, 96);
     spr.deleteSprite();
 
     spr.createSprite(90, 75);
@@ -711,19 +759,43 @@ bool UI::Network_4_0(uint8_t select) {
     default:
         break;
     }
-    spr.pushSprite(208, 100);
+    spr.pushSprite(208, 96);
     spr.deleteSprite();
 
+    DisconnectDisplay();
     Status1Display(0);
     return true;
 }
 
 bool UI::Network_5_0(uint8_t select) {
-    TitleDisplay(2);
-    // NetworkSubtitles(n_state.current_network);
-    NetworkSubtitles(n_state.current_network);
-    cfg.lora_on = false;
-    n_state.nl_state.current_page -= 3;
+    spr.createSprite(160, 80);
+    spr.fillRect(0, 0, 160, 80, TFT_WHITE);
+    spr.setFreeFont(FSS9);
+    spr.setTextColor(TFT_BLACK);
+    spr.drawString("Disconnected?", 26, 10, GFXFF);
+    if (select == 0) {
+        spr.fillRect(24, 42, 40, 24, TFT_GREEN);
+    } else {
+        spr.fillRect(94, 42, 40, 24, TFT_GREEN);
+    }
+
+    spr.fillRect(26, 44, 36, 20, TFT_RED);
+    spr.drawString("Yes", 30, 46, 2);
+
+    spr.fillRect(96, 44, 36, 20, TFT_BLUE);
+    spr.drawString("No", 106, 46, 2);
+
+    spr.pushSprite(80, 80);
+    spr.deleteSprite();
+    return true;
+}
+
+bool UI::Network_6_0(uint8_t select) {
+    if (select == 0) {
+        cfg.lora_on = false;
+        n_state.nl_state.current_page -= 5;
+    } else
+        n_state.nl_state.current_page -= 2;
 }
 
 void UI::ProcessPageManager(uint8_t key) {
@@ -1210,7 +1282,7 @@ void UI::SensorSwitchButton(uint8_t button) {
 }
 
 bool UI::Sensor_3(uint8_t select) {
-    if (select > s_data.size() - 1) 
+    if (select > s_data.size() - 1)
         select = s_data.size() - 1;
     TitleDisplay(0);
     // Display the sensor name

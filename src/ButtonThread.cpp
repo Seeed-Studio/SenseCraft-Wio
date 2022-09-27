@@ -15,7 +15,7 @@ void ButtonThread::Run() {
 
         for (uint8_t i = 0; i < 8; i++) {
             if (digitalRead(btn[i]) == LOW) {
-                Delay(Ticks::MsToTicks(50));
+                Delay(Ticks::MsToTicks(100));
                 if (digitalRead(btn[i]) == LOW) {
                     // avoid send 0 to Message
                     Message[0] = i + 1;
