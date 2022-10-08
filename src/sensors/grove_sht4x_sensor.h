@@ -34,7 +34,7 @@ public:
 	const char *get_name();
 	bool read(struct sensor_data *data);
 private:
-	const char *name = "Temp_Humi";
+	const char *name = "T_H";
 	const char *data_unit = "C,%RH";
 	int sht4x_value[2];
 

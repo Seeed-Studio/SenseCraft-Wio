@@ -547,31 +547,34 @@ bool UI::Network_2_0(uint8_t select) {
 }
 
 void UI::NetworkSignal(int16_t signal) {
+    spr.setFreeFont(FSS9);
+    spr.setTextColor(TFT_WHITE);
+    spr.drawString("Signal:", 5, 12, 2);
     if (signal > -70 && signal < 0) {
-        spr.fillRect(53, 110 - 75, 3, 11, tft.color565(0, 139, 0)); // Four-frame signal
-        spr.fillRect(59, 107 - 75, 3, 14, tft.color565(0, 139, 0));
-        spr.fillRect(65, 104 - 75, 3, 17, tft.color565(0, 139, 0));
-        spr.fillRect(71, 101 - 75, 3, 20, tft.color565(0, 139, 0));
+        spr.fillRect(53, 15, 3, 11, tft.color565(0, 139, 0)); // Four-frame signal
+        spr.fillRect(59, 12, 3, 14, tft.color565(0, 139, 0));
+        spr.fillRect(65, 9, 3, 17, tft.color565(0, 139, 0));
+        spr.fillRect(71, 6, 3, 20, tft.color565(0, 139, 0));
     } else if (signal > -90 && signal < -70) {
-        spr.fillRect(53, 110 - 75, 3, 11, tft.color565(0, 139, 0)); // Three-frame signal
-        spr.fillRect(59, 107 - 75, 3, 14, tft.color565(0, 139, 0));
-        spr.fillRect(65, 104 - 75, 3, 17, tft.color565(0, 139, 0));
-        spr.fillRect(71, 101 - 75, 3, 20, tft.color565(100, 100, 100));
+        spr.fillRect(53, 15, 3, 11, tft.color565(0, 139, 0)); // Three-frame signal
+        spr.fillRect(59, 12, 3, 14, tft.color565(0, 139, 0));
+        spr.fillRect(65, 9, 3, 17, tft.color565(0, 139, 0));
+        spr.fillRect(71, 6, 3, 20, tft.color565(100, 100, 100));
     } else if (signal > -110 && signal < -90) {
-        spr.fillRect(53, 110 - 75, 3, 11, tft.color565(0, 139, 0)); // Two-frame signal
-        spr.fillRect(59, 107 - 75, 3, 14, tft.color565(0, 139, 0));
-        spr.fillRect(65, 104 - 75, 3, 17, tft.color565(100, 100, 100));
-        spr.fillRect(71, 101 - 75, 3, 20, tft.color565(100, 100, 100));
+        spr.fillRect(53, 15, 3, 11, tft.color565(0, 139, 0)); // Two-frame signal
+        spr.fillRect(59, 12, 3, 14, tft.color565(0, 139, 0));
+        spr.fillRect(65, 9, 3, 17, tft.color565(100, 100, 100));
+        spr.fillRect(71, 6, 3, 20, tft.color565(100, 100, 100));
     } else if (signal > -130 && signal < -110) {
-        spr.fillRect(53, 110 - 75, 3, 11, tft.color565(0, 139, 0)); // One frame signal
-        spr.fillRect(59, 107 - 75, 3, 14, tft.color565(100, 100, 100));
-        spr.fillRect(65, 104 - 75, 3, 17, tft.color565(100, 100, 100));
-        spr.fillRect(71, 101 - 75, 3, 20, tft.color565(100, 100, 100));
+        spr.fillRect(53, 15, 3, 11, tft.color565(0, 139, 0)); // One frame signal
+        spr.fillRect(59, 12, 3, 14, tft.color565(100, 100, 100));
+        spr.fillRect(65, 9, 3, 17, tft.color565(100, 100, 100));
+        spr.fillRect(71, 6, 3, 20, tft.color565(100, 100, 100));
     } else {
-        spr.fillRect(53, 110 - 75, 3, 11, tft.color565(140, 42, 42)); // No signal
-        spr.fillRect(59, 107 - 75, 3, 14, tft.color565(140, 42, 42));
-        spr.fillRect(65, 104 - 75, 3, 17, tft.color565(140, 42, 42));
-        spr.fillRect(71, 101 - 75, 3, 20, tft.color565(140, 42, 42));
+        spr.fillRect(53, 15, 3, 11, tft.color565(140, 42, 42)); // No signal
+        spr.fillRect(59, 12, 3, 14, tft.color565(140, 42, 42));
+        spr.fillRect(65, 9, 3, 17, tft.color565(140, 42, 42));
+        spr.fillRect(71, 6, 3, 20, tft.color565(140, 42, 42));
     }
 }
 
@@ -580,7 +583,7 @@ void UI::DisconnectDisplay() {
     spr.fillRect(0, 0, 80, 18, TFT_RED);
     spr.setFreeFont(FSS9);
     spr.setTextColor(TFT_WHITE);
-    spr.drawString("Disconnect", 8, 2, 2);
+    spr.drawString("Disconnect", 8, 1, 2);
     spr.pushSprite(120, 192);
     spr.deleteSprite();
 }
@@ -607,10 +610,7 @@ bool UI::Network_2_1(uint8_t select) {
         spr.pushSprite(20, 80);
         spr.deleteSprite();
 
-        spr.createSprite(188, 40);
-        spr.setFreeFont(FSS9);
-        spr.setTextColor(TFT_WHITE);
-        spr.drawString("Signal:", 6, 24, 2);
+        spr.createSprite(188, 36);
         NetworkSignal(cfg.wifi_rssi);
         spr.pushSprite(20, 146);
         spr.deleteSprite();
@@ -643,7 +643,15 @@ bool UI::Network_3_0(uint8_t select) {
         spr.drawString("QR code on the back of Grove-Wio E5", 0, 34, 2);
         spr.drawString("(which is included in the kit) to bind", 0, 48, 2);
         spr.drawString("your device to the cloud.", 0, 62, 2);
-        spr.pushSprite(25, 90);
+        spr.pushSprite(25, 80);
+        spr.deleteSprite();
+
+        spr.createSprite(80, 20);
+        spr.fillRect(0, 0, 80, 20, 0x03ff);
+        spr.setFreeFont(FSS9);
+        spr.setTextColor(TFT_WHITE);
+        spr.drawString("Continue", 12, 2, 2);
+        spr.pushSprite(120, 180);
         spr.deleteSprite();
         Status1Display(0);
     } else {
@@ -667,7 +675,7 @@ bool UI::Network_3_1(uint8_t select) {
     spr.fillRect(26, 44, 36, 20, TFT_RED);
     spr.drawString("Yes", 30, 46, 2);
 
-    spr.fillRect(96, 44, 36, 20, TFT_BLUE);
+    spr.fillRect(96, 44, 36, 20, 0x02ff);
     spr.drawString("No", 106, 46, 2);
 
     spr.pushSprite(80, 80);
@@ -686,24 +694,27 @@ bool UI::Network_4_0(uint8_t select) {
     TitleDisplay(2);
     NetworkSubtitles(n_state.current_network);
     cfg.lora_on = true;
-    spr.createSprite(188, 95);
+    spr.createSprite(188, 64);
     spr.setTextColor(TFT_WHITE);
-    spr.drawString("Connected: LoRa  ", 5, 3.8 * FONT_ROW_HEIGHT - 80, 2);
-    spr.drawString("Signal:", 5, 4.8 * FONT_ROW_HEIGHT - 75, 2);
-    spr.drawString("Total Send:", 5, 5.8 * FONT_ROW_HEIGHT - 75, 2);
-    spr.drawString("packets", 115, 5.8 * FONT_ROW_HEIGHT - 75, 2);
-    spr.drawString("Succeed:", 5, 6.8 * FONT_ROW_HEIGHT - 75, 2);
-    spr.drawString("packets", 105, 6.8 * FONT_ROW_HEIGHT - 75, 2);
+    spr.drawString("Connected: LoRa  ", 5, 3.8 * FONT_ROW_HEIGHT - 85, 2);
+    spr.drawString("Total Send:", 5, 4.8 * FONT_ROW_HEIGHT - 85, 2);
+    spr.drawString("packets", 115, 4.8 * FONT_ROW_HEIGHT - 85, 2);
+    spr.drawString("Succeed:", 5, 5.8 * FONT_ROW_HEIGHT - 85, 2);
+    spr.drawString("packets", 105, 5.8 * FONT_ROW_HEIGHT - 85, 2);
 
     spr.setFreeFont(FSSB9);
     spr.setTextColor(tft.color565(0, 139, 0));
-    spr.drawString(String(cfg.lora_fcnt), 80, 5.8 * FONT_ROW_HEIGHT - 75,
+    spr.drawString(String(cfg.lora_fcnt), 80, 4.8 * FONT_ROW_HEIGHT - 85,
                    2); // Show total number of packages issued
-    spr.drawString(String(cfg.lora_sucess_cnt), 70, 6.8 * FONT_ROW_HEIGHT - 75,
+    spr.drawString(String(cfg.lora_sucess_cnt), 70, 5.8 * FONT_ROW_HEIGHT - 85,
                    2); // Shows the number of successful deliveries
 
-    NetworkSignal(cfg.lora_rssi);
     spr.pushSprite(20, 96);
+    spr.deleteSprite();
+
+    spr.createSprite(188, 30);
+    NetworkSignal(cfg.lora_rssi);
+    spr.pushSprite(20, 160);
     spr.deleteSprite();
 
     spr.createSprite(90, 75);
@@ -782,7 +793,7 @@ bool UI::Network_5_0(uint8_t select) {
     spr.fillRect(26, 44, 36, 20, TFT_RED);
     spr.drawString("Yes", 30, 46, 2);
 
-    spr.fillRect(96, 44, 36, 20, TFT_BLUE);
+    spr.fillRect(96, 44, 36, 20, 0x02ff);
     spr.drawString("No", 106, 46, 2);
 
     spr.pushSprite(80, 80);
@@ -1015,7 +1026,7 @@ void UI::SensePageManager(uint8_t key) {
     case RIGHT_PRESSED:
         s_state.s_select++;
         Sensor_num = s_data.size() - 1;
-        if(s_data.size() < SEMSOR_NUM_MAX)
+        if (s_data.size() < SEMSOR_NUM_MAX)
             Sensor_num = SEMSOR_NUM_MAX - 1;
         if (s_state.s_select > Sensor_num) {
             s_state.s_select = Sensor_num;
@@ -1055,10 +1066,10 @@ void UI::SensePageManager(uint8_t key) {
 void UI::SensorSubTitle(String value) {
     spr.setFreeFont(FSSB9);
     spr.setTextColor(TFT_WHITE, tft.color565(100, 100, 100));
-    if (value.length() > 6) {
+    if (value.length() > 7) {
         spr.drawString(value, 2 * (13 - value.length()), 0, FONT2);
     } else {
-        spr.drawString(value, 6 * (7 - value.length()), 0, GFXFF);
+        spr.drawString(value, 5 * (8 - value.length()), 0, GFXFF);
     }
 }
 
@@ -1066,10 +1077,10 @@ void UI::SensorSubTitle2(String value) {
     spr.createSprite(300, 25);
     spr.setFreeFont(FSSB9);
     spr.setTextColor(TFT_WHITE, tft.color565(100, 100, 100));
-    if (value.length() > 6) {
+    if (value.length() > 7) {
         spr.drawString(value, 2 * (13 - value.length()), 0, FONT2);
     } else {
-        spr.drawString(value, 6 * (7 - value.length()), 0, GFXFF);
+        spr.drawString(value, 5 * (8 - value.length()), 0, GFXFF);
     }
     spr.pushSprite(120, 50);
     spr.deleteSprite();
@@ -1078,10 +1089,10 @@ void UI::SensorSubTitle2(String value) {
 void UI::SensorUnit(String value) {
     spr.setFreeFont(FSS9);
     spr.setTextColor(TFT_WHITE);
-    if (value.length() > 6) {
+    if (value.length() > 7) {
         spr.drawString(value, 2 * (13 - value.length()), 115, FONT2);
     } else {
-        spr.drawString(value, 6 * (7 - value.length()), 115, GFXFF);
+        spr.drawString(value, 5 * (8 - value.length()), 115, GFXFF);
     }
 }
 
@@ -1130,10 +1141,10 @@ void UI::SensorPageState(int pages_num, int page_select) {
 
 bool UI::Sensor_1(uint8_t select) {
     bool           ret;
-    uint8_t        sense_display_num = 0;
-    static uint8_t index             = 0;
-    s_data_ready                     = false;
-    s_data_ready                     = false;
+    uint8_t        sense_display_num = 0, len = 0;
+    static uint8_t index = 0;
+    s_data_ready         = false;
+    s_data_ready         = false;
     if (s_data.size() == 0) {
         s_data_ready = true;
         return false;
@@ -1183,14 +1194,15 @@ bool UI::Sensor_1(uint8_t select) {
                                  ((uint8_t *)s_data[index + si].data)[i + 1] << 8 |
                                  ((uint8_t *)s_data[index + si].data)[i + 2] << 16 |
                                  ((uint8_t *)s_data[index + si].data)[i + 3] << 24;
+                    len = String(dd).length();
+                    if (len >= sense_display_num)
+                        len = sense_display_num - 1;
                     if (s_data[index + si].data_type == SENSOR_DATA_TYPE_INT32)
-                        spr.drawString(String(dd), 2, 30 + 24 * i / 4,
+                        spr.drawString(String(dd), 2 * (sense_display_num - len), 30 + 24 * i / 4,
                                        2 * (4 - sense_display_num / 4));
                     else if (s_data[index + si].data_type == SENSOR_DATA_TYPE_FLOAT)
-                        spr.drawFloat((float)dd / 100, 2, 2, 30 + 24 * i / 4,
-                                      2 * (4 - sense_display_num / 4));
-                    // todo，数据单位，暂时显示为空
-                    spr.drawString("  ", 68, 30 + 24 * i, 2);
+                        spr.drawFloat((float)dd / 100, 2, 2 * (sense_display_num - len),
+                                      30 + 24 * i / 4, 2 * (4 - sense_display_num / 4));
                 }
             } else {
                 int32_t temp = 0;
@@ -1297,9 +1309,11 @@ bool UI::Sensor_3(uint8_t select) {
         if (cfg.sd_status == 1) {
             if (cfg.sensor_save_flag & 1 << s_data[select].id) {
                 SensorSwitchButton(1);
-            } else
+                Status2Display(0x3);
+            } else {
                 SensorSwitchButton(0);
-            Status2Display(0x3);
+                Status2Display(0xff);
+            }
         } else if (cfg.sd_status == 2) {
             Status2Display(0x1);
             SensorSwitchButton(0);
