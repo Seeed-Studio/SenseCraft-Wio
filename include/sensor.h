@@ -5,7 +5,7 @@
 #include<vector>
 #include "utils.h"
 
-#define LOG_MAX_SIZE 10
+#define LOG_MAX_SIZE 8
 
 typedef void (*sampler_callback)(const void *sample_buf, unsigned char byteLenght);
 

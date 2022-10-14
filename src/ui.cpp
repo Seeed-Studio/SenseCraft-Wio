@@ -10,13 +10,14 @@ void UI::uint8_to_float(uint8_t *data, float *destination) {
     *reinterpret_cast<uint32_t *>(destination) = value;
 }
 
+extern void LogMemoryUsage(const char *s);
 UI::UI(TFT_eSPI &lcd, TFT_eSprite &display, SysConfig &config, Message &m1)
-    : Thread("UIThread", 128 * 24, 2), tft(lcd), spr(display), cfg(config), btnMail(m1) {
+    : Thread("UIThread", 128 * 6, 3), tft(lcd), spr(display), cfg(config), btnMail(m1) {
     Start();
 };
 
 void UI::init() {
-    tft.fillScreen(TFT_BLACK);
+    tft.fillRect(0, 45, 320, 195, TFT_BLACK);
 }
 
 void UI::Run() {
@@ -112,7 +113,8 @@ const static unsigned int FONT_ROW_HEIGHT = 22; // The height of a letter
 
 void UI::PageMangent(uint8_t key) {
     if (key < 3) {
-        tft.fillScreen(TFT_BLACK);
+        // tft.fillScreen(TFT_BLACK);
+        init();
         page.mainstate = (page_state)key;
         key            = NONE_PRESSED;
     }
@@ -129,115 +131,70 @@ void UI::PageMangent(uint8_t key) {
     }
 }
 void UI::TitleDisplay(uint8_t t) {
-    spr.createSprite(320, 46);
-    spr.setFreeFont(FSSB9);
-    switch (t) {
-    case 0:
-        spr.fillRect(4 * PIXEL, 0, 21 * PIXEL, FONT_ROW_HEIGHT + 15, tft.color565(135, 206, 235));
-        spr.fillRect(30 * PIXEL, 0, 21 * PIXEL, FONT_ROW_HEIGHT + 15, TFT_WHITE);
-        spr.fillRect(56 * PIXEL, 0, 21 * PIXEL, FONT_ROW_HEIGHT + 15, TFT_WHITE);
-        break;
-    case 1:
-        spr.fillRect(4 * PIXEL, 0, 21 * PIXEL, FONT_ROW_HEIGHT + 15, TFT_WHITE);
-        spr.fillRect(30 * PIXEL, 0, 21 * PIXEL, FONT_ROW_HEIGHT + 15, tft.color565(135, 206, 235));
-        spr.fillRect(56 * PIXEL, 0, 21 * PIXEL, FONT_ROW_HEIGHT + 15, TFT_WHITE);
-        break;
-    case 2:
-        spr.fillRect(4 * PIXEL, 0, 21 * PIXEL, FONT_ROW_HEIGHT + 15, TFT_WHITE);
-        spr.fillRect(30 * PIXEL, 0, 21 * PIXEL, FONT_ROW_HEIGHT + 15, TFT_WHITE);
-        spr.fillRect(56 * PIXEL, 0, 21 * PIXEL, FONT_ROW_HEIGHT + 15, tft.color565(135, 206, 235));
-        break;
-    default:
-        break;
+    static uint8_t cur = 3; 
+    if(cur == t)
+        return;
+    else
+        cur = t;
+    for(uint8_t i = 0; i < 3; i++){
+        uint32_t color = (i==t) ? (tft.color565(135, 206, 235)) : TFT_WHITE;
+        tft.fillRoundRect((4+i*26)*PIXEL, 4, 21*PIXEL, FONT_ROW_HEIGHT+15, 8, color);
     }
 
-    spr.setFreeFont(FSSB9);
-    spr.setTextColor(TFT_BLACK);
-    spr.drawString("Sense", 32, 11, GFXFF);
-    spr.drawString("Process", 127, 11, GFXFF);
-    spr.drawString("Uplink", 237, 11, GFXFF);
-    spr.drawLine(0, 2 * FONT_ROW_HEIGHT, SCREEN_WIDTH, 2 * FONT_ROW_HEIGHT, TFT_WHITE);
+    tft.setFreeFont(FSSB9);
+    tft.setTextColor(TFT_BLACK);
+    tft.drawString("Sense", 32, 14, GFXFF);
+    tft.drawString("Process", 127, 14, GFXFF);
+    tft.drawString("Uplink", 237, 14, GFXFF);
+    tft.drawLine(0, 2*FONT_ROW_HEIGHT, SCREEN_WIDTH, 2*FONT_ROW_HEIGHT, TFT_WHITE);
 
-    spr.pushSprite(0, 0);
-    spr.deleteSprite();
 }
 
 void UI::Status1Display(uint8_t status) {
-    spr.createSprite(140, 25);
-    spr.setFreeFont(FSSB9);
-    spr.fillSprite(TFT_BLACK);
+    tft.setFreeFont(FSSB9);
     if (cfg.wificonnected == true) {
-        spr.setTextColor(TFT_GREEN, TFT_BLACK); // Networking status indication：ON
-        spr.drawString("WiFi", 60, 0, 2);       // Show the network you are in
+        tft.setTextColor(TFT_GREEN, TFT_BLACK); // Networking status indication：ON
+        tft.drawString("WiFi", 60, 215, 2);       // Show the network you are in
     } else if (cfg.lora_status == LORA_JOIN_SUCCESS || cfg.lora_status == LORA_SEND_SUCCESS ||
                cfg.lora_status == LORA_SEND_FAILED) {
-        spr.setTextColor(TFT_GREEN, TFT_BLACK); // Networking status indication：ON
-        spr.drawString("LoRa", 60, 0, 2);       // Show the network you are in
+        tft.setTextColor(TFT_GREEN, TFT_BLACK); // Networking status indication：ON
+        tft.drawString("LoRa", 60, 215, 2);       // Show the network you are in
     } else {
-        spr.setTextColor(TFT_RED, TFT_BLACK); // Networking status indication：OFF
-        spr.drawString("OFF", 60, 0, 2);      // Show the network you are in
+        tft.setTextColor(TFT_RED, TFT_BLACK); // Networking status indication：OFF
+        tft.drawString("OFF", 60, 215, 2);      // Show the network you are in
     }
-    spr.setTextColor(TFT_WHITE);
-    spr.drawString("Network:", 5, 0, 2);
-    spr.setFreeFont(FSS9);
-
-    spr.pushSprite(0, 215);
-    spr.deleteSprite();
+    tft.setTextColor(TFT_WHITE);
+    tft.drawString("Network:", 5, 215, 2);
 }
 
 void UI::Status2Display(uint8_t status) {
-    spr.createSprite(320, 25);
-    spr.setFreeFont(FSSB9);
-    spr.fillSprite(TFT_BLACK);
-    // int s_key = 1;
+    tft.setFreeFont(FSS9);
+    tft.setTextColor(TFT_YELLOW);
     switch (status) {
     case 0:
-        spr.setFreeFont(FSS9);
-        spr.setTextColor(TFT_YELLOW);
-        spr.drawString("Plug in a Grove sensor", 0, 0, 2);
-        spr.pushSprite(170, 215);
+        tft.drawString("Plug in a Grove sensor", 170, 215, 2);
         break;
     case 1:
-        spr.setFreeFont(FSS9);
-        spr.drawTriangle(0, 18, 11, 0, 22, 18, TFT_YELLOW);
-        spr.setTextColor(TFT_YELLOW);
-        spr.drawString("! ", 10, 4, 2);
-        spr.drawString("TF card storage is full", 28, 0, 2);
-        spr.pushSprite(140, 215);
+        tft.drawTriangle(140, 233, 151, 215, 162, 233, TFT_YELLOW);
+        tft.drawString("! ", 150, 219, 2);
+        tft.drawString("TF card storage is full", 168, 215, 2);
         break;
     case 2:
-        spr.setFreeFont(FSS9);
-        spr.setTextColor(TFT_GREEN);
-        spr.drawString("Vision AI Sensor connected", 22, 0, 2);
-        spr.pushSprite(120, 215);
+        tft.drawString("Vision AI Sensor connected", 142, 215, 2);
         break;
     case 3:
-        spr.setFreeFont(FSS9);
-        spr.setTextColor(TFT_GREEN);
-        spr.drawString("Saving has been started", 22, 0, 2);
-        spr.pushSprite(140, 215);
+        tft.drawString("Saving has been started", 162, 215, 2);
         break;
     case 4:
-        spr.setFreeFont(FSS9);
-        spr.setTextColor(TFT_YELLOW);
-        spr.drawString("Please insert TF card", 22, 0, 2);
-        spr.pushSprite(148, 215);
+        tft.drawString("Please insert TF card", 170, 215, 2);
         break;
     case 5:
-        spr.setFreeFont(FSS9);
-        spr.setTextColor(TFT_YELLOW);
-        spr.drawString("No data needs to be stored", 22, 0, 2);
-        spr.pushSprite(124, 215);
+        tft.drawString("No data needs to be stored", 146, 215, 2);
         break;
-
     default:
-        spr.setFreeFont(FSS9);
-        spr.setTextColor(TFT_YELLOW);
-        spr.drawString("                             ", 22, 0, 2);
-        spr.pushSprite(148, 215);
+        tft.drawString("                             ", 170, 215, 2);
         break;
     }
-    spr.deleteSprite();
 }
 bool UI::NetworkSubtitles(uint8_t keys) {
     switch (keys) {
@@ -316,7 +273,8 @@ bool UI::NetworkPageManager(uint8_t keys) {
                 n_state.nl_state.s_select = 0;
             }
             if (n_state.nl_state.current_page < countof(l_network) - 2) {
-                tft.fillScreen(TFT_BLACK);
+                // tft.fillScreen(TFT_BLACK);
+                init();
             }
         } else { // WiFi
             n_state.nw_state.s_select--;
@@ -341,7 +299,8 @@ bool UI::NetworkPageManager(uint8_t keys) {
                 n_state.nl_state.s_select = sizeof(lora_band_info) / sizeof(lora_band_info[0]) - 1;
             }
             if (n_state.nl_state.current_page < countof(l_network) - 2) {
-                tft.fillScreen(TFT_BLACK);
+                // tft.fillScreen(TFT_BLACK);
+                init();
             }
         } else { // WiFi
             n_state.nw_state.s_select++;
@@ -349,7 +308,8 @@ bool UI::NetworkPageManager(uint8_t keys) {
                 n_state.nw_state.s_select = 1;
             }
             if (n_state.nw_state.current_page != countof(w_network) - 2) {
-                tft.fillScreen(TFT_BLACK);
+                // tft.fillScreen(TFT_BLACK);
+                init();
             }
         }
         break;
@@ -365,7 +325,8 @@ bool UI::NetworkPageManager(uint8_t keys) {
                 n_state.nw_state.current_page = 0;
             }
         }
-        tft.fillScreen(TFT_BLACK);
+        // tft.fillScreen(TFT_BLACK);
+                init();
         break;
     case SELECT_PRESSED:
         if (n_state.current_network == LORA_PAGE) {
@@ -375,7 +336,8 @@ bool UI::NetworkPageManager(uint8_t keys) {
                     n_state.nl_state.current_page = countof(l_network) - 1;
                 }
                 if (n_state.nl_state.current_page != countof(l_network) - 2) {
-                    tft.fillScreen(TFT_BLACK);
+                    // tft.fillScreen(TFT_BLACK);
+                init();
                 }
             }
         } else { // WiFi
@@ -385,7 +347,8 @@ bool UI::NetworkPageManager(uint8_t keys) {
                     n_state.nw_state.current_page = countof(w_network) - 1;
                 }
                 if (n_state.nw_state.current_page != countof(w_network) - 2) {
-                    tft.fillScreen(TFT_BLACK);
+                    // tft.fillScreen(TFT_BLACK);
+                init();
                 }
             }
         }
@@ -816,7 +779,8 @@ void UI::ProcessPageManager(uint8_t key) {
         if (p_state.s_select < 0) {
             p_state.s_select = 0;
         }
-        tft.fillScreen(TFT_BLACK);
+        // tft.fillScreen(TFT_BLACK);
+                init();
         break;
     case RIGHT_PRESSED:
         p_state.s_select++;
@@ -824,14 +788,16 @@ void UI::ProcessPageManager(uint8_t key) {
         if (p_state.s_select > 2) {
             p_state.s_select = 2;
         }
-        tft.fillScreen(TFT_BLACK);
+        // tft.fillScreen(TFT_BLACK);
+                init();
         break;
     case UP_PRESSED:
         p_state.current_page--;
         if (p_state.current_page < 0) {
             p_state.current_page = 0;
         }
-        tft.fillScreen(TFT_BLACK);
+        // tft.fillScreen(TFT_BLACK);
+                init();
         break;
     case SELECT_PRESSED:
         if (p_state.is_next) {
@@ -840,7 +806,8 @@ void UI::ProcessPageManager(uint8_t key) {
                 p_state.current_page = countof(process) - 1;
             }
         }
-        tft.fillScreen(TFT_BLACK);
+        // tft.fillScreen(TFT_BLACK);
+                init();
         break;
     }
     p_state.is_next = (this->*process[p_state.current_page])(p_state.s_select);
@@ -945,26 +912,29 @@ bool UI::Process_2(uint8_t select) {
     switch (select) {
     // Vision AI real-time analysis
     case 0: {
-        // 270*80 = 21600
         // check all data if vision ai is running
         log_ready = false;
         if (a_log.size() == 0) {
             log_ready = true;
             break;
         }
-        spr.createSprite(320, 130);
-        spr.setFreeFont(FSS9);
+        // LogMemoryUsage(__FUNCTION__);
+        // spr.createSprite(320, 130);
+        tft.setFreeFont(FSS9);
         for (auto data : a_log) {
             sprintf(buf, "[%02d:%02d:%02d]:", data.time / 1000 / 60 / 60,
                     data.time / 1000 / 60 % 60, data.time / 1000 % 60);
-            spr.setTextColor(TFT_GREEN);
-            spr.drawString(buf, 4, i * 11, 2);
-            spr.setTextColor(TFT_WHITE);
-            spr.drawString(data.data, 82, i * 11, 2);
+            // tft.setTextPadding(130);
+            // tft.fillRect(20, 81 + i * 11, 280, 9, TFT_BLACK);
+            tft.setTextColor(TFT_GREEN, TFT_BLACK);
+            tft.drawString(buf, 20, 80 + i * 13, 2);
+            tft.setTextColor(TFT_WHITE, TFT_BLACK);
+            tft.drawString(data.data, 100, 80 + i * 13, 2);
             i++;
         }
-        spr.pushSprite(0, 80);
-        spr.deleteSprite();
+        // spr.pushSprite(0, 80);
+        // LogMemoryUsage(__FUNCTION__);
+        // spr.deleteSprite();
         log_ready = true;
         break;
     }
@@ -977,7 +947,7 @@ bool UI::Process_2(uint8_t select) {
 
         spr.fillRect(15, 0, 113, 113, TFT_WHITE);
         QRCode   qrcode;
-        uint8_t *qrcodeData = (uint8_t *)malloc(qrcode_getBufferSize(5));
+        uint8_t *qrcodeData = (uint8_t *)malloc(qrcode_getBufferSize(5)); // 1376/8
         qrcode_initText(&qrcode, qrcodeData, 5, 0,
                         "https://wiki.seeedstudio.com/K1100-Getting-Started/#tinyml-section");
         for (uint8_t y = 0; y < qrcode.size; y++) {
@@ -1000,6 +970,7 @@ bool UI::Process_2(uint8_t select) {
         spr.drawString("the tutorial ", 0, 66, GFXFF);
 
         spr.pushSprite(160, 80);
+        LogMemoryUsage(__FUNCTION__);
         spr.deleteSprite();
         break;
     }
@@ -1020,26 +991,29 @@ void UI::SensePageManager(uint8_t key) {
         if (s_state.s_select < 0) {
             s_state.s_select = 0;
         }
-        if (s_state.current_page == 1)
-            tft.fillScreen(TFT_BLACK);
+        init();
+        // if (s_state.current_page == 1)
+            // tft.fillScreen(TFT_BLACK);
         break;
     case RIGHT_PRESSED:
         s_state.s_select++;
         Sensor_num = s_data.size() - 1;
-        if (s_data.size() < SEMSOR_NUM_MAX)
-            Sensor_num = SEMSOR_NUM_MAX - 1;
+        if (s_data.size() < SENSOR_NUM_MAX)
+            Sensor_num = SENSOR_NUM_MAX - 1;
         if (s_state.s_select > Sensor_num) {
             s_state.s_select = Sensor_num;
         }
-        if (s_state.current_page == 1)
-            tft.fillScreen(TFT_BLACK);
+        init();
+        // if (s_state.current_page == 1)
+            // tft.fillScreen(TFT_BLACK);
         break;
     case UP_PRESSED:
         s_state.current_page--;
         if (s_state.current_page < 0) {
             s_state.current_page = 0;
         }
-        tft.fillScreen(TFT_BLACK);
+        init();
+        // tft.fillScreen(TFT_BLACK);
         break;
     case SELECT_PRESSED:
         if (s_state.is_next) {
@@ -1054,7 +1028,8 @@ void UI::SensePageManager(uint8_t key) {
                 s_state.current_page = countof(sense) - 1;
             }
         }
-        tft.fillScreen(TFT_BLACK);
+        init();
+        // tft.fillScreen(TFT_BLACK);
         break;
     }
 
@@ -1063,61 +1038,58 @@ void UI::SensePageManager(uint8_t key) {
     s_state.is_next = (this->*sense[s_state.current_page])(s_state.s_select);
 }
 
-void UI::SensorSubTitle(String value) {
-    spr.setFreeFont(FSSB9);
-    spr.setTextColor(TFT_WHITE, tft.color565(100, 100, 100));
+void UI::SensorSubTitle(String value, int si) {
+    tft.setFreeFont(FSSB9);
+    tft.setTextColor(TFT_WHITE, tft.color565(100, 100, 100));
     if (value.length() > 7) {
-        spr.drawString(value, 2 * (13 - value.length()), 0, FONT2);
+        tft.drawString(value, 2*(13-value.length())+(20+si*100), 60, FONT2);
     } else {
-        spr.drawString(value, 5 * (8 - value.length()), 0, GFXFF);
+        tft.drawString(value, 5*(8-value.length())+(20+si*100), 60, GFXFF);
     }
 }
 
+// display sensor chart subtitle 
 void UI::SensorSubTitle2(String value) {
-    spr.createSprite(300, 25);
-    spr.setFreeFont(FSSB9);
-    spr.setTextColor(TFT_WHITE, tft.color565(100, 100, 100));
+    // tft.createSprite(300, 25);
+    tft.setFreeFont(FSSB9);
+    tft.setTextColor(TFT_WHITE, tft.color565(100, 100, 100));
     if (value.length() > 7) {
-        spr.drawString(value, 2 * (13 - value.length()), 0, FONT2);
+        tft.drawString(value, 2*(13-value.length())+120, 50, FONT2);
     } else {
-        spr.drawString(value, 5 * (8 - value.length()), 0, GFXFF);
+        tft.drawString(value, 5*(8-value.length())+120, 50, GFXFF);
     }
-    spr.pushSprite(120, 50);
-    spr.deleteSprite();
 }
 
-void UI::SensorUnit(String value) {
-    spr.setFreeFont(FSS9);
-    spr.setTextColor(TFT_WHITE);
+void UI::SensorUnit(String value, int si) {
+    tft.setFreeFont(FSS9);
+    tft.setTextColor(TFT_WHITE);
     if (value.length() > 7) {
-        spr.drawString(value, 2 * (13 - value.length()), 115, FONT2);
+        tft.drawString(value, 2*(13-value.length())+(20+si*100), 175, FONT2);
     } else {
-        spr.drawString(value, 5 * (8 - value.length()), 115, GFXFF);
+        tft.drawString(value, 5*(8-value.length())+(20+si*100), 175, GFXFF);
     }
 }
 
 void UI::SensorADDDisplay(uint8_t is_backgroud) {
-    // spr.createSprite(90, 100);
 
     if (is_backgroud) {
-        spr.fillRect(0, 25, 90, 120, tft.color565(0, 139, 0));
+        // tft.fillRect(220, 85, 90, 120, tft.color565(0, 139, 0));
     }
 
-    spr.setFreeFont(FSS9);
-    spr.setTextColor(TFT_WHITE);
-    spr.drawString("ADD", 14, 27, 4);
+    tft.setFreeFont(FSS9);
+    tft.setTextColor(TFT_WHITE);
+    tft.drawString("ADD", 234, 87, 4);
 
-    spr.fillRect(20, 22 + 1.5 * FONT_ROW_HEIGHT, 40, 40, TFT_WHITE);
-    spr.fillRect(38, 22 + 1.5 * FONT_ROW_HEIGHT + 6, 3, 26, TFT_BLACK);
-    spr.fillRect(27, 22 + 1.5 * FONT_ROW_HEIGHT + 18, 26, 3, TFT_BLACK);
+    tft.fillRect(240, 82+1.5*FONT_ROW_HEIGHT, 40, 40, TFT_WHITE);
+    tft.fillRect(258, 82+1.5*FONT_ROW_HEIGHT+6, 3, 26, TFT_BLACK);
+    tft.fillRect(247, 82+1.5*FONT_ROW_HEIGHT+18, 26, 3, TFT_BLACK);
 
-    // spr.pushSprite(220, 90);
-    // spr.deleteSprite();
 }
 
 void UI::SensorPageState(int pages_num, int page_select) {
 
-    spr.createSprite(340, 10);
+    LogMemoryUsage(__FUNCTION__);
+    // spr.createSprite(340, 10);
     // 问题
     int *page_location = new int[pages_num];
 
@@ -1130,26 +1102,30 @@ void UI::SensorPageState(int pages_num, int page_select) {
 
     for (int i = 0; i < pages_num; i++) {
         if (i == page_select)
-            spr.fillCircle(page_location[i], 6, 3, tft.color565(0, 193, 255));
+            tft.fillCircle(page_location[i], 206, 3, tft.color565(0, 193, 255));
         else
-            spr.fillCircle(page_location[i], 6, 3, tft.color565(220, 220, 220));
+            tft.fillCircle(page_location[i], 206, 3, tft.color565(220, 220, 220));
     }
     delete page_location;
-    spr.pushSprite(0, 200);
-    spr.deleteSprite();
+    // spr.pushSprite(0, 200);
+    // LogMemoryUsage(__FUNCTION__);
+    // spr.deleteSprite();
 }
 
+// 显示Sensor首页
 bool UI::Sensor_1(uint8_t select) {
     bool           ret;
     uint8_t        sense_display_num = 0, len = 0;
-    static uint8_t index = 0;
-    s_data_ready         = false;
-    s_data_ready         = false;
+    uint16_t       bg_color;
+    static uint8_t index  = 0; // 指示页面最左侧传感器的序号
+    static uint8_t offset = 3; // 指示当前选中传感器的位置偏移
+    s_data_ready          = false;
     if (s_data.size() == 0) {
         s_data_ready = true;
         return false;
     }
     TitleDisplay(0);
+    //检查是否接入grove传感器，并显示提示信息
     if (select < s_data.size()) {
         Status2Display(0xff);
         ret = true;
@@ -1158,73 +1134,87 @@ bool UI::Sensor_1(uint8_t select) {
         ret = false;
     }
     //获取显示数据的位置
-    if (select >= index + 3) {
-        index += 1;
+    if (select >= index + 3) { //所选传感器在当前页之后
+        index += 1; 
+        tft.fillRect(0, 60, 320, 130, TFT_BLACK);
+        tft.fillRoundRect(20+(select-index)*100, 60, 90, 130, 10, tft.color565(0, 139, 0));
     }
-    if (select < index) {
+    else if (select < index) { //所选传感器在当前页之前
         index = select;
+        tft.fillRect(0, 60, 320, 130, TFT_BLACK);
+        tft.fillRoundRect(20+(select-index)*100, 60, 90, 130, 10, tft.color565(0, 139, 0));
     }
+    if(offset != select - index){
+        tft.fillRect(0, 60, 320, 130, TFT_BLACK);
+        tft.fillRoundRect(20+(select-index)*100, 60, 90, 130, 10, tft.color565(0, 139, 0));
+    }
+    offset = select - index;
+
     //只显示select-1, select和select+1的数据
-    //处理好特殊情况，第一个和最后一个
-    for (int si = 0; si < 3; si++) {
-        spr.createSprite(90, 130);
-        //高亮选择的数据
-        if (index + si == select) {
-            spr.fillRect(0, 25, 90, 130, tft.color565(0, 139, 0));
+    for (int si = 0; si < 3; si++) { // si : 指示传感器的位置偏移
+        // spr.createSprite(90, 130);
+        // 背景层，绿色矩形高亮选择的数据
+        if (index+si == select) {
+            bg_color = tft.color565(0, 139, 0);
+            // tft.fillRoundRect(20+si*100, 60, 90, 130, 10, tft.color565(0, 139, 0));
+        }
+        else{
+            bg_color = TFT_BLACK;
         }
 
-        if (index + si >= s_data.size()) {
-            SensorADDDisplay(index + si == select);
-        } else {
-            // Display the sensor name
-            SensorSubTitle(s_data[index + si].name);
-            SensorUnit(s_data[index + si].data_unit);
+        if (index+si >= s_data.size()) {
+            SensorADDDisplay(index+si == select); // Display ADD when no grove sensor
+        } 
+        else {
+            SensorSubTitle(s_data[index+si].name, si); // Display the sensor name
+            SensorUnit(s_data[index+si].data_unit, si); // Display the sensor unit
             //显示数据： 0正常显示 1显示平均值
-            spr.setFreeFont(FSS9);
-            spr.setTextColor(TFT_WHITE);
-            if (s_data[index + si].ui_type == SENSOR_UI_TYPE_NORMAL) {
+            tft.setFreeFont(FSS9);
+            tft.setTextColor(TFT_WHITE, bg_color);
+            if (s_data[index+si].ui_type == SENSOR_UI_TYPE_NORMAL) {
                 //一次只显示4个数据，每个测量数据4个byte
-                if (s_data[index + si].size > 4 * 4)
+                if (s_data[index+si].size > 4 * 4)
                     sense_display_num = 4 * 4;
                 else
-                    sense_display_num = s_data[index + si].size;
+                    sense_display_num = s_data[index+si].size;
                 //把框分成4行，每行显示一个数据
                 for (int i = 0; i < sense_display_num; i += 4) {
-                    int32_t dd = ((uint8_t *)s_data[index + si].data)[i] << 0 |
-                                 ((uint8_t *)s_data[index + si].data)[i + 1] << 8 |
-                                 ((uint8_t *)s_data[index + si].data)[i + 2] << 16 |
-                                 ((uint8_t *)s_data[index + si].data)[i + 3] << 24;
+                    int32_t dd = ((uint8_t *)s_data[index+si].data)[i] << 0 |
+                                 ((uint8_t *)s_data[index+si].data)[i + 1] << 8 |
+                                 ((uint8_t *)s_data[index+si].data)[i + 2] << 16 |
+                                 ((uint8_t *)s_data[index+si].data)[i + 3] << 24;
                     len = String(dd).length();
                     if (len >= sense_display_num)
                         len = sense_display_num - 1;
-                    if (s_data[index + si].data_type == SENSOR_DATA_TYPE_INT32)
-                        spr.drawString(String(dd), 2 * (sense_display_num - len), 30 + 24 * i / 4,
-                                       2 * (4 - sense_display_num / 4));
-                    else if (s_data[index + si].data_type == SENSOR_DATA_TYPE_FLOAT)
-                        spr.drawFloat((float)dd / 100, 2, 2 * (sense_display_num - len),
-                                      30 + 24 * i / 4, 2 * (4 - sense_display_num / 4));
+                    if (s_data[index+si].data_type == SENSOR_DATA_TYPE_INT32)
+                        tft.drawString(String(dd), 2*(sense_display_num-len)+(20+si*100),
+                                        30+24*i/4+60, 2*(4-sense_display_num/4));
+                    else if (s_data[index+si].data_type == SENSOR_DATA_TYPE_FLOAT)
+                        tft.drawFloat((float)dd/100, 2, 2*(sense_display_num-len)+(20+si*100),
+                                        30+24*i/4+60, 2*(4 - sense_display_num / 4));
                 }
             } else {
                 int32_t temp = 0;
-                for (int i = 0; i < s_data[index + si].size; i += 4) {
-                    temp += *(int32_t *)(s_data[index + si].data + i);
+                for (int i = 0; i < s_data[index+si].size; i += 4) {
+                    temp += *(int32_t *)(s_data[index+si].data + i);
                 }
-                temp /= s_data[index + si].size / 4;
-                spr.drawString(String(s_data[index + si].size / 4), 2, 30, 4);
-                if (s_data[index + si].data_type == SENSOR_DATA_TYPE_INT32)
-                    spr.drawString(String(temp), 2, 30 + 24, 4);
-                else if (s_data[index + si].data_type == SENSOR_DATA_TYPE_FLOAT)
-                    spr.drawFloat((float)temp / 100, 2, 2, 30 + 24, 4);
+                temp /= s_data[index+si].size / 4;
+                tft.drawString(String(s_data[index+si].size/4), 2+(20+si*100), 30+60, 4);
+                if (s_data[index+si].data_type == SENSOR_DATA_TYPE_INT32)
+                    tft.drawString(String(temp), 2+(20+si*100), 30+24+60, 4);
+                else if (s_data[index+si].data_type == SENSOR_DATA_TYPE_FLOAT)
+                    tft.drawFloat((float)temp/100, 2, 2+(20+si*100), 30+24+60, 4);
             }
         }
         //根据数据的index，显示不同的位置，一个页面只能显示三个，页面不够补+号。
-        spr.pushSprite(20 + si * 100, 60);
-        spr.deleteSprite();
+        // spr.pushSprite((20+si*100), 60);
+        LogMemoryUsage(__FUNCTION__);
+        // spr.deleteSprite();
     }
     // SensorADDDisplay(1);
-    SensorPageState(s_data.size() / 3 + 1, select / 3);
+    SensorPageState(s_data.size()/3+1, select/3);
     s_data_ready = true;
-    Status1Display(0);
+    Status1Display(0); //左下角显示连接状态
     return ret;
 }
 
@@ -1270,6 +1260,7 @@ bool UI::Sensor_2(uint8_t select) {
                                 //        the backgroud
             .backgroud(tft.color565(0, 0, 0))
             .draw(&tft);
+        LogMemoryUsage(__FUNCTION__);
     }
     select_old = select;
     SensorPageState(s_data.size() / 3 + 1, select / 3);
@@ -1277,26 +1268,33 @@ bool UI::Sensor_2(uint8_t select) {
     return true;
 }
 void UI::SensorSwitchButton(uint8_t button) {
-    spr.createSprite(320, 100);
-    spr.setTextColor(TFT_WHITE);
-    spr.drawString("Save to TF card ", 32, 48, FONT4);
+    // spr.createSprite(320, 100);
+    tft.setTextColor(TFT_WHITE);
+    tft.drawString("Save to TF card ", 32, 125, FONT4);
     unsigned int gg_switch_state_color[4] = {tft.color565(211, 211, 211), TFT_BLUE,
                                              tft.color565(201, 201, 201),
                                              tft.color565(65, 105, 235)};
     if (button == 1) {
-        spr.fillCircle(240 + 22, 56, 14, gg_switch_state_color[button]);
-        spr.fillCircle(240, 56, 14 / 2, gg_switch_state_color[button + 2]);
-        spr.fillRect(240, 56 - 14 / 2, 22, 14 + 1, gg_switch_state_color[button + 2]);
+        tft.fillCircle(240, 130, 14/2, gg_switch_state_color[button + 2]);
+        tft.fillRect(240, 130 - 14/2, 22, 14 + 1, gg_switch_state_color[button + 2]);
+        tft.fillCircle(240 + 22, 130, 14, gg_switch_state_color[button]);
     } else {
-        spr.fillCircle(240, 56, 14, gg_switch_state_color[button]);
-        spr.fillCircle(240 + 22, 56, 14 / 2, gg_switch_state_color[button + 2]);
-        spr.fillRect(240, 56 - 14 / 2, 22, 14 + 1, gg_switch_state_color[button + 2]);
+        tft.fillCircle(240 + 22, 130, 14/2, gg_switch_state_color[button + 2]);
+        tft.fillRect(240, 130 - 14/2, 22, 14 + 1, gg_switch_state_color[button + 2]);
+        tft.fillCircle(240, 130, 14, gg_switch_state_color[button]);
     }
-    spr.pushSprite(0, 75);
-    spr.deleteSprite();
+    // spr.pushSprite(0, 75);
+    // spr.deleteSprite();
 }
 
 bool UI::Sensor_3(uint8_t select) {
+    // remember button state to refreshes
+    // static uint8_t button_flag = 0; 
+    // if(button_flag != cfg.sensor_save_flag){
+    //     button_flag = cfg.sensor_save_flag;
+
+    // }
+
     if (select > s_data.size() - 1)
         select = s_data.size() - 1;
     TitleDisplay(0);
@@ -1307,6 +1305,7 @@ bool UI::Sensor_3(uint8_t select) {
         SensorSwitchButton(0);
     } else {
         if (cfg.sd_status == 1) {
+
             if (cfg.sensor_save_flag & 1 << s_data[select].id) {
                 SensorSwitchButton(1);
                 Status2Display(0x3);

@@ -15,9 +15,9 @@ using namespace cpp_freertos;
 #define SCREEN_WIDTH 320 // Wio Terminal Maximum Width
 #define SCREEN_HIGH 240  // Wio Terminal Maximum Height
 
-#define SEMSOR_NUM_MAX 4      // Maximum number of sensors
+#define SENSOR_NUM_MAX 5      // Maximum number of sensors
 #define LINE_DATA_MAX_SIZE 30 // maximum size of data
-#define DRAW_LINE_MAX_NUM 1   // maximum num of draw line
+#define DRAW_LINE_MAX_NUM 3   // maximum num of draw line
 #define SHOW_LOG_MAX_SIZE 11  // maximum size of log
 
 enum page_state { NETWORKPAGE, PROCESSPAGE, SENSEPAGE };
@@ -131,10 +131,10 @@ class UI : public Thread {
     bool         Sensor_3(uint8_t select);
     void         SensorADDDisplay(uint8_t chose);
     void         SensorPageState(int PAGES, int _CHOOSE_PAGE);
-    void         SensorSubTitle(String value);
+    void         SensorSubTitle(String value, int si);
     void         SensorSubTitle2(String value);
     void         SensorSwitchButton(uint8_t button);
-    void         SensorUnit(String value);
+    void         SensorUnit(String value, int si);
 
     typedef bool (UI::*page_t)(uint8_t key);
 
