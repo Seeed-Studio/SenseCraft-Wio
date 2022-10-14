@@ -1,7 +1,7 @@
 #include "SDThread.h"
 #include "utils.h"
 
-SDThread::SDThread(SysConfig &config) : Thread("SDThread", 128 * 26, 1), cfg(config) {
+SDThread::SDThread(SysConfig &config) : Thread("SDThread", 128 * 22, 2), cfg(config) {
     Start();
 }
 
@@ -34,7 +34,7 @@ void SDThread::saveData(String sensorName, int32_t *sensorData, int len) {
     if (SD.exists(fileName)) // header只写一次
     {
         myFile = SD.open(fileName, FILE_WRITE); //追加写模式
-        LOGSS.println("file does not found, creating...");
+        LOGSS.printf("file %s does not found, creating...\r\n", fileName.c_str());
         myFile.print(sensorName + ",");
         myFile.print("timestamp,");
         for (int i = 0; i < len - 1; i++) {

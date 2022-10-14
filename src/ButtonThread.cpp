@@ -1,11 +1,11 @@
 #include "ButtonThread.h"
 
-ButtonThread::ButtonThread(Message &m) : Thread("ButtonThread", 256, 1), Mail(m) {
+ButtonThread::ButtonThread(Message &m) : Thread("ButtonThread", 256, 3), Mail(m) {
     Start();
 };
 
 void ButtonThread::Run() {
-    LOGSS.print("Starting ButtonThread ");
+    LOGSS.println("Starting ButtonThread ");
     for (uint8_t i = 0; i < 8; i++) {
         pinMode(btn[i], INPUT_PULLUP);
     }

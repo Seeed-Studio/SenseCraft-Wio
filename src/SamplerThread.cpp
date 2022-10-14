@@ -12,7 +12,7 @@
 #include <vector>
 
 SamplerThread::SamplerThread(SysConfig &config, UI &ui)
-    : Thread("SamplerThread", 128 * 6, 1), cfg(config), display(ui) {
+    : Thread("SamplerThread", 128 * 2, 1), cfg(config), display(ui) {
     // start thread when created
     Start();
 }
