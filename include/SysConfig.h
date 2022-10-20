@@ -34,7 +34,7 @@ class SysConfig {
     int16_t          lora_rssi       = 0;
     int16_t          lora_fcnt       = 0;
     int16_t          lora_sucess_cnt = 0;
-    uint8_t          sd_status       = 0; // 0- not init, 1-  connected, 3- sd full
+    uint8_t          sd_status       = 0; // 0- not init, 1-  connected, 2- sd full
     uint8_t          sensor_save_flag = 0;
 
     static SemaphoreHandle_t lock;

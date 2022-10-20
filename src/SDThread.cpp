@@ -5,7 +5,7 @@ SDThread::SDThread(SysConfig &config) : Thread("SDThread", 128 * 22, 2), cfg(con
     Start();
 }
 
-// 0- not init, 1-  connected, 3- sd full
+// 0- not init, 1-  connected, 2- sd full
 uint8_t SDThread::status() {
     uint64_t cardSize;
     if (cfg.sd_status == 0) {
