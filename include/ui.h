@@ -128,6 +128,7 @@ class UI : public Thread {
     };
 
     struct NetworkState n_state = {0, {0, false, 0}, {0, false, 0}};
+    struct State u_state = {0, true, 0};
     void                NetworkPageManager(uint8_t keys);
     bool                Network_1(uint8_t select);
     bool                Network_2_0(uint8_t select); // lora
@@ -156,8 +157,14 @@ class UI : public Thread {
                            &UI::Network_Disconnect, &UI::Network_6_0};
     page_t w_network[4] = {&UI::Network_1, &UI::Network_2_1, &UI::Network_Disconnect, &UI::Network_4_1};
 
-    page_t process[2] = {&UI::Process_1, &UI::Process_2};
-    page_t sense[3]   = {&UI::Sensor_1, &UI::Sensor_2, &UI::Sensor_3};
+    page_t uplink [6] = { &UI::Network_1, &UI::Network_2_1, &UI::Network_2_0, &UI::Network_3_0, 
+                          &UI::Network_Disconnect};
+    page_t process[2] = { &UI::Process_1, &UI::Process_2};
+    page_t sense  [3] = { &UI::Sensor_1, &UI::Sensor_2, &UI::Sensor_3};
+
+    enum uplink_index { HOME_S, LORABAND_S, LORACONFIRM, CONNECT, DISCONNECT_S };
+    const int8_t uplink_page_pre[5]  = { HOME_S, HOME_S, HOME_S, LORABAND_S, CONNECT };
+    const int8_t uplink_page_next[5] = { HOME_S, HOME_S, HOME_S, LORABAND_S, HOME_S};
 
     void PageMangent(uint8_t key);
     void (UI::*get_page[3])(uint8_t key) = {&UI::NetworkPageManager, &UI::ProcessPageManager, &UI::SensePageManager};

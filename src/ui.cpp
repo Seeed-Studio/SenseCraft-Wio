@@ -30,7 +30,7 @@ void UI::Run() {
     data_refresh        = true;
 
     // remember the previous status to refresh on change
-    static uint8_t status_pre[4] = {0,0,0,0};
+    uint8_t status_pre[4] = {0,0,0,0};
     while (true) {
         // Whether to rotate the screen
         if (rotate_status != rotate_flag) {
@@ -59,7 +59,15 @@ void UI::Run() {
             status_pre[1] = cfg.sd_status;
             layout_refresh = true;
         }
-        if (cfg.wificonnected);
+        if (status_pre[2] != cfg.wificonnected) {
+            status_pre[2] = cfg.wificonnected;
+            layout_refresh = true;
+        };
+        if (status_pre[3] != cfg.lora_status) {
+            status_pre[3] = cfg.lora_status;
+            layout_refresh = true;
+        };
+
 
         // nums = sensorMail.Receive(&sdata, 256, 0);
         // if (nums > 0) {
@@ -138,25 +146,16 @@ void UI::PageMangent(uint8_t key) {
     else if(!data_refresh){
         return;
     }
+    
 
     if (key < 3) { // switch main state
         page.mainstate = (page_state)key;
         key            = NONE_PRESSED;
     }
 
+    // call pagemanager and refresh a page
     (this->*get_page[page.mainstate])(key);
-    // switch (page.mainstate) { // display content according to main state
-    // case NETWORKPAGE:
-    //     NetworkPageManager(key);
-    //     break;
-    // case PROCESSPAGE:
-    //     ProcessPageManager(key);
-    //     break;
-    // case SENSEPAGE:
-    //     SensePageManager(key);
-    //     break;
-    // }
-    // LOGSS.printf("page %d  sub %d  sel %d\r\n", page.mainstate, s_state.current_page, s_state.s_select);
+
     layout_refresh = false;
     data_refresh = false;
 }
@@ -198,7 +197,42 @@ void UI::StatusMachine(struct State *ui_state, uint8_t key) {
     }
 }
 
+// void UI::NetworkPageManager(uint8_t keys) {
+//     if (!layout_refresh) //this page not included data refresh
+//         return;
+//     switch (keys) {
+//     case LEFT_PRESSED:
+//         if ((u_state.current_page == HOME_S) || (u_state.current_page == LORABAND_S)
+//             || (u_state.current_page == DISCONNECT_S))
+//             u_state.s_select -= (u_state.s_select > 0) ? 1 : 0;
+//         break;
+//     case RIGHT_PRESSED:
+//         if ((u_state.current_page == HOME_S) || (u_state.current_page == DISCONNECT_S))
+//             u_state.s_select += (u_state.s_select < 1) ? 1 : 0;
+//         else if (u_state.current_page == LORABAND_S)
+//             u_state.s_select += (u_state.s_select < 2) ? 1 : 0;
+//         break;
+//     case UP_PRESSED:
+//         if ((u_state.current_page == WIFICONNECT) || (u_state.current_page == LORACONNECT))
+//         {
+//             u_state.s_select = 0;
+//             u_state.current_page == HOME_S;
+//         }
+//         // if ()
+//         break;
+//     case SELECT_PRESSED:
+//         if ()
+//         cfg.wifi_on = true;
+//         cfg.lora_on = false;
+//         break;
+//     }
+//     (this->*uplink[u_state.current_page])(u_state.s_select);
+// }
+
 void UI::NetworkPageManager(uint8_t keys) {
+    if (!layout_refresh) //this page not included data refresh
+        return;
+
     switch (keys) {
     case LEFT_PRESSED:
         if (n_state.nl_state.current_page == FIRST_PAGE &&
@@ -211,12 +245,7 @@ void UI::NetworkPageManager(uint8_t keys) {
             if (n_state.nl_state.s_select < 0) {
                 n_state.nl_state.s_select = 0;
             }
-        } else { // WiFi
-            n_state.nw_state.s_select--;
-            if (n_state.nw_state.s_select < 0) {
-                n_state.nw_state.s_select = 0;
-            }
-        }
+        } // WiFi page no need to select
         break;
     case RIGHT_PRESSED:
         if (n_state.nl_state.current_page == FIRST_PAGE &&
@@ -252,6 +281,14 @@ void UI::NetworkPageManager(uint8_t keys) {
         break;
     case SELECT_PRESSED:
         if (n_state.current_network == LORA_PAGE) {
+            if (n_state.nl_state.current_page == FIRST_PAGE &&
+                n_state.nw_state.current_page == FIRST_PAGE) {
+                    n_state.nl_state.current_page += (cfg.lora_on) ? 3 : 1;
+                }
+            else if (n_state.nl_state.current_page == FIRST_PAGE + 2 ) {
+                cfg.wifi_on = false;
+                cfg.lora_on = true;
+            }
             if (n_state.nl_state.is_next) {
                 n_state.nl_state.current_page++;
                 if (n_state.nl_state.current_page > countof(l_network) - 1) {
@@ -260,6 +297,11 @@ void UI::NetworkPageManager(uint8_t keys) {
             }
         } else { // WiFi
             if (n_state.nw_state.is_next) {
+                if (n_state.nl_state.current_page == FIRST_PAGE &&
+                    n_state.nw_state.current_page == FIRST_PAGE) {
+                    cfg.wifi_on = true;
+                    cfg.lora_on = false;
+                }
                 n_state.nw_state.current_page++;
                 if (n_state.nw_state.current_page > countof(w_network) - 1) {
                     n_state.nw_state.current_page = countof(w_network) - 1;
@@ -281,8 +323,6 @@ void UI::NetworkPageManager(uint8_t keys) {
 }
 
 bool UI::Network_1(uint8_t select) {
-    if (!layout_refresh) //this page not included data refresh
-        return true;
     Widget_Title(2);
 
     switch (n_state.current_network) {
@@ -312,6 +352,7 @@ bool UI::Network_1(uint8_t select) {
     Label_Network();
     return true;
 }
+
 // Select Frequency band interface
 void UI::NetworkLoRaBandSelect(uint8_t pos, struct LoRaBandInfo lbi, uint8_t select) {
     int len = strlen(lbi.type) + strlen(lbi.frequency) + strlen(lbi.country);
@@ -343,46 +384,43 @@ bool UI::Network_2_0(uint8_t select) {
         n_state.nl_state.current_page += 2;
         ret = true;
     }
-    Label_Network();
     return ret;
 }
 
 bool UI::Network_2_1(uint8_t select) {
-    static bool wifi_state; 
     Widget_Title(2);
-    Label_Subtitle("WiFi");
-    cfg.wifi_on = true;
-    cfg.lora_on = false;
-    if (cfg.wificonnected) {
-        if(!wifi_state){
-            // init();
-            wifi_state = true;
-        }
-        tft.setFreeFont(FSS9);
-        tft.setTextColor(TFT_WHITE);
-        tft.drawString("Connected:", 26, 86, 2);
-        tft.drawString("WiFi", 100, 86, 2);
-        // tft.fillRoundRect(30, 85, 200, 30, 5, TFT_WHITE);
-        // tft.fillRoundRect(33, 88, 80, 24, 4, TFT_DARKGREY);
-
-        tft.drawString("SSID:", 26, 106, 2);
-        tft.drawString(cfg.ssid, 60, 106, 2);
-
-        tft.drawString("Device Name:", 26, 126, 2);
-        tft.drawString(cfg.device_label, 108, 126, 2);
-
-        tft.drawString("Signal:", 26, 152, 2);
-        Widget_Signal(cfg.wifi_rssi, 0, 0);
-
-    } else {
-        wifi_state = false;
-        tft.setFreeFont(FSS9);
-        tft.setTextColor(TFT_WHITE);
-        tft.drawString("Waiting for configuration...", 26, 86, 2);
-    }
-
     Label_CentreBtn("Disconnect", TFT_RED);
     Label_Network();
+    if (cfg.wifi_on) {
+        Label_Subtitle("WiFi");
+        tft.setFreeFont(FSS9);
+        tft.setTextColor(TFT_WHITE);
+        if (cfg.wificonnected) {
+            tft.drawString("Connected:", 26, 86, 2);
+            tft.drawString("WiFi", 100, 86, 2);
+            tft.drawString("SSID:", 26, 106, 2);
+            tft.drawString(cfg.ssid, 60, 106, 2);
+            tft.drawString("Device Name:", 26, 126, 2);
+            tft.drawString(cfg.device_label, 108, 126, 2);
+            tft.drawString("Signal:", 26, 152, 2);
+            Widget_Signal(cfg.wifi_rssi, 0, 0);
+        } else {
+            tft.drawString("Waiting for configuration...", 26, 86, 2);
+        }
+    }
+    if (cfg.lora_on) {
+        Label_Subtitle("LoRa");
+        tft.setTextColor(TFT_WHITE);
+        tft.drawString("Connected: LoRa  ", 25, 3.8 * FONT_ROW_HEIGHT + 11, 2);
+        tft.drawString("Total Send:      packets", 25, 4.8 * FONT_ROW_HEIGHT + 11, 2);
+        tft.drawString("Succeed:         packets", 25, 5.8 * FONT_ROW_HEIGHT + 11, 2);
+        tft.setFreeFont(FSSB9);
+        tft.setTextColor(tft.color565(0, 139, 0));
+        tft.drawString(String(cfg.lora_fcnt), 100, 4.8 * FONT_ROW_HEIGHT + 11, 2); // Show total number of packages issued
+        tft.drawString(String(cfg.lora_sucess_cnt), 100, 5.8 * FONT_ROW_HEIGHT + 11, 2); // Shows the number of successful deliveries
+        Widget_LoraState(0, 0);
+        Widget_Signal(cfg.lora_rssi, -20, 18);
+    }
     return true;
 }
 
@@ -402,6 +440,7 @@ bool UI::Network_3_0(uint8_t select) {
         Label_Network();
     } else {
         n_state.nl_state.current_page -= 2;
+        (this->*l_network[n_state.nl_state.current_page])(n_state.nl_state.s_select);
     }
     return true;
 }
@@ -417,7 +456,7 @@ bool UI::Network_4_1(uint8_t select) {
 bool UI::Network_4_0(uint8_t select) {
     Widget_Title(2);
     Label_Subtitle("LoRa");
-    cfg.lora_on = true;
+    // cfg.lora_on = true;
     tft.setTextColor(TFT_WHITE);
     tft.drawString("Connected: LoRa  ", 25, 3.8 * FONT_ROW_HEIGHT + 11, 2);
     tft.drawString("Total Send:      packets", 25, 4.8 * FONT_ROW_HEIGHT + 11, 2);
