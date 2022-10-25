@@ -14,26 +14,43 @@
 #define HARDWARE_VERSION "seeed_k1100_dev_kit"
 #define SOFTWARE_VERSION "V1.0.0"
 
+#define ANSI_R "\x1b[31m"
+#define ANSI_G "\x1b[32m"
+#define ANSI_Y "\x1b[33m"
+#define ANSI_B "\x1b[34m"
+#define ANSI_MAGENTA "\x1b[35m"
+#define ANSI_CYAN    "\x1b[36m"
+#define ANSI_RESET   "\x1b[0m"
+
 using namespace cpp_freertos;
 
 TFT_eSPI    tft;
-TFT_eSprite spr = TFT_eSprite(&tft);
+// TFT_eSprite spr = TFT_eSprite(&tft);
 
 void display_init() // Display initialization, black background rotation
 {
     tft.begin();
     tft.setRotation(3);
     tft.fillScreen(TFT_BLACK);
-    spr.createSprite(320, 120);
-    spr.setTextColor(TFT_WHITE);
-    spr.setFreeFont(FSSB9);
-    // code to view the tutorial
-    spr.drawString("SenseCAP K1100", 90, 0, GFXFF);
-    spr.setFreeFont(FSS9);
-    spr.drawString(VERSION, 150, 40, FONT2);
-    spr.pushSprite(0, 110);
-    spr.deleteSprite();
+    tft.setTextColor(TFT_WHITE);
+    tft.setFreeFont(FSSB9);
+    tft.drawString("SenseCAP K1100", 90, 110, GFXFF);
+    tft.setFreeFont(FSS9);
+    tft.drawString(VERSION, 150, 150, FONT2);
 }
+
+using namespace std;
+void LogMemoryUsage(const char *s);
+void LogHeapChange(const char *s);
+void LogTaskTrace(void);
+// static void CheakHeap(void* pvParameters) 
+// {
+//     while(1){   
+//         LogTaskTrace();
+//         LogMemoryUsage();
+//         vTaskDelay(Ticks::SecondsToTicks(60));
+//     }
+// }
 
 void setup() {
     display_init();
@@ -54,13 +71,56 @@ void setup() {
     // Message *sensorMail = new Message(256);
 
     ButtonThread  *btn     = new ButtonThread(*btnMail);
-    UI            *u       = new UI(tft, spr, *cfg, *btnMail);
+    // UI            *u       = new UI(tft, spr, *cfg, *btnMail);
+    UI            *u       = new UI(tft, *cfg, *btnMail);
     SamplerThread *sampler = new SamplerThread(*cfg, *u);
+    // xTaskCreate(CheakHeap, "CheakHeap", 128*3, NULL, 1, &Handle_aTask);
 }
 
 // Get the size of memory left in the system in freertos.
-int freeMemory() {
-    return xPortGetFreeHeapSize();
+void LogMemoryUsage(const char *s) {
+    int CurFree, MinFree, Percentage;
+    int Total = configTOTAL_HEAP_SIZE;
+    CurFree = xPortGetFreeHeapSize();
+    MinFree = xPortGetMinimumEverFreeHeapSize();
+    Percentage = (Total-CurFree)*100 / Total;
+    string UsageGraph = "["ANSI_G;
+    for(int i=0; i<25; i++)
+    {
+        if(i == Percentage/4)
+            UsageGraph += "#"ANSI_RESET;
+        else
+            UsageGraph += "#";
+    }
+    UsageGraph += "]";
+    LOGSS.println("====== RTOS HEAP USAGE =======");
+    LOGSS.printf("| Log in  : "ANSI_Y"%s \r\n"ANSI_RESET, s);
+    LOGSS.printf("| Total   : "ANSI_B"%d "ANSI_RESET"bytes\r\n", Total);
+    LOGSS.printf("| Maximum : "ANSI_R"%d "ANSI_RESET"bytes\r\n", Total-MinFree);
+    LOGSS.printf("| Current : "ANSI_G"%d "ANSI_RESET"bytes\r\n", (Total-CurFree), UsageGraph.c_str());
+    LOGSS.printf("| %s \r\n", UsageGraph.c_str());
+    // LOGSS.println("================== END ===================");
+}
+
+void LogTaskTrace() {
+    char TraceBuf[512];
+    vTaskList(TraceBuf);
+    LOGSS.println("========= RTOS task stack usage ==========");
+    LOGSS.println("TaskName    State  Priority  FreeStack");
+    LOGSS.printf("%s", TraceBuf);
+    LOGSS.println("================== end ===================");
+}
+
+void LogHeapChange(const char *s) {
+    static int pre_free_heap = 0;
+    int heap_change = configTOTAL_HEAP_SIZE - xPortGetFreeHeapSize() - pre_free_heap;
+    if(heap_change > 0) {
+        LOGSS.printf(ANSI_R" => %s +%d\r\n"ANSI_RESET, s, heap_change);
+    }
+    else if(heap_change < 0) {
+        LOGSS.printf(ANSI_G" => %s %d\r\n"ANSI_RESET, s, heap_change);
+    }
+    pre_free_heap += heap_change;
 }
 
 void loop() {

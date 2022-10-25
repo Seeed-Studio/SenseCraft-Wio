@@ -26,6 +26,7 @@ std::string GenerateEncryptedSignature(const std::string& symmetricKey, const st
     if (mbedtls_md_hmac_starts(&ctx, base64DecodedSymmetricKey, base64DecodedSymmetricKeyLength) != 0) abort();
     if (mbedtls_md_hmac_update(&ctx, &signature[0], signature.size()) != 0) abort();
     if (mbedtls_md_hmac_finish(&ctx, encryptedSignature) != 0) abort();
+    mbedtls_md_free(&ctx);
 
     // Base64 encode encrypted signature
     // <-- encryptedSignature
