@@ -15,7 +15,7 @@ using namespace cpp_freertos;
 #define SCREEN_WIDTH 320 // Wio Terminal Maximum Width
 #define SCREEN_HIGH 240  // Wio Terminal Maximum Height
 
-#define SENSOR_NUM_MAX 5      // Maximum number of sensors
+#define SENSOR_NUM_MAX 6      // Maximum number of sensors
 #define LINE_DATA_MAX_SIZE 30 // maximum size of data
 #define DRAW_LINE_MAX_NUM 1   // maximum num of draw line
 #define SHOW_LOG_MAX_SIZE 11  // maximum size of log

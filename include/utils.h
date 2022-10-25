@@ -3,6 +3,7 @@
 #include <stdint.h>
 
 #define LOGSS Serial1
+#define DEVICE "SenseCAP K1100"
 #define VERSION "v0.32"
 enum button_state {
     NETWORK_PRESSED,

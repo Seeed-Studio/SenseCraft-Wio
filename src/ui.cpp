@@ -105,13 +105,9 @@ void UI::UIPushData(std::vector<sensor_data *> d) {
             // Whether to rotate the screen
             if (data->name == "IMU") {
                 if (((int32_t *)data->data)[0] > 50)
-                    if (rotate_flag == true) {
-                        rotate_flag = false;
-                    }
+                    rotate_flag = false;
                 if (((int32_t *)data->data)[0] < -50)
-                    if (rotate_flag == false) {
-                        rotate_flag = true;
-                    }
+                    rotate_flag = true;
             }
         }
         data_refresh = true;
@@ -121,10 +117,7 @@ void UI::UIPushData(std::vector<sensor_data *> d) {
 void UI::UIPushLog(std::vector<log_data> d) {
     // ui刷新时不更新数据
     if (log_ready) {
-        int log_num = d.size();
-        // 最多只显示11条日志
-        if (log_num > SHOW_LOG_MAX_SIZE)
-            log_num = SHOW_LOG_MAX_SIZE;
+        int log_num = (d.size() > SHOW_LOG_MAX_SIZE) ? SHOW_LOG_MAX_SIZE : d.size();
         a_log.clear();
         a_log.shrink_to_fit();
         for (int i = 0; i < log_num; i++)
@@ -325,15 +318,16 @@ bool UI::Network_Connect(uint8_t select) {
     if (cfg.lora_on) {
         Label_Subtitle("LoRa");
         tft.setTextColor(TFT_WHITE);
-        tft.drawString("Connected: LoRa  ", 25, 3.8 * FONT_ROW_HEIGHT + 11, 2);
-        tft.drawString("Total Send:      packets", 25, 4.8 * FONT_ROW_HEIGHT + 11, 2);
-        tft.drawString("Succeed:         packets", 25, 5.8 * FONT_ROW_HEIGHT + 11, 2);
+        tft.drawString("Connected: LoRa  ", 25, 4 * FONT_ROW_HEIGHT, 2);
+        tft.drawString("Total Send:      packets", 25, 5 * FONT_ROW_HEIGHT, 2);
+        tft.drawString("Succeed:         packets", 25, 6 * FONT_ROW_HEIGHT, 2);
+        tft.drawString("Signal:", 25, 7 * FONT_ROW_HEIGHT + 5, 2);
         tft.setFreeFont(FSSB9);
         tft.setTextColor(tft.color565(0, 139, 0));
-        tft.drawString(String(cfg.lora_fcnt), 100, 4.8 * FONT_ROW_HEIGHT + 11, 2); // Show total number of packages issued
-        tft.drawString(String(cfg.lora_sucess_cnt), 100, 5.8 * FONT_ROW_HEIGHT + 11, 2); // Shows the number of successful deliveries
+        tft.drawString(String(cfg.lora_fcnt), 100, 4.5 * FONT_ROW_HEIGHT + 11, 2); // Show total number of packages issued
+        tft.drawString(String(cfg.lora_sucess_cnt), 100, 5.5 * FONT_ROW_HEIGHT + 11, 2); // Shows the number of successful deliveries
         Widget_LoraState(0, 0);
-        Widget_Signal(cfg.lora_rssi, -20, 18);
+        Widget_Signal(cfg.lora_rssi, 2, 7);
     }
     return true;
 }
@@ -462,9 +456,11 @@ bool UI::Process_2(uint8_t select) {
                 sprintf(buf, "[%02d:%02d:%02d]:", data.time / 1000 / 60 / 60,
                         data.time / 1000 / 60 % 60, data.time / 1000 % 60);
                 tft.setTextColor(TFT_GREEN, TFT_BLACK);
-                tft.drawString(buf, 20, 80 + i * 13, 2);
+                tft.drawString(buf, 20, 80 + i * 14, 2);
                 tft.setTextColor(TFT_WHITE, TFT_BLACK);
-                tft.drawString(data.data, 100, 80 + i * 13, 2);
+                tft.setTextPadding(200);
+                tft.drawString(data.data, 100, 80 + i * 14, 2);
+                tft.setTextPadding(0);
                 i++;
             }
             log_ready = true;
@@ -556,7 +552,8 @@ bool UI::Sensor_1(uint8_t select) {
         Widget_Title(0);   //上方页面栏指示所在功能页
         Label_Network(); //左下角显示连接状态
         Label_Hardware(grove_status); //右下角提示grove接入
-        Widget_PagePos(s_data.size()/3+1, select/3);
+        // Widget_PagePos(s_data.size()/3+1, select/3);
+        Widget_PagePos(SENSOR_NUM_MAX/3, select/3);
         //保证所选传感器在显示范围内，即 index <= select < index+3
         if (select >= index + 3) //所选传感器在当前页之后
             index += 1;
@@ -594,7 +591,7 @@ bool UI::Sensor_2(uint8_t select) {
     if (layout_refresh) {
         Widget_Title(0);
         Label_Subtitle(s_data[select].name);// Display the sensor name
-        Widget_PagePos(s_data.size() / 3 + 1, select / 3);
+        Widget_PagePos(SENSOR_NUM_MAX / 3, select / 3);
         Label_Network();
     }
 
@@ -899,11 +896,11 @@ void UI::Label_SensorData(sensor_data& data, uint8_t pos, uint16_t bg_color) {
             temp += *(int32_t *)(data.data + i);
         }
         temp /= data.size / 4;
-        tft.drawString(String(data.size/4), 2+(20+pos*100), 30+60, 4);
+        tft.drawString(String(data.size/4), 65+pos*100, 90, 4);
         if (data.data_type == SENSOR_DATA_TYPE_INT32)
-            tft.drawString(String(temp), 2+(20+pos*100), 30+24+60, 4);
+            tft.drawString(String(temp), 65+pos*100, 90+24, 4);
         else if (data.data_type == SENSOR_DATA_TYPE_FLOAT)
-            tft.drawFloat((float)temp/100, 2, 2+(20+pos*100), 30+24+60, 4);
+            tft.drawFloat((float)temp/100, 2, 65+pos*100, 90+24, 4);
     }
     tft.setTextDatum(TL_DATUM);
     tft.setTextPadding(0);

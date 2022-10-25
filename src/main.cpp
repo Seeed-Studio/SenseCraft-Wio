@@ -34,7 +34,7 @@ void display_init() // Display initialization, black background rotation
     tft.fillScreen(TFT_BLACK);
     tft.setTextColor(TFT_WHITE);
     tft.setFreeFont(FSSB9);
-    tft.drawString("SenseCAP K1100", 90, 110, GFXFF);
+    tft.drawString(DEVICE, 90, 110, GFXFF);
     tft.setFreeFont(FSS9);
     tft.drawString(VERSION, 150, 150, FONT2);
 }
@@ -43,14 +43,6 @@ using namespace std;
 void LogMemoryUsage(const char *s);
 void LogHeapChange(const char *s);
 void LogTaskTrace(void);
-// static void CheakHeap(void* pvParameters) 
-// {
-//     while(1){   
-//         LogTaskTrace();
-//         LogMemoryUsage();
-//         vTaskDelay(Ticks::SecondsToTicks(60));
-//     }
-// }
 
 void setup() {
     display_init();
@@ -71,10 +63,8 @@ void setup() {
     // Message *sensorMail = new Message(256);
 
     ButtonThread  *btn     = new ButtonThread(*btnMail);
-    // UI            *u       = new UI(tft, spr, *cfg, *btnMail);
     UI            *u       = new UI(tft, *cfg, *btnMail);
     SamplerThread *sampler = new SamplerThread(*cfg, *u);
-    // xTaskCreate(CheakHeap, "CheakHeap", 128*3, NULL, 1, &Handle_aTask);
 }
 
 // Get the size of memory left in the system in freertos.
@@ -99,7 +89,6 @@ void LogMemoryUsage(const char *s) {
     LOGSS.printf("| Maximum : "ANSI_R"%d "ANSI_RESET"bytes\r\n", Total-MinFree);
     LOGSS.printf("| Current : "ANSI_G"%d "ANSI_RESET"bytes\r\n", (Total-CurFree), UsageGraph.c_str());
     LOGSS.printf("| %s \r\n", UsageGraph.c_str());
-    // LOGSS.println("================== END ===================");
 }
 
 void LogTaskTrace() {
