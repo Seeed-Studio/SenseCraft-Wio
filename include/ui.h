@@ -17,15 +17,8 @@ using namespace cpp_freertos;
 
 #define SENSOR_NUM_MAX 5      // Maximum number of sensors
 #define LINE_DATA_MAX_SIZE 30 // maximum size of data
-#define DRAW_LINE_MAX_NUM 3   // maximum num of draw line
+#define DRAW_LINE_MAX_NUM 1   // maximum num of draw line
 #define SHOW_LOG_MAX_SIZE 11  // maximum size of log
-
-#define WIDTH 32
-#define X_OFFSET 16
-#define X_RADIUS 18
-#define HEIGHT 20
-#define Y_OFFSET 10
-#define Y_RADIUS 12
 
 enum page_state { NETWORKPAGE, PROCESSPAGE, SENSEPAGE };
 
@@ -66,7 +59,8 @@ typedef bool (*page_t)(uint8_t key);
 
 class UI : public Thread {
   public:
-    UI(TFT_eSPI &lcd, TFT_eSprite &display, SysConfig &config, Message &m1);
+    // UI(TFT_eSPI &lcd, TFT_eSprite &display, SysConfig &config, Message &m1);
+    UI(TFT_eSPI &lcd, SysConfig &config, Message &m1);
 
   protected:
     virtual void Run();
@@ -77,7 +71,7 @@ class UI : public Thread {
 
   private:
     TFT_eSPI    &tft;
-    TFT_eSprite &spr;
+    // TFT_eSprite &spr;
 
     Message &btnMail;
 
@@ -99,9 +93,6 @@ class UI : public Thread {
 
     bool data_refresh;   // if new data push, refresh data in screen
     bool layout_refresh; // if a button pressed, refresh layout
-    
-    void render_frame(void);
-    void build_frame(void);
 
     /* Label: basic and simple UI elements */ 
     void Label_Network(void);
@@ -127,47 +118,37 @@ class UI : public Thread {
         {"AU", "915", "Australia", 9},
     };
 
-    struct NetworkState n_state = {0, {0, false, 0}, {0, false, 0}};
     struct State u_state = {0, true, 0};
-    void                NetworkPageManager(uint8_t keys);
-    bool                Network_1(uint8_t select);
-    bool                Network_2_0(uint8_t select); // lora
-    bool                Network_2_1(uint8_t select); // wifi
-    bool                Network_3_0(uint8_t select); // lora
-    bool                Network_Disconnect(uint8_t select); // wifi
-    bool                Network_4_0(uint8_t select); // lora
-    bool                Network_4_1(uint8_t select); // wifi
-    bool                Network_6_0(uint8_t select); // lora
-    void NetworkLoRaBandSelect(uint8_t pos, struct LoRaBandInfo lbi, uint8_t select);
+    void NetworkPageManager(uint8_t keys);
+    bool Network_Home(uint8_t select);
+    bool Network_Connect(uint8_t select);
+    bool Network_LoRa_Band(uint8_t select);
+    bool Network_LoRa_Confirm(uint8_t select);
+    bool Network_Disconnect(uint8_t select);
 
     struct State p_state = {0, true, 0};
-    void         ProcessPageManager(uint8_t keys);
-    bool         Process_1(uint8_t select);
-    bool         Process_2(uint8_t select);
+    void ProcessPageManager(uint8_t keys);
+    bool Process_1(uint8_t select);
+    bool Process_2(uint8_t select);
 
     struct State s_state = {0, true, 0};
-    void         SensePageManager(uint8_t keys);
-    bool         Sensor_1(uint8_t select);
-    bool         Sensor_2(uint8_t select);
-    bool         Sensor_3(uint8_t select);
-
-    typedef bool (UI::*page_t)(uint8_t key);
-
-    page_t l_network[6] = {&UI::Network_1, &UI::Network_2_0, &UI::Network_3_0, &UI::Network_4_0,
-                           &UI::Network_Disconnect, &UI::Network_6_0};
-    page_t w_network[4] = {&UI::Network_1, &UI::Network_2_1, &UI::Network_Disconnect, &UI::Network_4_1};
-
-    page_t uplink [6] = { &UI::Network_1, &UI::Network_2_1, &UI::Network_2_0, &UI::Network_3_0, 
-                          &UI::Network_Disconnect};
-    page_t process[2] = { &UI::Process_1, &UI::Process_2};
-    page_t sense  [3] = { &UI::Sensor_1, &UI::Sensor_2, &UI::Sensor_3};
-
-    enum uplink_index { HOME_S, LORABAND_S, LORACONFIRM, CONNECT, DISCONNECT_S };
-    const int8_t uplink_page_pre[5]  = { HOME_S, HOME_S, HOME_S, LORABAND_S, CONNECT };
-    const int8_t uplink_page_next[5] = { HOME_S, HOME_S, HOME_S, LORABAND_S, HOME_S};
+    void SensePageManager(uint8_t keys);
+    bool Sensor_1(uint8_t select);
+    bool Sensor_2(uint8_t select);
+    bool Sensor_3(uint8_t select);
 
     void PageMangent(uint8_t key);
-    void (UI::*get_page[3])(uint8_t key) = {&UI::NetworkPageManager, &UI::ProcessPageManager, &UI::SensePageManager};
+
+    typedef bool (UI::*page_t)(uint8_t key);
+    typedef void (UI::*main_t)(uint8_t key);
+
+    enum uplink_index { HOME_S, CONNECT, DISCONNECT_S, LORABAND_S, LORACONFIRM };
+    page_t uplink [5] = { &UI::Network_Home, &UI::Network_Connect, &UI::Network_Disconnect, 
+                          &UI::Network_LoRa_Band, &UI::Network_LoRa_Confirm };
+    page_t process[2] = { &UI::Process_1, &UI::Process_2};
+    page_t sense  [3] = { &UI::Sensor_1, &UI::Sensor_2, &UI::Sensor_3};
+    main_t get_page[3] = {&UI::NetworkPageManager, &UI::ProcessPageManager, &UI::SensePageManager};
+    // void (UI::*get_page[3])(uint8_t key) = {&UI::NetworkPageManager, &UI::ProcessPageManager, &UI::SensePageManager};
 
   private:
     // inline function, 4byte uint8_t to float

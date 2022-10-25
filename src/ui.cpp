@@ -5,7 +5,6 @@
 #include <math.h>
 
 #define countof(a) (sizeof(a) / sizeof(*(a)))
-static char frame_buffer[WIDTH * HEIGHT + 1];
 extern void LogMemoryUsage(const char *s);
 
 // inline function, 4byte uint8_t to float
@@ -15,8 +14,10 @@ void UI::uint8_to_float(uint8_t *data, float *destination) {
     *reinterpret_cast<uint32_t *>(destination) = value;
 }
 
-UI::UI(TFT_eSPI &lcd, TFT_eSprite &display, SysConfig &config, Message &m1)
-    : Thread("UIThread", 128 * 6, 3), tft(lcd), spr(display), cfg(config), btnMail(m1) {
+// UI::UI(TFT_eSPI &lcd, TFT_eSprite &display, SysConfig &config, Message &m1)
+UI::UI(TFT_eSPI &lcd, SysConfig &config, Message &m1)
+    // : Thread("UIThread", 128 * 6, 3), tft(lcd), spr(display), cfg(config), btnMail(m1) {
+    : Thread("UIThread", 128 * 6, 3), tft(lcd), cfg(config), btnMail(m1) {
     Start();
 };
 
@@ -82,8 +83,6 @@ void UI::Run() {
         // LOGSS.printf("UI Stacks Free Bytes Remaining %d\r\n",
         //              uxTaskGetStackHighWaterMark(GetHandle()));
         if (buff[0] == 5) {
-            build_frame();
-            render_frame();
             LogMemoryUsage(__FUNCTION__);
         }
         else {
@@ -197,151 +196,78 @@ void UI::StatusMachine(struct State *ui_state, uint8_t key) {
     }
 }
 
-// void UI::NetworkPageManager(uint8_t keys) {
-//     if (!layout_refresh) //this page not included data refresh
-//         return;
-//     switch (keys) {
-//     case LEFT_PRESSED:
-//         if ((u_state.current_page == HOME_S) || (u_state.current_page == LORABAND_S)
-//             || (u_state.current_page == DISCONNECT_S))
-//             u_state.s_select -= (u_state.s_select > 0) ? 1 : 0;
-//         break;
-//     case RIGHT_PRESSED:
-//         if ((u_state.current_page == HOME_S) || (u_state.current_page == DISCONNECT_S))
-//             u_state.s_select += (u_state.s_select < 1) ? 1 : 0;
-//         else if (u_state.current_page == LORABAND_S)
-//             u_state.s_select += (u_state.s_select < 2) ? 1 : 0;
-//         break;
-//     case UP_PRESSED:
-//         if ((u_state.current_page == WIFICONNECT) || (u_state.current_page == LORACONNECT))
-//         {
-//             u_state.s_select = 0;
-//             u_state.current_page == HOME_S;
-//         }
-//         // if ()
-//         break;
-//     case SELECT_PRESSED:
-//         if ()
-//         cfg.wifi_on = true;
-//         cfg.lora_on = false;
-//         break;
-//     }
-//     (this->*uplink[u_state.current_page])(u_state.s_select);
-// }
-
 void UI::NetworkPageManager(uint8_t keys) {
     if (!layout_refresh) //this page not included data refresh
         return;
-
     switch (keys) {
     case LEFT_PRESSED:
-        if (n_state.nl_state.current_page == FIRST_PAGE &&
-            n_state.nw_state.current_page == FIRST_PAGE) {
-            n_state.current_network = LORA_PAGE;
-        }
-
-        if (n_state.current_network == LORA_PAGE) {
-            n_state.nl_state.s_select--;
-            if (n_state.nl_state.s_select < 0) {
-                n_state.nl_state.s_select = 0;
-            }
-        } // WiFi page no need to select
+        if ((u_state.current_page == HOME_S) || (u_state.current_page == LORABAND_S)
+            || (u_state.current_page == DISCONNECT_S))
+            u_state.s_select -= (u_state.s_select > 0) ? 1 : 0;
         break;
     case RIGHT_PRESSED:
-        if (n_state.nl_state.current_page == FIRST_PAGE &&
-            n_state.nw_state.current_page == FIRST_PAGE) {
-            n_state.current_network = WIFI_PAGE;
-        }
-
-        if (n_state.current_network == LORA_PAGE) {
-            n_state.nl_state.s_select++;
-            if (n_state.nl_state.s_select >
-                sizeof(lora_band_info) / sizeof(lora_band_info[0]) - 1) {
-                n_state.nl_state.s_select = sizeof(lora_band_info) / sizeof(lora_band_info[0]) - 1;
-            }
-        } else { // WiFi
-            n_state.nw_state.s_select++;
-            if (n_state.nw_state.s_select > 1) {
-                n_state.nw_state.s_select = 1;
-            }
-        }
+        if (u_state.current_page == LORABAND_S)
+            u_state.s_select += (u_state.s_select < 2) ? 1 : 0;
+        else
+            u_state.s_select += (u_state.s_select < 1) ? 1 : 0;
         break;
     case UP_PRESSED:
-        if (n_state.current_network == LORA_PAGE) {
-            n_state.nl_state.current_page--;
-            if (n_state.nl_state.current_page < 0) {
-                n_state.nl_state.current_page = 0;
-            }
-        } else { // WiFi
-            n_state.nw_state.current_page--;
-            if (n_state.nw_state.current_page < 0) {
-                n_state.nw_state.current_page = 0;
-            }
+        if (u_state.current_page == LORABAND_S) {
+            u_state.s_select = 0;
+            u_state.current_page = HOME_S;
         }
+        else
+            u_state.current_page -= (u_state.current_page > HOME_S) ? 1 : 0;
         break;
     case SELECT_PRESSED:
-        if (n_state.current_network == LORA_PAGE) {
-            if (n_state.nl_state.current_page == FIRST_PAGE &&
-                n_state.nw_state.current_page == FIRST_PAGE) {
-                    n_state.nl_state.current_page += (cfg.lora_on) ? 3 : 1;
-                }
-            else if (n_state.nl_state.current_page == FIRST_PAGE + 2 ) {
-                cfg.wifi_on = false;
-                cfg.lora_on = true;
+        switch (u_state.current_page)
+        {
+        case HOME_S:
+            if (u_state.s_select == 1) {
+                cfg.lora_on = false;
+                cfg.wifi_on = true;
+                u_state.current_page = CONNECT;
             }
-            if (n_state.nl_state.is_next) {
-                n_state.nl_state.current_page++;
-                if (n_state.nl_state.current_page > countof(l_network) - 1) {
-                    n_state.nl_state.current_page = countof(l_network) - 1;
-                }
+            else
+                u_state.current_page = (cfg.lora_on) ? CONNECT : LORABAND_S;
+            break;
+        case DISCONNECT_S:
+            if (u_state.s_select == 0) {
+                cfg.lora_on = cfg.wifi_on = false;
+                u_state.current_page = HOME_S;
             }
-        } else { // WiFi
-            if (n_state.nw_state.is_next) {
-                if (n_state.nl_state.current_page == FIRST_PAGE &&
-                    n_state.nw_state.current_page == FIRST_PAGE) {
-                    cfg.wifi_on = true;
-                    cfg.lora_on = false;
-                }
-                n_state.nw_state.current_page++;
-                if (n_state.nw_state.current_page > countof(w_network) - 1) {
-                    n_state.nw_state.current_page = countof(w_network) - 1;
-                }
-            }
+            else
+                u_state.current_page = CONNECT;
+            break;
+        case LORACONFIRM:
+            cfg.lora_on = true;
+            cfg.wifi_on = false;
+            u_state.current_page = CONNECT;
+            break;
+        default:
+            u_state.current_page += 1;
+            break;
         }
         break;
     }
-
-    if (n_state.current_network == 0)
-        n_state.nl_state.is_next =
-            (this->*l_network[n_state.nl_state.current_page])(n_state.nl_state.s_select);
-    else
-        n_state.nw_state.is_next =
-            (this->*w_network[n_state.nw_state.current_page])(n_state.nw_state.s_select);
-    // s_data.clear();
-    // s_data.shrink_to_fit();
-    // s_data_ready = true;
+    // LOGSS.printf("page switch: %d %d\r\n", u_state.current_page, u_state.s_select);
+    u_state.is_next = (this->*uplink[u_state.current_page])(u_state.s_select);
 }
 
-bool UI::Network_1(uint8_t select) {
+bool UI::Network_Home(uint8_t select) {
     Widget_Title(2);
-
-    switch (n_state.current_network) {
-    case 0:
-        Label_Subtitle("LoRa");
-        tft.setFreeFont(FSS9);
-        tft.setTextColor(TFT_WHITE);
+    tft.setFreeFont(FSS9);
+    tft.setTextColor(TFT_WHITE);
+    if (select == 0) {
         tft.fillRect(30, 95, 110, 60, tft.color565(0, 139, 0));
         tft.drawString(" Please press the bottom right button to confirm", 2, 166, 2);
         tft.drawString("           your network selection.", 2, 186, 2);
-        break;
-    case 1:
-        Label_Subtitle("WiFi");
-        tft.setFreeFont(FSS9);
-        tft.setTextColor(TFT_WHITE);
+        Label_Subtitle("LoRa");
+    } else {
         tft.fillRect(180, 95, 110, 60, tft.color565(0, 139, 0));
         tft.drawString("Please refer to our wiki to configure the info in", 8, 166, 2);
         tft.drawString(" config.txt,then save it and restart the K1100.", 8, 186, 2);
-        break;
+        Label_Subtitle("WiFi");
     }
     tft.setFreeFont(FSSB9);
     tft.setTextColor(TFT_WHITE);
@@ -353,41 +279,29 @@ bool UI::Network_1(uint8_t select) {
     return true;
 }
 
-// Select Frequency band interface
-void UI::NetworkLoRaBandSelect(uint8_t pos, struct LoRaBandInfo lbi, uint8_t select) {
-    int len = strlen(lbi.type) + strlen(lbi.frequency) + strlen(lbi.country);
-    char *freq_info = new char[len+9];
-    sprintf(freq_info,"%s%s is for %s", lbi.type, lbi.frequency, lbi.country);
-    tft.setFreeFont(FSS9);
-    tft.setTextColor(TFT_WHITE);
-    tft.drawCentreString("Select and confirm LoRaWAN frequency band", 160, 69, 2);
-    if (pos == select) {
-        tft.fillRect(20 + pos * 100, 110, 80, 60, tft.color565(0, 139, 0));
-        tft.drawCentreString(freq_info, 160, 195, 2);
-    }
-    tft.setFreeFont(FSS9);
-    tft.drawString(lbi.type, 20 + pos * 100, 110, GFXFF);
-    tft.setFreeFont(FSS24);
-    tft.drawString(lbi.frequency, 20 + pos * 100, 130, GFXFF);
-}
-
-bool UI::Network_2_0(uint8_t select) {
-    bool ret = true;
+bool UI::Network_LoRa_Band(uint8_t select) {
     Widget_Title(2);
     Label_Network();
-    if (!cfg.lora_on) {
-        for (uint8_t i = 0; i < 3; i++) {
-            NetworkLoRaBandSelect(i, lora_band_info[i], select);
+    for (uint8_t i = 0; i < 3; i++) {
+        struct LoRaBandInfo lbi = lora_band_info[i];
+        int len = strlen(lbi.type) + strlen(lbi.frequency) + strlen(lbi.country);
+        char *freq_info = new char[len+9];
+        sprintf(freq_info,"%s%s is for %s", lbi.type, lbi.frequency, lbi.country);
+        if (i == select) {
+            tft.fillRect(20 + i * 100, 110, 80, 60, tft.color565(0, 139, 0));
+            tft.drawCentreString(freq_info, 160, 195, 2);
         }
-        ret = true;
-    } else {
-        n_state.nl_state.current_page += 2;
-        ret = true;
+        tft.setFreeFont(FSS9);
+        tft.setTextColor(TFT_WHITE);
+        tft.drawCentreString("Select and confirm LoRaWAN frequency band", 160, 69, 2);
+        tft.drawString(lbi.type, 20 + i * 100, 110, GFXFF);
+        tft.setFreeFont(FSS24);
+        tft.drawString(lbi.frequency, 20 + i * 100, 130, GFXFF);
     }
-    return ret;
+    return true;
 }
 
-bool UI::Network_2_1(uint8_t select) {
+bool UI::Network_Connect(uint8_t select) {
     Widget_Title(2);
     Label_CentreBtn("Disconnect", TFT_RED);
     Label_Network();
@@ -424,65 +338,19 @@ bool UI::Network_2_1(uint8_t select) {
     return true;
 }
 
-bool UI::Network_3_0(uint8_t select) {
+bool UI::Network_LoRa_Confirm(uint8_t select) {
     Widget_Title(2);
-    if (!cfg.lora_on) {
-        cfg.lora_frequency = lora_band_info[select].band;
-        cfg.wifi_on        = false;
-        tft.setTextColor(TFT_WHITE);
-        tft.drawString("Please download and register an account", 25, 86, 2);
-        tft.drawString("on our SenseCAP Mate APP, then scan the", 25, 100, 2);
-        tft.drawString("QR code on the back of Grove-Wio E5", 25, 114, 2);
-        tft.drawString("(which is included in the kit) to bind", 25, 128, 2);
-        tft.drawString("your device to the cloud.", 25, 142, 2);
-
-        Label_CentreBtn("Continue", 0x03ff);
-        Label_Network();
-    } else {
-        n_state.nl_state.current_page -= 2;
-        (this->*l_network[n_state.nl_state.current_page])(n_state.nl_state.s_select);
-    }
-    return true;
-}
-
-bool UI::Network_4_1(uint8_t select) {
-    if (select == 0) {
-        cfg.wifi_on = false;
-        n_state.nw_state.current_page -= 3;
-    } else
-        n_state.nw_state.current_page -= 2;
-}
-
-bool UI::Network_4_0(uint8_t select) {
-    Widget_Title(2);
-    Label_Subtitle("LoRa");
-    // cfg.lora_on = true;
+    cfg.lora_frequency = lora_band_info[select].band;
     tft.setTextColor(TFT_WHITE);
-    tft.drawString("Connected: LoRa  ", 25, 3.8 * FONT_ROW_HEIGHT + 11, 2);
-    tft.drawString("Total Send:      packets", 25, 4.8 * FONT_ROW_HEIGHT + 11, 2);
-    // tft.drawString("packets", 115, 4.8 * FONT_ROW_HEIGHT + 11, 2);
-    tft.drawString("Succeed:         packets", 25, 5.8 * FONT_ROW_HEIGHT + 11, 2);
-    // tft.drawString("packets", 105, 5.8 * FONT_ROW_HEIGHT + 11, 2);
+    tft.drawString("Please download and register an account", 25, 86, 2);
+    tft.drawString("on our SenseCAP Mate APP, then scan the", 25, 100, 2);
+    tft.drawString("QR code on the back of Grove-Wio E5", 25, 114, 2);
+    tft.drawString("(which is included in the kit) to bind", 25, 128, 2);
+    tft.drawString("your device to the cloud.", 25, 142, 2);
 
-    tft.setFreeFont(FSSB9);
-    tft.setTextColor(tft.color565(0, 139, 0));
-    tft.drawString(String(cfg.lora_fcnt), 100, 4.8 * FONT_ROW_HEIGHT + 11, 2); // Show total number of packages issued
-    tft.drawString(String(cfg.lora_sucess_cnt), 100, 5.8 * FONT_ROW_HEIGHT + 11, 2); // Shows the number of successful deliveries
-
-    Widget_LoraState(0, 0);
-
-    Widget_Signal(cfg.lora_rssi, -20, 18);
-    Label_CentreBtn("Disconnect", TFT_RED);
+    Label_CentreBtn("Continue", 0x03ff);
     Label_Network();
     return true;
-}
-
-bool UI::Network_6_0(uint8_t select) {
-    if (select == 0) {
-        cfg.lora_on = false;
-        n_state.nl_state.current_page -= 5;
-    } else
-        n_state.nl_state.current_page -= 2;
 }
 
 bool UI::Network_Disconnect(uint8_t select) {
@@ -927,7 +795,7 @@ void UI::Widget_LoraState(int32_t x, int32_t y){
 }
 
 void UI::Label_CentreBtn(String name, uint16_t color) {
-    tft.fillRoundRect(110, 180, 100, 28, 6, color);
+    tft.fillRoundRect(110, 180, 100, 28, 8, color);
     tft.setFreeFont(FSS9);
     tft.setTextColor(TFT_WHITE, color);
     tft.drawCentreString(name, 160, 185, 1);
@@ -1057,55 +925,4 @@ void UI::Label_Subtitle(String value) {
     // } else {
     //     tft.drawCentreString(value, SCREEN_WIDTH/2, 50, GFXFF);
     // }
-}
-
-void UI::build_frame()
-{
-	static float A, B;
-    static float z[WIDTH * HEIGHT];
-	memset(frame_buffer, ' ', sizeof(frame_buffer));
-	memset(z, 0, sizeof(z));
-
-	//calculate pixel
-	for(float j=0; j < 6.28; j += 0.07) {//angle 2*pi
-		for(float i=0; i < 6.28; i += 0.02) {//angle 2*pi
-			float c = sin(i);
-			float d = cos(j);
-			float e = sin(A);
-			float f = sin(j);
-			float g = cos(A);
-			float h = d + 2;
-			float D = 1 / (c * h * e + f * g + 5);
-			float l = cos(i);
-			float m = cos(B);
-			float n = sin(B);
-			float t = c * h * g - f * e;
-			int x = X_OFFSET + X_RADIUS * D * (l * h * m - t * n);
-			int y= Y_OFFSET + Y_RADIUS * D * (l * h * n + t * m);
-			int o = x + WIDTH * y;
-			int N = 8 * ((f * e - c * d * g) * m - c * d * e - f * g - l * d * n);
-			if(HEIGHT > y && y > 0 && x > 0 && WIDTH > x && D > z[o]) {
-				z[o] = D;
-				frame_buffer[o] = ".,-~:;=!*#$@"[N > 0 ? N : 0];
-			}
-		}
-	}
-	// A += 0.00004 * WIDTH * HEIGHT;
-	// B += 0.00002 * WIDTH * HEIGHT;
-    A += 0.00016 * WIDTH * HEIGHT;
-	B += 0.00008 * WIDTH * HEIGHT;
-}
-
-void UI::render_frame()
-{
-    tft.setFreeFont(FM9);
-    tft.setTextColor(tft.color565(245, 192, 86), TFT_BLACK);
-    // LOGSS.printf("font width: %d , height: %d \r\n", tft.textWidth("@"), tft.fontHeight());
-    for(int i = 0; i < HEIGHT; i++)
-	{
-		char tmp = frame_buffer[(i + 1) * WIDTH];
-		frame_buffer[(i + 1) * WIDTH] = 0;
-		tft.drawString(&frame_buffer[i * WIDTH], 0, i * 12);
-		frame_buffer[(i + 1) * WIDTH] = tmp;
-	}
 }
