@@ -36,7 +36,7 @@ void display_init() // Display initialization, black background rotation
 }
 
 void setup() {
-
+    display_init();
     SysConfig *cfg = new SysConfig();
     cfg->init();
 
@@ -49,7 +49,6 @@ void setup() {
     while (!LOGSS && (millis() - start) < 1500)
         ; // Open the Serial Monitor to get started or wait for 1.5"
 
-    display_init();
 
     Message *btnMail = new Message(256);
     // Message *sensorMail = new Message(256);

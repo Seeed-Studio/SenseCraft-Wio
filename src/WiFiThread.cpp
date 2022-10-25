@@ -41,12 +41,12 @@ const char *ROOT_CA_BALTIMORE = "-----BEGIN CERTIFICATE-----\n"
                                 "R9I4LtD+gdwyah617jzV/OeBHRnDJELqYzmp\n"
                                 "-----END CERTIFICATE-----";
 
-WiFiThread::WiFiThread(SysConfig &config) : Thread("WiFiThread", 128 * 6, 1), cfg(config) {
+WiFiThread::WiFiThread(SysConfig &config) : Thread("WiFiThread", 128 * 10, 1), cfg(config) {
     Start();
 }
 
 void WiFiThread::MqttSubscribeCallbackDPS(char *topic, byte *payload, unsigned int length) {
-    LOGSS.printf("Subscribe: \r\n %s \r\n Len:%d  payload: %s\r\n", topic, length, payload);
+    LOGSS.printf("Subscribe: \r\n %s \r\n Len:%d \r\n", topic, length);
     if (DpsClient.RegisterSubscribeWork(topic, std::vector<uint8_t>(payload, payload + length)) !=
         0) {
         LOGSS.println("Failed to parse topic and/or payload");
@@ -99,7 +99,7 @@ int WiFiThread::RegisterDeviceToDPS(const std::string &endpoint, const std::stri
     const std::string encryptedSignature = GenerateEncryptedSignature(symmetricKey, signature);
     const std::string mqttPassword =
         DpsClient.GetMqttPassword(encryptedSignature, expirationEpochTime);
-    LOGSS.printf(" MQTT password = %s\r\n", mqttPassword.c_str());
+    // LOGSS.printf(" MQTT password = %s\r\n", mqttPassword.c_str());
     const std::string registerPublishTopic   = DpsClient.GetRegisterPublishTopic();
     const std::string registerSubscribeTopic = DpsClient.GetRegisterSubscribeTopic();
 
@@ -124,6 +124,7 @@ int WiFiThread::RegisterDeviceToDPS(const std::string &endpoint, const std::stri
             LOGSS.println("Client sent operation query message");
             DpsPublishTimeOfQueryStatus = 0;
         }
+        Delay(Ticks::MsToTicks(50));
     }
 
     if (!DpsClient.IsAssigned())
@@ -184,7 +185,7 @@ int WiFiThread::ConnectToHub(az_iot_hub_client *iot_hub_client, const std::strin
             iot_hub_client, expirationEpochTime, encryptedSignatureSpan, AZ_SPAN_EMPTY,
             mqttPassword, sizeof(mqttPassword), NULL)))
         return -3;
-    LOGSS.printf(" MQTT password = %s\r\n", mqttPassword);
+    // LOGSS.printf(" MQTT password = %s\r\n", mqttPassword);
 
     wifiClient.setCACert(ROOT_CA_BALTIMORE);
     client->setBufferSize(MQTT_PACKET_SIZE);
