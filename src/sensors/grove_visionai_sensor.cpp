@@ -17,10 +17,9 @@ void Visionai::pushlog(const char *msg) {
 
 void Visionai::Run() {
     char log[32];
-    softwarei2c.begin(VISIONAI_SDAPIN, VISIONAI_SCLPIN);
+    // softwarei2c.begin(VISIONAI_SDAPIN, VISIONAI_SCLPIN);
     ai.begin(ALGO_OBJECT_DETECTION, MODEL_EXT_INDEX_1); // Object detection and externel model 1
     while (true) {
-        softwarei2c.begin(VISIONAI_SDAPIN, VISIONAI_SCLPIN);
         uint32_t tick = millis();
         if (ai.invoke()) // begin invoke
         {
@@ -36,24 +35,19 @@ void Visionai::Run() {
                 }
                 Delay(Ticks::MsToTicks(100));
             }
-            uint8_t len = ai.get_result_len(); // receive how many people detect
-            dsize       = len;
-            if (len > 0 && len <= MAX_DETECTION) {
+            uint8_t dsize = ai.get_result_len(); // receive how many people detect
+            if (dsize > 0 && dsize <= MAX_DETECTION) {
                 int time1 = millis() - tick;
                 sprintf(log, "Time consuming: %d", time1);
                 pushlog(log);
-                sprintf(log, "Number of people: %d", len);
+                sprintf(log, "Number of people: %d", dsize);
                 pushlog(log);
                 object_detection_t g_data; // get data
-                for (int i = 0; i < len; i++) {
+                for (int i = 0; i < dsize; i++) {
                     sprintf(log, "Detecting and calculating: %d", i + 1);
                     pushlog(log);
                     ai.get_result(i, (uint8_t *)&g_data, sizeof(object_detection_t)); // get result
-                    if (g_data.confidence < 100) {
-                        data[i] = g_data.confidence;
-                    } else {
-                        data[i] = 100;
-                    }
+                    data[i] = (g_data.confidence < 100) ? g_data.confidence : 100;
                     sprintf(log, "confidence: %d", data[i]);
                     pushlog(log);
                 }
@@ -77,9 +71,22 @@ grove_visionai_sensor::grove_visionai_sensor() {
 }
 void grove_visionai_sensor::init() {
     visionai->Start();
+    // if (is_connected) {
+    //     ai.begin(ALGO_OBJECT_DETECTION, MODEL_EXT_INDEX_1);
+    // }
 }
 
 bool grove_visionai_sensor::read(struct sensor_data *sdata) {
+    /* check out connection */
+    // if (!I2C_Detect(grove_i2c_addr[S_VISION], softwarei2c)) {
+    //     is_connected = false;
+    //     return false;
+    // } else if (!is_connected) { // first connect
+    //     is_connected = true;
+    //     init();
+    //     return false; // waiting for next read
+    // }
+
     sdata->size                 = visionai->dsize * sizeof(visionai->data[0]);
     sdata->data_type            = SENSOR_DATA_TYPE_INT32;
     sdata->data                 = &visionai->data;

@@ -25,22 +25,45 @@ void Sgp30::Run() {
 }
 
 grove_sgp30_sensor::grove_sgp30_sensor() {
-    sgp30 = new Sgp30();
+    // sgp30 = new Sgp30();
 }
 void grove_sgp30_sensor::init() {
-    sgp30->Start();
+    // sgp30->Start();
+    if (is_connected) {
+        sgp30.begin(softwarei2c);
+        sgp30.initAirQuality();
+    }
 }
 
 bool grove_sgp30_sensor::read(struct sensor_data *sdata) {
+    /* check out connection */
+    if (!I2C_Detect(grove_i2c_addr[S_SGP30], softwarei2c)) {
+        is_connected = false;
+        return false;
+    }
+    else if (!is_connected) { // first connect
+        is_connected = true;
+        init();
+        return false; // waiting for next read
+    }
 
-    sdata->data      = sgp30->data;
-    sdata->data_type = SENSOR_DATA_TYPE_INT32;
-    sdata->size      = sizeof(sgp30->data);
-    sdata->id        = GROVE_SGP30;
-    sdata->name      = name;
-    sdata->status    = sgp30->status;
-    sdata->ui_type   = SENSOR_UI_TYPE_NORMAL;
-    sdata->data_unit = data_unit;
+    /* check out measurement */
+    if (sgp30.measureAirQuality() != SGP30_SUCCESS) {
+        sdata->status = false;
+        sgp30.initAirQuality();
+    } else {
+        sdata->status  = true;
+        sgp30_value[0] = sgp30.CO2;
+        sgp30_value[1] = sgp30.TVOC;
+
+        sdata->data      = sgp30_value;
+        sdata->data_type = SENSOR_DATA_TYPE_INT32;
+        sdata->size      = sizeof(sgp30_value);
+        sdata->id        = GROVE_SGP30;
+        sdata->name      = name;
+        sdata->ui_type   = SENSOR_UI_TYPE_NORMAL;
+        sdata->data_unit = data_unit;
+    }
     return sdata->status;
 }
 

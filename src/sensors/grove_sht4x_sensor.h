@@ -19,7 +19,7 @@ class Sht4x : public Thread {
     uint8_t dsize;
     bool    status;
 	SHT4x  sht4x_dev;
-	SoftwareI2C softwarei2c;
+	// SoftwareI2C softwarei2c;
 
   protected:
     virtual void Run();
@@ -36,9 +36,11 @@ public:
 private:
 	const char *name = "T_H";
 	const char *data_unit = "C,%RH";
-	int sht4x_value[2];
-
-	Sht4x  *sht4x;
+	int         sht4x_value[2];
+	bool        is_connected;
+	SHT4x       sht4x;
+	// SoftwareI2C softwarei2c;
+	// Sht4x  *sht4x;
 };
 
 #endif

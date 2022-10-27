@@ -20,7 +20,7 @@ class Sgp30 : public Thread {
     uint8_t dsize;
     bool    status;
     SGP30       mySensor;
-    SoftwareI2C softwarei2c;
+    // SoftwareI2C softwarei2c;
   protected:
     virtual void Run();
 };
@@ -36,8 +36,11 @@ class grove_sgp30_sensor : public sensor_base {
     const char *name = "Gas"; 
     const char *data_unit = "ppm,ppb";
     int         sgp30_value[2];
+    SGP30       sgp30;
+    bool        is_connected;
+    // SoftwareI2C softwarei2c;
 
-    Sgp30 *sgp30;
+    // Sgp30 *sgp30;
 };
 
 #endif
