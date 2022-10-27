@@ -1,6 +1,6 @@
 #include "ButtonThread.h"
 
-ButtonThread::ButtonThread(Message &m) : Thread("ButtonThread", 256, 3), Mail(m) {
+ButtonThread::ButtonThread(Message &m) : Thread("ButtonThread", 128, 3), Mail(m) {
     Start();
 };
 

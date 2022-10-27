@@ -6,6 +6,7 @@
 
 #define countof(a) (sizeof(a) / sizeof(*(a)))
 extern void LogMemoryUsage(const char *s);
+extern void LogTaskTrace(void);
 
 // inline function, 4byte uint8_t to float
 void UI::uint8_to_float(uint8_t *data, float *destination) {
@@ -14,10 +15,8 @@ void UI::uint8_to_float(uint8_t *data, float *destination) {
     *reinterpret_cast<uint32_t *>(destination) = value;
 }
 
-// UI::UI(TFT_eSPI &lcd, TFT_eSprite &display, SysConfig &config, Message &m1)
 UI::UI(TFT_eSPI &lcd, SysConfig &config, Message &m1)
-    // : Thread("UIThread", 128 * 6, 3), tft(lcd), spr(display), cfg(config), btnMail(m1) {
-    : Thread("UIThread", 128 * 6, 3), tft(lcd), cfg(config), btnMail(m1) {
+    : Thread("UIThread", 128 * 4, 3), tft(lcd), cfg(config), btnMail(m1) {
     Start();
 };
 
@@ -82,8 +81,10 @@ void UI::Run() {
         //}
         // LOGSS.printf("UI Stacks Free Bytes Remaining %d\r\n",
         //              uxTaskGetStackHighWaterMark(GetHandle()));
-        if (buff[0] == 5) {
+        if (buff[0] == 5 & layout_refresh) {
             LogMemoryUsage(__FUNCTION__);
+            LogTaskTrace();
+            layout_refresh = false;
         }
         else {
             PageMangent(keys);
@@ -272,28 +273,6 @@ bool UI::Network_Home(uint8_t select) {
     return true;
 }
 
-bool UI::Network_LoRa_Band(uint8_t select) {
-    Widget_Title(2);
-    Label_Network();
-    for (uint8_t i = 0; i < 3; i++) {
-        struct LoRaBandInfo lbi = lora_band_info[i];
-        int len = strlen(lbi.type) + strlen(lbi.frequency) + strlen(lbi.country);
-        char *freq_info = new char[len+9];
-        sprintf(freq_info,"%s%s is for %s", lbi.type, lbi.frequency, lbi.country);
-        if (i == select) {
-            tft.fillRect(20 + i * 100, 110, 80, 60, tft.color565(0, 139, 0));
-            tft.drawCentreString(freq_info, 160, 195, 2);
-        }
-        tft.setFreeFont(FSS9);
-        tft.setTextColor(TFT_WHITE);
-        tft.drawCentreString("Select and confirm LoRaWAN frequency band", 160, 69, 2);
-        tft.drawString(lbi.type, 20 + i * 100, 110, GFXFF);
-        tft.setFreeFont(FSS24);
-        tft.drawString(lbi.frequency, 20 + i * 100, 130, GFXFF);
-    }
-    return true;
-}
-
 bool UI::Network_Connect(uint8_t select) {
     Widget_Title(2);
     Label_CentreBtn("Disconnect", TFT_RED);
@@ -328,6 +307,28 @@ bool UI::Network_Connect(uint8_t select) {
         tft.drawString(String(cfg.lora_sucess_cnt), 100, 5.5 * FONT_ROW_HEIGHT + 11, 2); // Shows the number of successful deliveries
         Widget_LoraState(0, 0);
         Widget_Signal(cfg.lora_rssi, 2, 7);
+    }
+    return true;
+}
+
+bool UI::Network_LoRa_Band(uint8_t select) {
+    Widget_Title(2);
+    Label_Network();
+    for (uint8_t i = 0; i < 3; i++) {
+        struct LoRaBandInfo lbi = lora_band_info[i];
+        int len = strlen(lbi.type) + strlen(lbi.frequency) + strlen(lbi.country);
+        char *freq_info = new char[len+9];
+        sprintf(freq_info,"%s%s is for %s", lbi.type, lbi.frequency, lbi.country);
+        if (i == select) {
+            tft.fillRect(20 + i * 100, 110, 80, 60, tft.color565(0, 139, 0));
+            tft.drawCentreString(freq_info, 160, 195, 2);
+        }
+        tft.setFreeFont(FSS9);
+        tft.setTextColor(TFT_WHITE);
+        tft.drawCentreString("Select and confirm LoRaWAN frequency band", 160, 69, 2);
+        tft.drawString(lbi.type, 20 + i * 100, 110, GFXFF);
+        tft.setFreeFont(FSS24);
+        tft.drawString(lbi.frequency, 20 + i * 100, 130, GFXFF);
     }
     return true;
 }
@@ -594,10 +595,7 @@ bool UI::Sensor_2(uint8_t select) {
         Widget_PagePos(SENSOR_NUM_MAX / 3, select / 3);
         Label_Network();
     }
-
     tft.fillRect(18, 78, 24, 90, TFT_WHITE);
-
-    // 85 * 260 = 22100
     auto content = line_chart(20, 80); //(x,y) where the line graph begins
     data_num     = s_data[select].size / 4;
     if (data_num > DRAW_LINE_MAX_NUM)
@@ -613,7 +611,10 @@ bool UI::Sensor_2(uint8_t select) {
         {
             line_chart_data[i].pop(); // this is used to remove the first read variable
         }
-        line_chart_data[i].push(((int32_t *)s_data[select].data)[i]);
+        if (s_data[select].data_type == SENSOR_DATA_TYPE_FLOAT)
+            line_chart_data[i].push(((int32_t *)s_data[select].data)[i]/100);
+        else
+            line_chart_data[i].push(((int32_t *)s_data[select].data)[i]);
 
         content.height(85)
             .width(260)
