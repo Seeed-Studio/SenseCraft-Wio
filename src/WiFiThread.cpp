@@ -299,7 +299,7 @@ void WiFiThread::reconnect() {
     if (ConnectToHub(&HubClient, cfg.symmetric_key.c_str(), now + TOKEN_LIFESPAN) != 0) {
         LOGSS.printf(" Hub host = %s\r\n", HubHost.c_str());
         LOGSS.printf(" registration id = %s\r\n", cfg.registration_id.c_str());
-        LOGSS.printf("WIFI - Attempting MQTT failed, rc=%s\r\n", client->state());
+        LOGSS.printf("WIFI - Attempting MQTT failed, rc=%d\r\n", client->state());
         LOGSS.println(" try again in 2 seconds");
         delay(2000); // Wait 2 seconds before retrying
     } else {
