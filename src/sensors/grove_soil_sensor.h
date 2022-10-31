@@ -19,13 +19,12 @@ class grove_soil_sensor : public sensor_base {
     void        init();
     const char *get_name();
     bool        read(struct sensor_data *data);
+    bool        is_available;
 
   private:
     const char *name = "Soil";
     const char *data_unit = " ";
     int         soil_value;
-    bool        is_available;
-    // SoftwareI2C softwarei2c;
 };
 
 #endif

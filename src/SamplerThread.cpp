@@ -7,6 +7,7 @@
 #include "sensors/buildin_mic.h"
 #include "sensors/grove_sgp30_sensor.h"
 #include "sensors/grove_sht4x_sensor.h"
+#include "sensors/grove_vl53l0x_sensor.h"
 #include "sensors/grove_soil_sensor.h"
 #include "sensors/grove_visionai_sensor.h"
 #include "sensors/SensorsUtils.h"
@@ -27,9 +28,10 @@ void SamplerThread::Run() {
     sensors.push_back(new buildin_light_sensor());
     sensors.push_back(new buildin_mic());
     sensors.push_back(new LIS3DHTRSensor()); // buildin-imu
+    sensors.push_back(new grove_soil_sensor());
     sensors.push_back(new grove_sht4x_sensor());
     sensors.push_back(new grove_sgp30_sensor());
-    sensors.push_back(new grove_soil_sensor());
+    sensors.push_back(new grove_vl53l0x_sensor());
     sensors.push_back(new grove_visionai_sensor());
     // sensors.push_back(new FakeSensor());
 
