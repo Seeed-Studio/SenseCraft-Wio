@@ -16,7 +16,7 @@ void UI::uint8_to_float(uint8_t *data, float *destination) {
 }
 
 UI::UI(TFT_eSPI &lcd, SysConfig &config, Message &m1)
-    : Thread("UIThread", 128 * 4, 3), tft(lcd), cfg(config), btnMail(m1) {
+    : Thread("UIThread", 128 * 6, 3), tft(lcd), cfg(config), btnMail(m1) {
     Start();
 };
 
@@ -554,13 +554,18 @@ bool UI::Sensor_1(uint8_t select) {
         Label_Network(); //左下角显示连接状态
         Label_Hardware(grove_status); //右下角提示grove接入
         // Widget_PagePos(s_data.size()/3+1, select/3);
-        Widget_PagePos(SENSOR_NUM_MAX/3, select/3);
+        Widget_PagePos((SENSOR_NUM_MAX+2)/3, select/3);
         //保证所选传感器在显示范围内，即 index <= select < index+3
         if (select >= index + 3) //所选传感器在当前页之后
             index += 1;
         else if (select < index) //所选传感器在当前页之前
             index = select;
         // tft.fillRect(20+(select-index)*100, 60, 90, 130, tft.color565(0, 139, 0));
+        // tft.setCursor(100, 300);
+        // tft.loadFont("Sarasa-Latin-24");
+        // tft.setFreeFont(&Orbitron_Light_24);
+        // tft.println("Hello World!");
+        // tft.unloadFont();
     }
 
     for (uint8_t si = 0; si < 3; si++) { // 显示序号为 index，index+1，index+2的传感器
@@ -592,7 +597,7 @@ bool UI::Sensor_2(uint8_t select) {
     if (layout_refresh) {
         Widget_Title(0);
         Label_Subtitle(s_data[select].name);// Display the sensor name
-        Widget_PagePos(SENSOR_NUM_MAX / 3, select / 3);
+        Widget_PagePos((SENSOR_NUM_MAX+2)/3, select / 3);
         Label_Network();
     }
     tft.fillRect(18, 78, 24, 90, TFT_WHITE);
@@ -611,7 +616,7 @@ bool UI::Sensor_2(uint8_t select) {
         {
             line_chart_data[i].pop(); // this is used to remove the first read variable
         }
-        if (s_data[select].data_type == SENSOR_DATA_TYPE_FLOAT)
+        if (s_data[select].id == GROVE_SHT4X)
             line_chart_data[i].push(((int32_t *)s_data[select].data)[i]/100);
         else
             line_chart_data[i].push(((int32_t *)s_data[select].data)[i]);
@@ -668,14 +673,14 @@ bool UI::Sensor_3(uint8_t select) {
 void UI::Widget_Title(uint8_t t) {
     for(uint8_t i = 0; i < 3; i++){
         uint32_t color = (i==t) ? (tft.color565(135, 206, 235)) : TFT_WHITE;
-        tft.fillRoundRect((4+i*26)*PIXEL, 4, 21*PIXEL, FONT_ROW_HEIGHT+15, 8, color);
+        tft.fillRoundRect(17+i*(17+84), 4, 84, FONT_ROW_HEIGHT+15, 8, color);
     }
     tft.setFreeFont(FSSB9);
     tft.setTextColor(TFT_BLACK);
-    tft.drawString("Sense", 32, 14, GFXFF);
-    tft.drawString("Process", 127, 14, GFXFF);
-    tft.drawString("Uplink", 237, 14, GFXFF);
-    tft.drawLine(0, 2*FONT_ROW_HEIGHT, SCREEN_WIDTH, 2*FONT_ROW_HEIGHT, TFT_WHITE);
+    tft.drawCentreString("Sense", 59, 14, GFXFF);
+    tft.drawCentreString("Process", 59+101, 14, GFXFF);
+    tft.drawCentreString("Uplink", 59+202, 14, GFXFF);
+    tft.drawLine(0+10, 2*FONT_ROW_HEIGHT, SCREEN_WIDTH-10, 2*FONT_ROW_HEIGHT, TFT_WHITE);
 }
 
 /* Display a switch button for sd card save */
@@ -850,8 +855,8 @@ void UI::Label_Hardware(uint8_t status) {
 void UI::Label_SensorInfo(String name, String unit, uint8_t pos) {
     if (!layout_refresh)
         return;
-    uint8_t name_font = (name.length() > 7) ? FONT2 : GFXFF;
-    uint8_t unit_font = (unit.length() > 7) ? FONT2 : GFXFF;
+    uint8_t name_font = (name.length() > 9) ? FONT2 : GFXFF;
+    uint8_t unit_font = (unit.length() > 9) ? FONT2 : GFXFF;
     tft.setFreeFont(FSS9); // tft.setFreeFont(FSSB9);
     tft.setTextColor(TFT_WHITE, tft.color565(100, 100, 100));
     tft.drawCentreString(name, 65+pos*100, 60, name_font);
@@ -871,24 +876,27 @@ void UI::Label_SensorAdd(uint8_t pos) {
 }
 
 void UI::Label_SensorData(sensor_data& data, uint8_t pos, uint16_t bg_color) {
-    uint8_t sense_display_num = 0, font = 1;
-    tft.setFreeFont(FMB9);// tft.setFreeFont(FSS9);
+    uint8_t data_num = 0;
+    tft.setFreeFont(FSS9);
     tft.setTextColor(TFT_WHITE, bg_color);
     tft.setTextDatum(TC_DATUM);
     tft.setTextPadding(90);
     if (data.ui_type == SENSOR_UI_TYPE_NORMAL) {
-        //传感器需要显示的数据数量，最多同时显示4个，每个数据 4 byte
-        sense_display_num = (data.size > 4*4) ? 4*4 : data.size;
-        font = 2 * (4 - sense_display_num / 4);
-        for (int i = 0; i < sense_display_num; i += 4) { 
-            int32_t dd = ((uint8_t *)data.data)[i] << 0 |
-                            ((uint8_t *)data.data)[i + 1] << 8 |
-                            ((uint8_t *)data.data)[i + 2] << 16 |
-                            ((uint8_t *)data.data)[i + 3] << 24;
+        //传感器需要同时显示的数据数量，最多4个，每个 4 bytes
+        data_num = (data.size > 4*4) ? 4 : data.size/4;
+        for (int i = 0; i < data_num; i ++) { 
+            // int32_t dd =((uint8_t *)data.data)[4*i+0] << 0 |
+            //             ((uint8_t *)data.data)[4*i+1] << 8 |
+            //             ((uint8_t *)data.data)[4*i+2] << 16|
+            //             ((uint8_t *)data.data)[4*i+3] << 24;
+            int32_t dd = ((int32_t *)data.data)[i];
+            uint8_t font =  (data_num == 3) ? FONT2 : 
+                            (data_num == 2) ? FONT4 : 
+                            (dd > 999)      ? FONT4 : FONT6;
             if (data.data_type == SENSOR_DATA_TYPE_INT32)
-                tft.drawString(String(dd), 65+pos*100, 90+24*i/4, font);
+                tft.drawString(String(dd), 65+pos*100, 90+24*i, font);
             else if (data.data_type == SENSOR_DATA_TYPE_FLOAT)
-                tft.drawFloat((float)dd/100, 2, 65+pos*100, 90+24*i/4, font);
+                tft.drawFloat((float)dd/100, 2, 65+pos*100, 90+24*i, font);
             // tft.setTextPadding(width);
         }
     } else {

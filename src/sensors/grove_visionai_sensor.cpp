@@ -35,7 +35,7 @@ void Visionai::Run() {
                 }
                 Delay(Ticks::MsToTicks(100));
             }
-            uint8_t dsize = ai.get_result_len(); // receive how many people detect
+            dsize = ai.get_result_len(); // receive how many people detect
             if (dsize > 0 && dsize <= MAX_DETECTION) {
                 int time1 = millis() - tick;
                 sprintf(log, "Time consuming: %d", time1);
