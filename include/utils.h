@@ -4,7 +4,7 @@
 
 #define LOGSS Serial1
 #define DEVICE "SenseCAP K1100"
-#define VERSION "v0.32"
+#define VERSION "v0.4"
 enum button_state {
     NETWORK_PRESSED,
     PROCESS_PRESSED,
