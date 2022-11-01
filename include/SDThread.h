@@ -21,7 +21,7 @@ class SDThread : public Thread {
   protected:
     virtual void Run();
     uint8_t      status();
-    void         saveData(String sensorName, int32_t *sensorData, int len);
+    void         saveData(String sensorName, int32_t *sensorData, int len, uint8_t type);
     void         Readdata(String sensorName);
 
   private:

@@ -28,7 +28,7 @@ uint8_t SDThread::status() {
     return 1;
 }
 //保存传感器数值到SD卡，参数：传感器名（同时也是文件名称），数据，数据长度
-void SDThread::saveData(String sensorName, int32_t *sensorData, int len) {
+void SDThread::saveData(String sensorName, int32_t *sensorData, int len, uint8_t type) {
     String fileName = sensorName + ".csv";
     // LOGSS.println(fileName);
     if (SD.exists(fileName)) // header只写一次
@@ -53,14 +53,23 @@ void SDThread::saveData(String sensorName, int32_t *sensorData, int len) {
                  String(now.hour()) + ":" + String(now.minute()) + ":" + String(now.second()) +
                  ",");
 
-    for (int i = 0; i < len - 1; i++) //写入传感器值
+    for (int i = 0; i < len; i++) //写入传感器值
     {
-        myFile.print(sensorData[i]);
-        // LOGSS.println(sensorData[i]);
-        myFile.print(",");
+        /* 根据传感器值类型进行写入 */
+        if (type == SENSOR_DATA_TYPE_FLOAT) {
+            myFile.print(sensorData[i]/100);
+            myFile.print(".");
+            myFile.print(sensorData[i]%100);
+        } else {
+            myFile.print(sensorData[i]);
+        }
+        /* 判断是否写完所有传感器值 */
+        if (i+1 < len) {
+            myFile.print(",");
+        } else {
+            myFile.println(" ");
+        }
     }
-    myFile.println(sensorData[len - 1]); //最后一个传感器数值加换行
-    // LOGSS.println(sensorData[len - 1]);
 
     myFile.close();
 }
@@ -120,12 +129,14 @@ void SDThread::Run() {
                 if (cfg.sensor_save_flag & (1 << data.id)) {
                     cfg.sd_status = status();
                     if (cfg.sd_status == 1) {
-                        saveData(String(data.name), (int32_t *)data.data, data.size / 4);
+                        saveData(String(data.name), (int32_t *)data.data, data.size/4, 
+                                 data.data_type);
                     }
                 }
             }
             sd_data_ready = true;
         }
+        Delay(Ticks::MsToTicks(1000));
     }
 }
 
