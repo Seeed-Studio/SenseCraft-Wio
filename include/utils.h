@@ -2,8 +2,9 @@
 #define __UTILS_H__
 #include <stdint.h>
 
-#define LOGSS Serial
-#define VERSION "v0.32"
+#define LOGSS Serial1
+#define DEVICE "SenseCAP K1100"
+#define VERSION "v0.4"
 enum button_state {
     NETWORK_PRESSED,
     PROCESS_PRESSED,
@@ -40,7 +41,7 @@ struct sensor_data {
     const char   *data_unit;
     const void   *data;
     unsigned char size;
-    uint8_t       id;
+    uint16_t       id;
     bool          status;        // 0: normal, 1: error
     uint8_t       data_type = 0; // 0: int32_t, 1: float(*100)
     uint8_t       ui_type   = 0; // 0: normal, 1: average value
@@ -52,13 +53,16 @@ struct log_data {
 };
 
 enum sensor_type {
-    // 1-3, buildin sensor
+    /* buildin sensor */
     BUILDIN_LIGHT = 1,
     BUILDIN_MIC,
     LIS3DHTRSENSOR,
+    /* grove i2c sensor */
     GROVE_VISIONAI,
     GROVE_SHT4X,
     GROVE_SGP30,
+    GROVE_VL53L0X,
+    /* grove analog sensor */
     GROVE_SOIL,
 };
 

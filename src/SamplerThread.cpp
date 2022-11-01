@@ -7,12 +7,14 @@
 #include "sensors/buildin_mic.h"
 #include "sensors/grove_sgp30_sensor.h"
 #include "sensors/grove_sht4x_sensor.h"
+#include "sensors/grove_vl53l0x_sensor.h"
 #include "sensors/grove_soil_sensor.h"
 #include "sensors/grove_visionai_sensor.h"
+#include "sensors/SensorsUtils.h"
 #include <vector>
 
 SamplerThread::SamplerThread(SysConfig &config, UI &ui)
-    : Thread("SamplerThread", 128 * 6, 1), cfg(config), display(ui) {
+    : Thread("SamplerThread", 128 * 4, 1), cfg(config), display(ui) {
     // start thread when created
     Start();
 }
@@ -25,10 +27,11 @@ void SamplerThread::Run() {
     std::vector<sensor_base *> sensors;
     sensors.push_back(new buildin_light_sensor());
     sensors.push_back(new buildin_mic());
-    sensors.push_back(new LIS3DHTRSensor());
+    sensors.push_back(new LIS3DHTRSensor()); // buildin-imu
+    sensors.push_back(new grove_soil_sensor());
     sensors.push_back(new grove_sht4x_sensor());
     sensors.push_back(new grove_sgp30_sensor());
-    sensors.push_back(new grove_soil_sensor());
+    sensors.push_back(new grove_vl53l0x_sensor());
     sensors.push_back(new grove_visionai_sensor());
     // sensors.push_back(new FakeSensor());
 
@@ -64,7 +67,7 @@ void SamplerThread::Run() {
         }
         datas.clear();
         datas.shrink_to_fit();
-        Delay(Ticks::MsToTicks(1000));
+        Delay(Ticks::MsToTicks(SENSOR_READ_DELAY));
         // LOGSS.printf("SamplerThread Stacks Free Bytes Remaining %d\r\n",
         // uxTaskGetStackHighWaterMark(GetHandle()));
     }

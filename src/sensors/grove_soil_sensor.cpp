@@ -4,29 +4,16 @@
 grove_soil_sensor::grove_soil_sensor() {
 }
 void grove_soil_sensor::init() {
+    is_available = (Grove_I2C_Check(softwarei2c)) ? false : true;
 }
 
 bool grove_soil_sensor::read(struct sensor_data *sdata) {
     uint16_t sum = 0, data[READ_NUM] = {0};
     double   variance = 0.0;
-    // 根据能否可以控制scl，判断是否接了I2C设备
-    pinMode(SOFTWRIE_SCLPIN, OUTPUT);
-    digitalWrite(SOFTWRIE_SCLPIN, HIGH);
-    pinMode(SOFTWRIE_SCLPIN, INPUT);
-    if (digitalRead(SOFTWRIE_SCLPIN) == HIGH) {
-        pinMode(SOFTWRIE_SCLPIN, OUTPUT);
-        digitalWrite(SOFTWRIE_SCLPIN, LOW);
-        if (digitalRead(SOFTWRIE_SCLPIN) == LOW) {
-            pinMode(SOFTWRIE_SCLPIN, OUTPUT);
-            digitalWrite(SOFTWRIE_SCLPIN, HIGH);
-        }
+    init();
+    if (!is_available) {
         return false;
     }
-    //
-    // softwarei2c.begin(SOFTWRIE_SDAPIN, SOFTWRIE_SCLPIN);
-    // if (I2CScanner(softwarei2c)) {
-    //     return false;
-    // }
     analogRead(SOILPIN);
     delay(2);
     // 求和

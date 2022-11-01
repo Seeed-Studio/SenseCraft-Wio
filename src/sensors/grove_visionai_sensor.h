@@ -3,6 +3,7 @@
 
 #include "Seeed_Arduino_GroveAI.h"
 #include "SoftwareI2C.h"
+#include "SensorsUtils.h"
 #include "SysConfig.h"
 #include "sensor.h"
 #include <Seeed_Arduino_ooFreeRTOS.h>
@@ -22,7 +23,7 @@ class Visionai : public Thread {
     uint8_t                 dsize;
     bool                    status;
     std::vector<log_data>   ai_log;
-    SoftwareI2C             softwarei2c;
+    // SoftwareI2C             softwarei2c;
     GroveAI                 ai = GroveAI(softwarei2c);
 
   protected:
@@ -36,12 +37,14 @@ class grove_visionai_sensor : public sensor_base {
     void        init();
     const char *get_name();
     bool        read(struct sensor_data *data);
+    bool        is_connected;
 
   private:
     const char *name = "Vision";
     const char *data_unit = "count,%";
     int         visionai_value[20];
     Visionai   *visionai;
+    // GroveAI     ai = GroveAI(softwarei2c);
 };
 
 #endif

@@ -41,7 +41,11 @@ const char *ROOT_CA_BALTIMORE = "-----BEGIN CERTIFICATE-----\n"
                                 "R9I4LtD+gdwyah617jzV/OeBHRnDJELqYzmp\n"
                                 "-----END CERTIFICATE-----";
 
-WiFiThread::WiFiThread(SysConfig &config) : Thread("WiFiThread", 128 * 10, 1), cfg(config) {
+extern void LogMemoryUsage(const char *s);
+extern void LogHeapChange(const char *s);
+extern void LogTaskTrace();
+
+WiFiThread::WiFiThread(SysConfig &config) : Thread("WiFiThread", 128 * 6, 1), cfg(config) {
     Start();
 }
 
@@ -149,8 +153,10 @@ int WiFiThread::ConnectToHub(az_iot_hub_client *iot_hub_client, const std::strin
 
     const az_span hostSpan{az_span_create((uint8_t *)&HubHost[0], HubHost.size())};
     LOGSS.printf("Hub:\r\n Host: %s\r\n", HubHost.c_str());
+    
     const az_span deviceIdSpan{az_span_create((uint8_t *)&deviceIdCache[0], deviceIdCache.size())};
     LOGSS.printf(" Device id = %s\r\n", deviceIdCache.c_str());
+
     az_iot_hub_client_options options = az_iot_hub_client_options_default();
     options.model_id                  = AZ_SPAN_LITERAL_FROM_STR(IOT_CONFIG_MODEL_ID);
     if (az_result_failed(az_iot_hub_client_init(iot_hub_client, hostSpan, deviceIdSpan, &options)))
@@ -163,11 +169,13 @@ int WiFiThread::ConnectToHub(az_iot_hub_client *iot_hub_client, const std::strin
         return -4;
 
     LOGSS.printf(" MQTT client id = %s\r\n", mqttClientId);
+    // LogMemoryUsage(__FUNCTION__);
     char mqttUsername[256];
     if (az_result_failed(az_iot_hub_client_get_user_name(iot_hub_client, mqttUsername,
                                                          sizeof(mqttUsername), NULL)))
         return -5;
     LOGSS.printf(" MQTT username = %s\r\n", mqttUsername);
+    // LogMemoryUsage(__FUNCTION__);
     char    mqttPassword[300];
     uint8_t signatureBuf[256];
     az_span signatureSpan = az_span_create(signatureBuf, sizeof(signatureBuf));
@@ -184,7 +192,7 @@ int WiFiThread::ConnectToHub(az_iot_hub_client *iot_hub_client, const std::strin
     if (az_result_failed(az_iot_hub_client_sas_get_password(
             iot_hub_client, expirationEpochTime, encryptedSignatureSpan, AZ_SPAN_EMPTY,
             mqttPassword, sizeof(mqttPassword), NULL)))
-        return -3;
+        return -3; 
     // LOGSS.printf(" MQTT password = %s\r\n", mqttPassword);
 
     wifiClient.setCACert(ROOT_CA_BALTIMORE);
@@ -200,6 +208,8 @@ int WiFiThread::ConnectToHub(az_iot_hub_client *iot_hub_client, const std::strin
 
     client->subscribe(AZ_IOT_HUB_CLIENT_METHODS_SUBSCRIBE_TOPIC);
     client->subscribe(AZ_IOT_HUB_CLIENT_C2D_SUBSCRIBE_TOPIC);
+    LOGSS.println("connect to hub end");
+    // LogMemoryUsage(__FUNCTION__);
 
     return 0;
 }
@@ -283,31 +293,27 @@ int WiFiThread::SendCommandResponse(az_iot_hub_client_method_request *request, u
 }
 
 void WiFiThread::reconnect() {
-    // Loop until we're reconnected
-    while (!client->connected()) {
-        LOGSS.println("WIFI - Attempting MQTT connection...");
-
-        // Attempt to connect
-        const uint64_t now = ntp->epoch();
-        if (ConnectToHub(&HubClient, cfg.symmetric_key.c_str(), now + TOKEN_LIFESPAN) != 0) {
-            LOGSS.printf(" Hub host = %s\r\n", HubHost.c_str());
-            LOGSS.printf(" registration id = %s\r\n", cfg.registration_id.c_str());
-            LOGSS.printf("WIFI - Attempting MQTT failed, rc=%s\r\n", client->state());
-            LOGSS.println(" try again in 2 seconds");
-            // Wait 2 seconds before retrying
-            delay(2000);
-
-        } else {
-            LOGSS.println("WIFI - Attempting MQTT connected");
-        }
-        reconnectTime = now + TOKEN_LIFESPAN * 0.85;
+    LOGSS.println("WIFI - Attempting MQTT connection...");
+    // Attempt to connect
+    const uint64_t now = ntp->epoch();
+    if (ConnectToHub(&HubClient, cfg.symmetric_key.c_str(), now + TOKEN_LIFESPAN) != 0) {
+        LOGSS.printf(" Hub host = %s\r\n", HubHost.c_str());
+        LOGSS.printf(" registration id = %s\r\n", cfg.registration_id.c_str());
+        LOGSS.printf("WIFI - Attempting MQTT failed, rc=%d\r\n", client->state());
+        LOGSS.println(" try again in 2 seconds");
+        delay(2000); // Wait 2 seconds before retrying
+    } else {
+        LOGSS.println("WIFI - Attempting MQTT connected");
     }
+    reconnectTime = now + TOKEN_LIFESPAN * 0.85;
 }
 
 // Sending data to Ubidots
 az_result WiFiThread::send_data() {
     char payload[16];
-    if (!client->connected()) {
+    // LOGSS.println("send data...");
+
+    while (!client->connected()) {
         reconnect();
     }
 
@@ -405,6 +411,7 @@ void WiFiThread::Run() {
             cfg.wifi_rssi     = WiFi.RSSI();
             wifi_data_ready   = false;
             send_data(); // Sending data to Ubidots
+            // LOGSS.println("send done. ");
             wifi_data_ready = true;
             Delay(Ticks::SecondsToTicks(60));
         } else {

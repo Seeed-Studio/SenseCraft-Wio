@@ -15,7 +15,7 @@ using namespace cpp_freertos;
 #define SCREEN_WIDTH 320 // Wio Terminal Maximum Width
 #define SCREEN_HIGH 240  // Wio Terminal Maximum Height
 
-#define SEMSOR_NUM_MAX 4      // Maximum number of sensors
+#define SENSOR_NUM_MAX 6      // Maximum number of sensors
 #define LINE_DATA_MAX_SIZE 30 // maximum size of data
 #define DRAW_LINE_MAX_NUM 1   // maximum num of draw line
 #define SHOW_LOG_MAX_SIZE 11  // maximum size of log
@@ -59,8 +59,8 @@ typedef bool (*page_t)(uint8_t key);
 
 class UI : public Thread {
   public:
-    UI(TFT_eSPI &lcd, TFT_eSprite &display, SysConfig &config, Message &m1);
-    void init();
+    // UI(TFT_eSPI &lcd, TFT_eSprite &display, SysConfig &config, Message &m1);
+    UI(TFT_eSPI &lcd, SysConfig &config, Message &m1);
 
   protected:
     virtual void Run();
@@ -71,7 +71,7 @@ class UI : public Thread {
 
   private:
     TFT_eSPI    &tft;
-    TFT_eSprite &spr;
+    // TFT_eSprite &spr;
 
     Message &btnMail;
 
@@ -91,9 +91,25 @@ class UI : public Thread {
 
     struct PagesStateMachine page;
 
-    void TitleDisplay(uint8_t t);
-    void Status1Display(uint8_t status);
-    void Status2Display(uint8_t status);
+    bool data_refresh;   // if new data push, refresh data in screen
+    bool layout_refresh; // if a button pressed, refresh layout
+
+    /* Label: basic and simple UI elements */ 
+    void Label_Network(void);
+    void Label_Hardware(uint8_t status);
+    void Label_SensorInfo(String name, String unit, uint8_t pos);
+    void Label_SensorData(sensor_data& data, uint8_t pos, uint16_t bg_color);
+    void Label_SensorAdd(uint8_t pos);
+    void Label_Subtitle(String value);
+    void Label_CentreBtn(String name, uint16_t color);
+
+    /* Widget: advanced and complex UI elements */
+    void Widget_Title(uint8_t t);
+    void Widget_SaveButton(uint8_t button);
+    void Widget_Signal(int16_t signal, int32_t x, int32_t y);
+    void Widget_PagePos(int PAGES, int _CHOOSE_PAGE);
+    void Widget_LoraState(int32_t x, int32_t y);
+
     void StatusMachine(struct State *ui_state, uint8_t key);
 
     struct LoRaBandInfo lora_band_info[3] = {
@@ -102,50 +118,37 @@ class UI : public Thread {
         {"AU", "915", "Australia", 9},
     };
 
-    struct NetworkState n_state = {0, {0, false, 0}, {0, false, 0}};
-    bool                NetworkPageManager(uint8_t keys);
-    bool                Network_1(uint8_t select);
-    bool                Network_2_0(uint8_t select); // lora
-    bool                Network_2_1(uint8_t select); // wifi
-    bool                Network_3_0(uint8_t select); // lora
-    bool                Network_3_1(uint8_t select); // wifi
-    bool                Network_4_0(uint8_t select); // lora
-    bool                Network_4_1(uint8_t select); // wifi
-    bool                Network_5_0(uint8_t select); // lora
-    bool                Network_6_0(uint8_t select); // lora
-    bool                NetworkSubtitles(uint8_t keys);
-    void                NetworkSignal(int16_t signal);
-    void                DisconnectDisplay();
-    void NetworkLoRaBandSelect(uint8_t location, struct LoRaBandInfo lbi, uint8_t select);
+    struct State u_state = {0, true, 0};
+    void NetworkPageManager(uint8_t keys);
+    bool Network_Home(uint8_t select);
+    bool Network_Connect(uint8_t select);
+    bool Network_LoRa_Band(uint8_t select);
+    bool Network_LoRa_Confirm(uint8_t select);
+    bool Network_Disconnect(uint8_t select);
 
     struct State p_state = {0, true, 0};
-    void         ProcessPageManager(uint8_t keys);
-    void         ProcessSubTitle(uint8_t select);
-    bool         Process_1(uint8_t select);
-    bool         Process_2(uint8_t select);
+    void ProcessPageManager(uint8_t keys);
+    bool Process_1(uint8_t select);
+    bool Process_2(uint8_t select);
 
     struct State s_state = {0, true, 0};
-    void         SensePageManager(uint8_t keys);
-    bool         Sensor_1(uint8_t select);
-    bool         Sensor_2(uint8_t select);
-    bool         Sensor_3(uint8_t select);
-    void         SensorADDDisplay(uint8_t chose);
-    void         SensorPageState(int PAGES, int _CHOOSE_PAGE);
-    void         SensorSubTitle(String value);
-    void         SensorSubTitle2(String value);
-    void         SensorSwitchButton(uint8_t button);
-    void         SensorUnit(String value);
-
-    typedef bool (UI::*page_t)(uint8_t key);
-
-    page_t l_network[6] = {&UI::Network_1, &UI::Network_2_0, &UI::Network_3_0, &UI::Network_4_0,
-                           &UI::Network_5_0, &UI::Network_6_0};
-    page_t w_network[4] = {&UI::Network_1, &UI::Network_2_1, &UI::Network_3_1, &UI::Network_4_1};
-
-    page_t process[2] = {&UI::Process_1, &UI::Process_2};
-    page_t sense[3]   = {&UI::Sensor_1, &UI::Sensor_2, &UI::Sensor_3};
+    void SensePageManager(uint8_t keys);
+    bool Sensor_1(uint8_t select);
+    bool Sensor_2(uint8_t select);
+    bool Sensor_3(uint8_t select);
 
     void PageMangent(uint8_t key);
+
+    typedef bool (UI::*page_t)(uint8_t key);
+    typedef void (UI::*main_t)(uint8_t key);
+
+    enum uplink_index { HOME_S, CONNECT, DISCONNECT_S, LORABAND_S, LORACONFIRM };
+    page_t uplink [5] = { &UI::Network_Home, &UI::Network_Connect, &UI::Network_Disconnect, 
+                          &UI::Network_LoRa_Band, &UI::Network_LoRa_Confirm };
+    page_t process[2] = { &UI::Process_1, &UI::Process_2};
+    page_t sense  [3] = { &UI::Sensor_1, &UI::Sensor_2, &UI::Sensor_3};
+    main_t get_page[3] = {&UI::NetworkPageManager, &UI::ProcessPageManager, &UI::SensePageManager};
+    // void (UI::*get_page[3])(uint8_t key) = {&UI::NetworkPageManager, &UI::ProcessPageManager, &UI::SensePageManager};
 
   private:
     // inline function, 4byte uint8_t to float
