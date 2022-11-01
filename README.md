@@ -37,12 +37,12 @@ To get a sneak peak about how to use this at the current state, please follow [t
 
 ## Functions list
 
-<table style="undefined;table-layout: fixed; width: 1646px">
+<table style="undefined;table-layout: fixed; width: 2623px">
 <colgroup>
 <col style="width: 29px">
-<col style="width: 399px">
-<col style="width: 719px">
-<col style="width: 499px">
+<col style="width: 334px">
+<col style="width: 1767px">
+<col style="width: 493px">
 </colgroup>
 <thead>
   <tr>
@@ -57,7 +57,7 @@ To get a sneak peak about how to use this at the current state, please follow [t
     <td>1</td>
     <td>Basic interaction logic of the user interface</td>
     <td>Switch between the homepage of Sense, Process, and Uplink (Network) by pressing the top 3 buttons. Press LEFT and RIGHT to select different options, press UP to return, and press ENTER to confirm. DOWN key is undefined</td>
-    <td rowspan="13">Implemented<br></td>
+    <td rowspan="14">Implemented<br></td>
   </tr>
   <tr>
     <td>2</td>
@@ -97,7 +97,7 @@ To get a sneak peak about how to use this at the current state, please follow [t
   <tr>
     <td>9</td>
     <td>Connect to Azure IoT Central via WiFi</td>
-    <td>Users can connect to the Azure IoT Central platform via WiFi and display data. Learn more <a href="https://wiki.seeedstudio.com/Connect-Wio-Terminal-to-Azure-IoT-Central" target="_blank" rel="noopener noreferrer">here</a>.</td>
+    <td>Users can connect to the Azure IoT Central platform via WiFi and display data. Learn more <a href="https://wiki.seeedstudio.com/Connect-Wio-Terminal-to-Azure-IoT-Central">here</a>.</td>
   </tr>
   <tr>
     <td>10</td>
@@ -123,7 +123,6 @@ To get a sneak peak about how to use this at the current state, please follow [t
     <td>14</td>
     <td>Disconnect secondary confirmation interface</td>
     <td>On the information display page after successfully connecting to LoRa or WiFi, a discontent button is provided. After clicking, a pop-up window appears to confirm whether it is disconnected or not.</td>
-    <td>Under development, to be released with v0.4</td>
   </tr>
   <tr>
     <td>15</td>
