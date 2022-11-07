@@ -60,6 +60,7 @@ std::string ComputeDerivedSymmetricKey(const std::string& masterKey, const std::
     if (mbedtls_md_hmac_starts(&ctx, base64DecodedMasterKey, base64DecodedMasterKeyLength) != 0) abort();
     if (mbedtls_md_hmac_update(&ctx, (const unsigned char*)&registrationId[0], registrationId.size()) != 0) abort();
     if (mbedtls_md_hmac_finish(&ctx, derivedSymmetricKey) != 0) abort();
+    mbedtls_md_free(&ctx);
 
     // Base64 encode encrypted signature
     // <-- derivedSymmetricKey
