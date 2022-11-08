@@ -43,15 +43,18 @@ class SysConfig {
     SysConfig(/* args */);
     ~SysConfig();
     void init();
+    
+    void ReadConfigParam(const String filename, char *prefix_param, String *param);
     void ReadAllConfig();
+
     void WriteConfigParam(char *filename, char *prefix_param, char *param);
+    void WriteConfigTemp();
 
   private:
     /* data */
     bool              spi_flash_mount;
+    bool              cfg_available;
     Adafruit_USBD_MSC usb_msc;
-
-    void ReadConfigParam(const String filename, char *prefix_param, String *param);
 };
 
 #endif // __SYSCONFIG_H__

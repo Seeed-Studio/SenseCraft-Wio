@@ -45,6 +45,7 @@ void LogHeapChange(const char *s);
 void LogTaskTrace(void);
 
 void setup() {
+    LOGSS.begin(115200);
     display_init();
     SysConfig *cfg = new SysConfig();
     cfg->init();
@@ -53,8 +54,7 @@ void setup() {
     cm_backtrace_init("Seeed K1100 dev kit", HARDWARE_VERSION, SOFTWARE_VERSION);
 #endif
     // put your setup code here, to run once:
-    LOGSS.begin(115200);
-    uint32_t start = millis();
+    uint32_t start = millis();  
     while (!LOGSS && (millis() - start) < 1500)
         ; // Open the Serial Monitor to get started or wait for 1.5"
 

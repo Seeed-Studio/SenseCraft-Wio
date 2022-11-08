@@ -538,36 +538,27 @@ void UI::SensePageManager(uint8_t key) {
 }
 
 bool UI::Sensor_1(uint8_t select) {
-    uint8_t        grove_status;
     uint16_t       bg_color;
     static uint8_t index  = 0; // 指示页面最左侧传感器的序号
-    if (s_data.size() == 0) { // 传感器还未准备好
-        s_data_ready = true;
-        tft.drawString("Loading...", 110, 110, 4);
-        return false;
-    }
     s_data_ready = false;
-    grove_status = (select < s_data.size()) ? 0xff : 0x00;
     if (layout_refresh) 
     {
         Widget_Title(0);   //上方页面栏指示所在功能页
         Label_Network(); //左下角显示连接状态
-        Label_Hardware(grove_status); //右下角提示grove接入
-        // Widget_PagePos(s_data.size()/3+1, select/3);
-        Widget_PagePos((SENSOR_NUM_MAX+2)/3, select/3);
+        Label_Hardware((select<s_data.size())?0xff:0x00); //右下角提示grove接入
+        Widget_PagePos(SENSOR_NUM_MAX/3+(SENSOR_NUM_MAX%3>0), select/3);
         //保证所选传感器在显示范围内，即 index <= select < index+3
         if (select >= index + 3) //所选传感器在当前页之后
             index += 1;
         else if (select < index) //所选传感器在当前页之前
             index = select;
-        // tft.fillRect(20+(select-index)*100, 60, 90, 130, tft.color565(0, 139, 0));
-        // tft.setCursor(100, 300);
-        // tft.loadFont("Sarasa-Latin-24");
-        // tft.setFreeFont(&Orbitron_Light_24);
-        // tft.println("Hello World!");
-        // tft.unloadFont();
     }
-
+    if (s_data.size() == 0) { // 传感器还未准备好
+        s_data_ready = true;
+        tft.setTextColor(TFT_WHITE);
+        tft.drawString("Loading...", 100, 110, 4);
+        return false;
+    }
     for (uint8_t si = 0; si < 3; si++) { // 显示序号为 index，index+1，index+2的传感器
         if (index+si == select) {
             bg_color = tft.color565(0, 139, 0);

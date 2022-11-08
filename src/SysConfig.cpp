@@ -72,29 +72,24 @@ void SysConfig::init() {
     // 如果flash挂载成功 则映射改空间
     if (spi_flash_mount) {
         const sfud_flash *_flash = sfud_get_device_table() + 0;
-
         // Set disk vendor id, product id and revision with string up to 8, 16, 4 characters
         // respectively
         usb_msc.setID("K1101", "Mass Storage", "1.0");
-
         // Set disk size
         usb_msc.setCapacity((_flash->chip.capacity / _flash->chip.erase_gran),
                             _flash->chip.erase_gran);
-
         // Set callback
         usb_msc.setReadWriteCallback(msc_read_cb, msc_write_cb, msc_flush_cb);
-
         // Set Lun ready (RAM disk is always ready)
         usb_msc.setUnitReady(true);
-
         usb_msc.begin();
+        ReadAllConfig();
     }
     // pinMode(SDCARD_DET_PIN, INPUT);
     // if (digitalRead(SDCARD_DET_PIN) == LOW) {
     //     sd_mount = SD.begin(SDCARD_SS_PIN, SDCARD_SPI, 4000000UL);
     // }else
     // 	LOGSS.println("sd card not insert");
-    ReadAllConfig();
 }
 
 // void SysConfig::set_lora_freq(uint8_t frequency)
@@ -109,13 +104,14 @@ void SysConfig::init() {
 
 void SysConfig::ReadConfigParam(const String filename, char *prefix_param, String *param) {
     xSemaphoreTake(SysConfig::lock, portMAX_DELAY);
-    if (spi_flash_mount) {
+    if (spi_flash_mount && cfg_available) {
         File config = SFUD.open(filename, "r");
         if (config) {
-
-            if (-1 != config.find(prefix_param)) {
+            if (config.find(prefix_param) == true) {
                 *param = config.readStringUntil('\n');
                 param->trim();
+            } else { // missing parameter
+                cfg_available = false;
             }
             config.close();
         }
@@ -125,6 +121,7 @@ void SysConfig::ReadConfigParam(const String filename, char *prefix_param, Strin
 
 void SysConfig::ReadAllConfig() {
     if (SFUD.exists("config.txt")) {
+        cfg_available = true; // assume that the configuration is available
         ReadConfigParam("config.txt", "SSID=", &this->ssid);
         ReadConfigParam("config.txt", "PASSWORD=", &this->password);
         ReadConfigParam("config.txt", "MQTT_CLIENT_NAME=", &this->mqtt_client_name);
@@ -133,32 +130,39 @@ void SysConfig::ReadAllConfig() {
         ReadConfigParam("config.txt", "ID_SCOPE=", &this->id_scope);
         ReadConfigParam("config.txt", "DEVICE_ID=", &this->registration_id);
         ReadConfigParam("config.txt", "PRIMARY_KEY=", &this->symmetric_key);
-    }
-    else
-    {
-        WriteConfigParam("config.txt", "SSID=", "WiFi_Name");
-        WriteConfigParam("config.txt", "PASSWORD=", "WiFi_Password");
-        WriteConfigParam("config.txt", "MQTT_CLIENT_NAME=", "Topic");
-        WriteConfigParam("config.txt", "TOKEN=", "Default_Token");
-        WriteConfigParam("config.txt", "DEVICE_LABEL=", "Device_Name");
-        WriteConfigParam("config.txt", "ID_SCOPE=", "Default_ID_Scope");
-        WriteConfigParam("config.txt", "DEVICE_ID=", "Default_Device_ID");
-        WriteConfigParam("config.txt", "PRIMARY_KEY=", "Default_Primay_Key");
+        if (!cfg_available) {
+            SFUD.remove("config.txt");
+            LOGSS.println("missing parameter!");
+            ReadAllConfig();
+        }
+    } else { // config file does not exist, create a template
+        WriteConfigTemp();
+        // WriteConfigParam("config.txt", "SSID=", "WiFi_Name");
+        // WriteConfigParam("config.txt", "PASSWORD=", "WiFi_Password");
+        // WriteConfigParam("config.txt", "MQTT_CLIENT_NAME=", "Topic");
+        // WriteConfigParam("config.txt", "TOKEN=", "Default_Token");
+        // WriteConfigParam("config.txt", "DEVICE_LABEL=", "Device_Name");
+        // WriteConfigParam("config.txt", "ID_SCOPE=", "Default_ID_Scope");
+        // WriteConfigParam("config.txt", "DEVICE_ID=", "Default_Device_ID");
+        // WriteConfigParam("config.txt", "PRIMARY_KEY=", "Default_Primay_Key");
     }
 }
 
 void SysConfig::WriteConfigParam(char *filename, char *prefix_param, char *param) {
     xSemaphoreTake(SysConfig::lock, portMAX_DELAY);
+    LOGSS.println("===> write param");
     if (spi_flash_mount) {
         File config = SFUD.open(filename, "r+");
-        if (config) {
-            if (-1 != config.find(prefix_param)) {
+        if (config) { // file already has content
+            LOGSS.println("cfg file already has content");
+            if (config.find(prefix_param) == true) { // param already in the file
                 config.seek(config.position());
-                config.print(prefix_param);
-                config.print(param);
-                config.print("\n");
             }
-        } else {
+            config.print(prefix_param);
+            config.print(param);
+            config.print("\n");
+        } else { // file is empty
+            LOGSS.println("cfg file is empty");
             config = SFUD.open(filename, "w");
             if (config) {
                 config.print(prefix_param);
@@ -168,5 +172,22 @@ void SysConfig::WriteConfigParam(char *filename, char *prefix_param, char *param
         }
         config.close();
     }
+    xSemaphoreGive(SysConfig::lock);
+}
+
+void SysConfig::WriteConfigTemp() {
+    xSemaphoreTake(SysConfig::lock, portMAX_DELAY);
+    File config = SFUD.open("config.txt", "w");
+    if (config) {
+        config.print("SSID=WiFi_Name\n");
+        config.print("PASSWORD=WiFi_Password\n");
+        config.print("MQTT_CLIENT_NAME=Topic\n");
+        config.print("TOKEN=Default_Token\n");
+        config.print("DEVICE_LABEL=Device_Name\n");
+        config.print("ID_SCOPE=Default_ID_Scope\n");
+        config.print("DEVICE_ID=Default_Device_ID\n");
+        config.print("PRIMARY_KEY=Default_Primay_Key\n");
+    }
+    config.close();
     xSemaphoreGive(SysConfig::lock);
 }
