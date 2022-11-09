@@ -68,7 +68,9 @@ struct grove_ai_vision_data {
  */
 
 LoRaThread::LoRaThread(SysConfig &config) : Thread("LoRaThread", 512, 1), cfg(config) {
+#ifndef CN_VER
     Start();
+#endif
 };
 
 void LoRaThread::Init() {

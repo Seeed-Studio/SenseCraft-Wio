@@ -35,7 +35,7 @@ void UI::Run() {
         // Whether to rotate the screen
         if (rotate_status != rotate_flag) {
             rotate_status = rotate_flag;
-            tft.fillScreen(TFT_BLACK);
+            layout_refresh = true;
             if (rotate_flag == true)
                 tft.setRotation(1);
             else
@@ -216,6 +216,14 @@ void UI::NetworkPageManager(uint8_t keys) {
     case SELECT_PRESSED:
         switch (u_state.current_page)
         {
+#ifdef CN_VER
+        case HOME_S:
+            cfg.wifi_on = true;
+            cfg.cloud = (u_state.s_select == 0)?CLOUD_UBIDOTS:
+                                                CLOUD_AZURE;
+            u_state.current_page = CONNECT;
+            break;
+#else
         case HOME_S:
             if (u_state.s_select == 1) {
                 cfg.lora_on = false;
@@ -225,6 +233,7 @@ void UI::NetworkPageManager(uint8_t keys) {
             else
                 u_state.current_page = (cfg.lora_on) ? CONNECT : LORABAND_S;
             break;
+#endif
         case DISCONNECT_S:
             if (u_state.s_select == 0) {
                 cfg.lora_on = cfg.wifi_on = false;
@@ -250,26 +259,30 @@ void UI::NetworkPageManager(uint8_t keys) {
 
 bool UI::Network_Home(uint8_t select) {
     Widget_Title(2);
-    tft.setFreeFont(FSS9);
-    tft.setTextColor(TFT_WHITE);
-    if (select == 0) {
-        tft.fillRect(30, 95, 110, 60, tft.color565(0, 139, 0));
-        tft.drawString(" Please press the bottom right button to confirm", 2, 166, 2);
-        tft.drawString("           your network selection.", 2, 186, 2);
-        Label_Subtitle("LoRa");
-    } else {
-        tft.fillRect(180, 95, 110, 60, tft.color565(0, 139, 0));
-        tft.drawString("Please refer to our wiki to configure the info in", 8, 166, 2);
-        tft.drawString(" config.txt,then save it and restart the K1100.", 8, 186, 2);
-        Label_Subtitle("WiFi");
-    }
+    Label_Network();
     tft.setFreeFont(FSSB9);
     tft.setTextColor(TFT_WHITE);
-    tft.drawString("LoRa", 60, 121, GFXFF);
-    // tft.drawString("(SenseCAP)", 5, 36, GFXFF);
-    tft.drawString("WiFi", 210, 121, GFXFF);
-    // tft.drawString("(Ubidots)", 6, 36, GFXFF);
-    Label_Network();
+#ifdef CN_VER
+    tft.fillRect(30+150*select, 95, 110, 60, tft.color565(0, 139, 0));
+    tft.drawCentreString("Ubidots", 30+55, 121, GFXFF);
+    tft.drawCentreString("Azure", 30+55+150, 121, GFXFF);
+    String tab = (select == 0) ? "Ubidots" : "Azure";
+    tft.drawString("Please refer to our wiki to configure the info in", 8, 166, 2);
+    tft.drawString(" config.txt,then save it and restart the K1101.", 8, 186, 2);
+#else
+    tft.fillRect(30+150*select, 95, 110, 60, tft.color565(0, 139, 0));
+    tft.drawCentreString("LoRa", 30+55, 121, GFXFF);
+    tft.drawCentreString("WiFi", 30+55+150, 121, GFXFF);
+    String tab = (select == 0) ? "LoRa" : "WiFi";
+    if (select == 0) {
+        tft.drawString(" Please press the bottom right button to confirm", 2, 166, 2);
+        tft.drawString("           your network selection.", 2, 186, 2);
+    } else {
+        tft.drawString("Please refer to our wiki to configure the info in", 8, 166, 2);
+        tft.drawString(" config.txt,then save it and restart the K1100.", 8, 186, 2);
+    }
+#endif
+    Label_Subtitle(tab);
     return true;
 }
 

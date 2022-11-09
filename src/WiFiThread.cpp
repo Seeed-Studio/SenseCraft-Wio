@@ -4,21 +4,6 @@
 #include "utils.h"
 #include <functional>
 
-#define AZ_RETURN_IF_FAILED(exp)                                                                   \
-    do {                                                                                           \
-        az_result const _result = (exp);                                                           \
-        if (az_result_failed(_result)) {                                                           \
-            return _result;                                                                        \
-        }                                                                                          \
-    } while (0)
-
-#define AZ_SPAN_LITERAL_FROM_CHAR(STRING_LITERAL)                                                  \
-    {                                                                                              \
-        ._internal = {                                                                             \
-            .ptr  = (uint8_t *)(STRING_LITERAL),                                                   \
-            .size = strlen(STRING_LITERAL),                                                        \
-        },                                                                                         \
-    }
 const char *ROOT_CA_BALTIMORE = "-----BEGIN CERTIFICATE-----\n"
                                 "MIIDdzCCAl+gAwIBAgIEAgAAuTANBgkqhkiG9w0BAQUFADBaMQswCQYDVQQGEwJJ\n"
                                 "RTESMBAGA1UEChMJQmFsdGltb3JlMRMwEQYDVQQLEwpDeWJlclRydXN0MSIwIAYD\n"
@@ -40,13 +25,81 @@ const char *ROOT_CA_BALTIMORE = "-----BEGIN CERTIFICATE-----\n"
                                 "ksLi4xaNmjICq44Y3ekQEe5+NauQrz4wlHrQMz2nZQ/1/I6eYs9HRCwBXbsdtTLS\n"
                                 "R9I4LtD+gdwyah617jzV/OeBHRnDJELqYzmp\n"
                                 "-----END CERTIFICATE-----";
-
-extern void LogMemoryUsage(const char *s);
-extern void LogHeapChange(const char *s);
-extern void LogTaskTrace();
+void callback(char *topic, byte *payload, unsigned int length) {
+    LOGSS.print("WIFI - Message arrived [");
+    LOGSS.print(topic);
+    LOGSS.print("] ");
+    for (int i = 0; i < length; i++) {
+        LOGSS.print((char)payload[i]);
+    }
+    LOGSS.println("");
+}
 
 WiFiThread::WiFiThread(SysConfig &config) : Thread("WiFiThread", 128 * 6, 1), cfg(config) {
     Start();
+}
+
+void WiFiThread::Run() {
+    client = new PubSubClient(wifiClient);
+    ntp    = new NTP(wifi_udp);
+    while (true) {
+        if (cfg.wifi_on) {
+            if (!cfg.wificonnected) {
+            // while (WiFi.status() != WL_CONNECTED) {
+                WiFi.begin(cfg.ssid.begin(), cfg.password.begin());
+                LOGSS.println("WIFI - Connecting to WiFi...");
+                Delay(Ticks::MsToTicks(1000));
+                if (WiFi.status() == WL_CONNECTED) { 
+                    LOGSS.println("WIFI - Configuring MQTT...");
+                    if (cfg.cloud == CLOUD_AZURE) {
+                        ntp->begin();
+#if defined(USE_DPS)
+                        if (RegisterDeviceToDPS(IOT_CONFIG_GLOBAL_DEVICE_ENDPOINT, cfg.id_scope.c_str(),
+                                                cfg.registration_id.c_str(), cfg.symmetric_key.c_str(),
+                                                ntp->epoch() + TOKEN_LIFESPAN) != 0) {
+                            WiFi.disconnect();
+                        }
+#else
+                        HubHost  = IOT_CONFIG_IOTHUB;
+                        DeviceId = IOT_CONFIG_DEVICE_ID;
+#endif // USE_DPS
+                    }
+                    else { // Ubidots
+                        client->setServer(MQTT_BROKER, 1883);
+                        client->setCallback(callback);
+                    }
+                    cfg.wificonnected = true;
+                    cfg.wifi_rssi     = WiFi.RSSI();
+                }
+            }
+            send_data();
+            for(int i=0; i<60; i++){
+                if (cfg.wifi_on) { // wifi always on
+                    Delay(Ticks::MsToTicks(1000));
+                } else { // wifi turn off
+                    cfg.wificonnected = false;
+                    break;
+                }
+            }
+        } else { // wifi off
+            client->disconnect();
+            WiFi.disconnect();
+            cfg.wificonnected = false;
+            Delay(Ticks::MsToTicks(1000));
+        }
+    }
+}
+
+// Store the received sensor data into a queue of length 30.
+void WiFiThread::WiFiPushData(std::vector<sensor_data *> d) {
+    // A loop to deep copy param of d vector into new wifi_data queue
+    // by Iterative method
+    if (wifi_data_ready) {
+        wifi_data.clear();
+        wifi_data.shrink_to_fit();
+        for (auto data : d)
+            wifi_data.push_back(*data);
+    }
 }
 
 void WiFiThread::MqttSubscribeCallbackDPS(char *topic, byte *payload, unsigned int length) {
@@ -295,28 +348,50 @@ int WiFiThread::SendCommandResponse(az_iot_hub_client_method_request *request, u
 void WiFiThread::reconnect() {
     LOGSS.println("WIFI - Attempting MQTT connection...");
     // Attempt to connect
-    const uint64_t now = ntp->epoch();
-    if (ConnectToHub(&HubClient, cfg.symmetric_key.c_str(), now + TOKEN_LIFESPAN) != 0) {
-        LOGSS.printf(" Hub host = %s\r\n", HubHost.c_str());
-        LOGSS.printf(" registration id = %s\r\n", cfg.registration_id.c_str());
-        LOGSS.printf("WIFI - Attempting MQTT failed, rc=%d\r\n", client->state());
-        LOGSS.println(" try again in 2 seconds");
-        delay(2000); // Wait 2 seconds before retrying
-    } else {
-        LOGSS.println("WIFI - Attempting MQTT connected");
+    if (cfg.cloud == CLOUD_AZURE) {
+        const uint64_t now = ntp->epoch();
+        if (ConnectToHub(&HubClient, cfg.symmetric_key.c_str(), now + TOKEN_LIFESPAN) == 0) {
+            LOGSS.println("WIFI - Attempting MQTT connected");
+        } else {
+            LOGSS.printf(" Hub host = %s\r\n", HubHost.c_str());
+            LOGSS.printf(" registration id = %s\r\n", cfg.registration_id.c_str());
+            LOGSS.printf("WIFI - Attempting MQTT failed, rc=%d\r\n", client->state());
+            LOGSS.println(" try again in 2 seconds");
+            Delay(Ticks::MsToTicks(2000)); // Wait 2 seconds before retrying
+        }
+        reconnectTime = now + TOKEN_LIFESPAN * 0.85;
+    } else { //Ubidots
+        if (client->connect(cfg.mqtt_client_name.begin(), cfg.token.begin(), "")) {
+            LOGSS.println("WIFI - Attempting MQTT connected");
+        } else {
+            LOGSS.println(cfg.mqtt_client_name.begin());
+            LOGSS.println(cfg.token.begin());
+            LOGSS.printf("WIFI - Attempting MQTT failed, rc=%d\r\n", client->state());
+            LOGSS.println(" try again in 2 seconds");
+            Delay(Ticks::MsToTicks(2000)); // Wait 2 seconds before retrying
+        }
     }
-    reconnectTime = now + TOKEN_LIFESPAN * 0.85;
 }
 
-// Sending data to Ubidots
-az_result WiFiThread::send_data() {
-    char payload[16];
-    // LOGSS.println("send data...");
-
+// Sending data to Cloud
+void WiFiThread::send_data() {
+    wifi_data_ready = false; // disable data push
     while (!client->connected()) {
         reconnect();
     }
+    if (cfg.cloud == CLOUD_AZURE)
+    {
+        LOGSS.println("WIFI - Publishing to azure");
+        publish_azure();
+    } else { //Ubidots
+        LOGSS.println("WIFI - Publishing to ubidots");
+        publish_ubidots();
+    }
+    client->loop();
+    wifi_data_ready = true; // enable data push
+}
 
+az_result WiFiThread::publish_azure(){
     char telemetry_topic[128];
     if (az_result_failed(az_iot_hub_client_telemetry_get_publish_topic(
             &HubClient, NULL, telemetry_topic, sizeof(telemetry_topic), NULL))) {
@@ -332,7 +407,6 @@ az_result WiFiThread::send_data() {
     }
     az_json_writer json_builder;
     char           telemetry_payload[200];
-
     // Builds the topic
     AZ_RETURN_IF_FAILED(
         az_json_writer_init(&json_builder, AZ_SPAN_FROM_BUFFER(telemetry_payload), NULL));
@@ -351,8 +425,8 @@ az_result WiFiThread::send_data() {
                 AZ_RETURN_IF_FAILED(
                     az_json_writer_append_int32(&json_builder, ((int32_t *)data.data)[0]));
             }
-
         } else {
+            char payload[16];
             for (int i = 0; i < data.size / 4; i++) {
                 sprintf(payload, "%s%d", data.name, i);
                 if (data.data_type == SENSOR_DATA_TYPE_FLOAT) {
@@ -378,60 +452,41 @@ az_result WiFiThread::send_data() {
         ++sendCount;
         LOGSS.printf("Sent telemetry %d\r\n", sendCount);
     }
-    client->loop();
 }
 
-void WiFiThread::Run() {
-    // LOGSS.println(cfg.ssid.begin());
-    // LOGSS.println(cfg.password.begin());
-    client = new PubSubClient(wifiClient);
-    ntp    = new NTP(wifi_udp);
-    while (true) {
-        if (cfg.wifi_on) {
-            while (WiFi.status() != WL_CONNECTED) {
-                WiFi.begin(cfg.ssid.begin(), cfg.password.begin());
-                LOGSS.println("WIFI - Connecting to WiFi...");
-                Delay(Ticks::MsToTicks(1000));
-                if (WiFi.status() == WL_CONNECTED) {
-                    ntp->begin();
-#if defined(USE_DPS)
-                    if (RegisterDeviceToDPS(IOT_CONFIG_GLOBAL_DEVICE_ENDPOINT, cfg.id_scope.c_str(),
-                                            cfg.registration_id.c_str(), cfg.symmetric_key.c_str(),
-                                            ntp->epoch() + TOKEN_LIFESPAN) != 0) {
-                        WiFi.disconnect();
-                    }
-#else
-                    HubHost  = IOT_CONFIG_IOTHUB;
-                    DeviceId = IOT_CONFIG_DEVICE_ID;
-#endif // USE_DPS
-                }
-            }
-            // LOGSS.println("WIFI -  wifi connected");
-            cfg.wificonnected = true;
-            cfg.wifi_rssi     = WiFi.RSSI();
-            wifi_data_ready   = false;
-            send_data(); // Sending data to Ubidots
-            // LOGSS.println("send done. ");
-            wifi_data_ready = true;
-            Delay(Ticks::SecondsToTicks(60));
+void WiFiThread::publish_ubidots(){
+    char payload[700];
+    char topic[150];
+    // Builds the topic
+    sprintf(topic, "%s", ""); // Cleans the topic content
+    sprintf(topic, "%s%s", "/v2.0/devices/", cfg.device_label.begin());
+    for (auto data : wifi_data) {
+        // Builds the payload
+        sprintf(payload, "%s", "");
+        if (data.size / 4 <= 1) {
+            sprintf(payload, "%s", "");              // Cleans the payload
+            sprintf(payload, "{\"%s\":", data.name); // Adds the variable label
+            if (data.data_type == SENSOR_DATA_TYPE_FLOAT)
+                sprintf(payload, "%s %f", payload, ((int32_t *)data.data)[0] / 100.0f);
+            else
+                sprintf(payload, "%s %d", payload, ((int32_t *)data.data)[0]); // Adds the value
+            sprintf(payload, "%s}", payload); // Closes the dictionary brackets
+            client->publish(topic, payload);
+            LOGSS.println(payload);
         } else {
-            client->disconnect();
-            WiFi.disconnect();
-            // LOGSS.println("WIFI - Disconnect");
-            cfg.wificonnected = false;
-            Delay(Ticks::MsToTicks(1000));
+            for (int i = 0; i < data.size / 4; i++) {
+                sprintf(payload, "%s", "");
+                sprintf(payload, "{\"%s%d\":", data.name, i + 1); // Adds the variable label
+                if (data.data_type == SENSOR_DATA_TYPE_FLOAT)
+                    sprintf(payload, "%s %f", payload, ((int32_t *)data.data)[i] / 100.0f);
+                else
+                    sprintf(payload, "%s %d", payload, ((int32_t *)data.data)[i]); // Adds the value
+                sprintf(payload, "%s}", payload); // Closes the dictionary brackets
+                client->publish(topic, payload);
+                LOGSS.println(payload);
+                Delay(Ticks::MsToTicks(1000));
+            }
         }
-    }
-}
-
-// Store the received sensor data into a queue of length 30.
-void WiFiThread::WiFiPushData(std::vector<sensor_data *> d) {
-    // A loop to deep copy param of d vector into new wifi_data queue
-    // by Iterative method
-    if (wifi_data_ready) {
-        wifi_data.clear();
-        wifi_data.shrink_to_fit();
-        for (auto data : d)
-            wifi_data.push_back(*data);
+        Delay(Ticks::MsToTicks(1000));
     }
 }
