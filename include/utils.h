@@ -3,7 +3,7 @@
 #include <stdint.h>
 
 #define LOGSS Serial1
-#define CN_VER
+// #define CN_VER
 #ifdef CN_VER
 #define DEVICE "SenseCAP K1101"
 #else

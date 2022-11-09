@@ -16,9 +16,7 @@ class SysConfig {
     /* wifi */
     String ssid;
     String password;
-#ifdef CN_VER
     mqtt_server cloud = CLOUD_AZURE;
-#endif
     /* ubidots */
     String mqtt_client_name;
     String token;

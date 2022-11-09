@@ -14,9 +14,7 @@
 #include <rpcWiFiClientSecure.h>
 #include <vector>
 
-#ifdef CN_VER
 #define MQTT_BROKER "industrial.api.ubidots.com"
-#endif
 
 #define USE_DPS
 #define MQTT_PACKET_SIZE 1024
@@ -66,9 +64,7 @@ class WiFiThread : public Thread {
     void send_data();
 
     az_result publish_azure();
-#ifdef CN_VER
     void publish_ubidots();
-#endif
 
   private:
     SysConfig &cfg;
