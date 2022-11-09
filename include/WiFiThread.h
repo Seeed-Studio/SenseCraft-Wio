@@ -14,6 +14,8 @@
 #include <rpcWiFiClientSecure.h>
 #include <vector>
 
+#define MQTT_BROKER "industrial.api.ubidots.com"
+
 #define USE_DPS
 #define MQTT_PACKET_SIZE 1024
 #define TOKEN_LIFESPAN 3600
@@ -23,6 +25,20 @@
 #endif
 #define IOT_CONFIG_GLOBAL_DEVICE_ENDPOINT "global.azure-devices-provisioning.net"
 #define IOT_CONFIG_MODEL_ID "dtmi:seeedkk:wioterminal:wioterminal_aziot_example;5"
+#define AZ_RETURN_IF_FAILED(exp)                                                                   \
+    do {                                                                                           \
+        az_result const _result = (exp);                                                           \
+        if (az_result_failed(_result)) {                                                           \
+            return _result;                                                                        \
+        }                                                                                          \
+    } while (0)
+#define AZ_SPAN_LITERAL_FROM_CHAR(STRING_LITERAL)                                                  \
+    {                                                                                              \
+        ._internal = {                                                                             \
+            .ptr  = (uint8_t *)(STRING_LITERAL),                                                   \
+            .size = strlen(STRING_LITERAL),                                                        \
+        },                                                                                         \
+    }
 
 using namespace cpp_freertos;
 
@@ -45,7 +61,10 @@ class WiFiThread : public Thread {
     int  SendCommandResponse(az_iot_hub_client_method_request *request, uint16_t status,
                              az_span response);
     void reconnect();
-    az_result send_data();
+    void send_data();
+
+    az_result publish_azure();
+    void publish_ubidots();
 
   private:
     SysConfig &cfg;

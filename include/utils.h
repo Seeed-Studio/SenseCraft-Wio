@@ -3,8 +3,19 @@
 #include <stdint.h>
 
 #define LOGSS Serial1
+// #define CN_VER
+#ifdef CN_VER
+#define DEVICE "SenseCAP K1101"
+#else
 #define DEVICE "SenseCAP K1100"
+#endif
 #define VERSION "v0.4"
+
+enum mqtt_server {
+    CLOUD_AZURE,
+    CLOUD_UBIDOTS,
+};
+
 enum button_state {
     NETWORK_PRESSED,
     PROCESS_PRESSED,
@@ -78,5 +89,11 @@ enum lora_freq {
     IN865,
     AU915,
 };
+
+#ifdef DEBUG
+extern void LogMemoryUsage(const char *s);
+extern void LogHeapChange(const char *s);
+extern void LogTaskTrace();
+#endif // DEBUG
 
 #endif // __UTILS_H__
