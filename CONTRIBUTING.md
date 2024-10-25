@@ -7,3 +7,4 @@ We value contributions and we provide the most active and constant contributors 
 - Test open pull requests: try to run the proposed modifications and report your success or failure. Testing on real hardware takes time and any help in this will speed up our responsiveness in merging contributions.
 - Help others contribute by reviewing their code and suggesting good ways to implement fixes and features.
 - Write documentation and improve the existing content.
+- Assist in translations to your native tongue 🌎

@@ -144,6 +144,7 @@ static const char * const print_info[] = {
         [PRINT_DFSR_EXTERNAL]         = "Debug fault is caused by EDBGRQ signal asserted",
         [PRINT_MMAR]                  = "The memory management fault occurred address is %08x",
         [PRINT_BFAR]                  = "The bus fault occurred address is %08x",
+/**
 #elif (CMB_PRINT_LANGUAGE == CMB_PRINT_LANGUAGE_CHINESE)
         [PRINT_MAIN_STACK_CFG_ERROR]  = "�����޷���ȡ��ջ��Ϣ��������ջ���������",
         [PRINT_FIRMWARE_INFO]         = "�̼����ƣ�%s��Ӳ���汾�ţ�%s�������汾�ţ�%s",
@@ -183,6 +184,7 @@ static const char * const print_info[] = {
         [PRINT_DFSR_EXTERNAL]         = "�������Դ���ԭ���ⲿ��������",
         [PRINT_MMAR]                  = "�����洢����������ĵ�ַ��%08x",
         [PRINT_BFAR]                  = "�������ߴ���ĵ�ַ��%08x",
+**/
 #else
     #error "CMB_PRINT_LANGUAGE defined error in 'cmb_cfg.h'"
 #endif

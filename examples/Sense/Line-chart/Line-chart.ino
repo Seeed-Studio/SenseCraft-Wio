@@ -18,7 +18,7 @@ LIS3DHTR<TwoWire> lis;
 #define SCREEN_HIGH 240  // Wio Terminal Maximum Height
 #define PIXEL 4          // Width of one letter
 
-// 显示尺寸设置
+// Display size settings
 #define SCREEN_WIDTH 320
 #define SCREEN_HIGH 240
 #define SCREEN_PADDING 0

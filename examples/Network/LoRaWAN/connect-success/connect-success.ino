@@ -13,7 +13,7 @@ const static unsigned int FONT_ROW_HEIGHT = 22; // The height of a letter
 //Key
 int key_status = 0;
 
-void key()                 //设置按键
+void key()                 //set button
 {
     if (digitalRead(WIO_KEY_C) == LOW) {
       Serial.println("A Key pressed");

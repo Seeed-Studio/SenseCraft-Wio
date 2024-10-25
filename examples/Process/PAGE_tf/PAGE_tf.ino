@@ -14,7 +14,7 @@ doubles data;                        // Initilising a doubles type to store data
 TFT_eSprite spr = TFT_eSprite(&tft); // Sprite
 LIS3DHTR<TwoWire> lis;
 
-// 显示尺寸设置
+// Display size settings
 #define SCREEN_WIDTH 320
 #define SCREEN_HIGH 240
 #define SCREEN_PADDING 0
@@ -25,19 +25,19 @@ const static unsigned int FONT_LEFT_START = 0;  // px
 const static unsigned int FONT_COLOR = TFT_WHITE;
 const static unsigned int FONT_BG_COLOR = TFT_RED;
 const static unsigned int BACKGROUD = TFT_BLACK;
-int conf = 0;                                     //置信度
-int num = 0;                                      //人体数量
-int light = 0, mic_val = 0;                       //光线值、麦克风响度
-bool col = false;                                 //控制LoRaWAN灯色
-float x_values = 0.0, y_value = 0.0, z_val = 0.0; // IMU数值
+int conf = 0;                                     //Confidence
+int num = 0;                                      //number of people
+int light = 0, mic_val = 0;                       //Light value, microphone loudness
+bool col = false;                                 //control lora wan light color
+float x_values = 0.0, y_value = 0.0, z_val = 0.0; // Imu value
 int conf_avg = 0;
 
 int gg_switch = 0;
 int gg_switch_k = 1;
-int gg_switch_circle = 10;                        // r 外部大圆半径
-int gg_switch_rect_width = 20;                    // width x++ 矩形宽度
+int gg_switch_circle = 10;                        // r outer great circle radius
+int gg_switch_rect_width = 20;                    // width x++ rectangle width
 int gg_switch_rect_high = 1;                      // high  y++
-int gg_switch_location_x = FONT_LEFT_START + 260; // location 左侧圆心
+int gg_switch_location_x = FONT_LEFT_START + 260; // location left center
 int gg_switch_location_y = 115;
 int gg_switch_state = 0; // 0 off 1 on
 unsigned int gg_switch_state_color[4] = {tft.color565(211, 211, 211), TFT_BLUE, tft.color565(201, 201, 201), tft.color565(65, 105, 235)};
