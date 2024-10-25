@@ -81,15 +81,9 @@ void UI::Run() {
         //}
         // LOGSS.printf("UI Stacks Free Bytes Remaining %d\r\n",
         //              uxTaskGetStackHighWaterMark(GetHandle()));
-        if (buff[0] == 5 & layout_refresh) {
-            LogMemoryUsage(__FUNCTION__);
-            LogTaskTrace();
-            layout_refresh = false;
-        }
-        else {
-            PageMangent(keys);
-            Delay(Ticks::MsToTicks(50));//waiting for sensor data
-        }
+        PageMangent(keys);
+        //主要是等数据，不然会Sensor会get不到数据，无法切换页面，未来需要加锁
+        Delay(Ticks::MsToTicks(50));
     }
 }
 
@@ -97,7 +91,7 @@ void UI::Run() {
 void UI::UIPushData(std::vector<sensor_data *> d) {
     // A loop to deep copy param of d vector into new lora_data queue
     // by Iterative method
-    // ui刷新时不更新数据
+    // Data is not updated when Ui refreshes
     if (s_data_ready) {
         s_data.clear();
         s_data.shrink_to_fit();
@@ -116,9 +110,12 @@ void UI::UIPushData(std::vector<sensor_data *> d) {
 }
 
 void UI::UIPushLog(std::vector<log_data> d) {
-    // ui刷新时不更新数据
+    // Data is not updated when Ui refreshes
     if (log_ready) {
-        int log_num = (d.size() > SHOW_LOG_MAX_SIZE) ? SHOW_LOG_MAX_SIZE : d.size();
+        int log_num = d.size();
+        // 最多只显示11条日志
+        if (log_num > SHOW_LOG_MAX_SIZE)
+            log_num = SHOW_LOG_MAX_SIZE;
         a_log.clear();
         a_log.shrink_to_fit();
         for (int i = 0; i < log_num; i++)
@@ -153,7 +150,7 @@ void UI::PageMangent(uint8_t key) {
     data_refresh = false;
 }
 
-// todo: 未启用，待完善
+// todo: Not enabled, to be improved
 void UI::StatusMachine(struct State *ui_state, uint8_t key) {
     switch (key) {
     case LEFT_PRESSED:
@@ -165,7 +162,7 @@ void UI::StatusMachine(struct State *ui_state, uint8_t key) {
         break;
     case RIGHT_PRESSED:
         ui_state->s_select++;
-        // 只有两个选择
+        // only two options
         if (ui_state->s_select > 2) {
             ui_state->s_select = 2;
         }
@@ -391,8 +388,8 @@ void UI::ProcessPageManager(uint8_t key) {
     case RIGHT_PRESSED:
         p_state.s_select++;
         // 只有两个选择
-        if (p_state.s_select > 1) {
-            p_state.s_select = 1;
+        if (p_state.s_select > 2) {
+            p_state.s_select = 2;
         }
         break;
     case UP_PRESSED:
@@ -636,78 +633,32 @@ bool UI::Sensor_2(uint8_t select) {
             .backgroud(tft.color565(0, 0, 0))
             .draw(&tft);
     }
-    select_old = select;
-    return true;
+
+    spr.setFreeFont(FSS9);
+    spr.setTextColor(TFT_WHITE);
+    spr.drawString("ADD", 14, 27, 4);
+
+    spr.fillRect(20, 22 + 1.5 * FONT_ROW_HEIGHT, 40, 40, TFT_WHITE);
+    spr.fillRect(38, 22 + 1.5 * FONT_ROW_HEIGHT + 6, 3, 26, TFT_BLACK);
+    spr.fillRect(27, 22 + 1.5 * FONT_ROW_HEIGHT + 18, 26, 3, TFT_BLACK);
+
+    // spr.pushSprite(220, 90);
+    // spr.deleteSprite();
 }
 
-bool UI::Sensor_3(uint8_t select) {
-    if(!layout_refresh)
-        return true;
+void UI::SensorPageState(int pages_num, int page_select) {
 
-    if (select > s_data.size() - 1)
-        select = s_data.size() - 1;
-    Widget_Title(0);
-    Label_Network();
-    Label_Subtitle(s_data[select].name); // Display the sensor name
-    if (cfg.sensor_save_flag == 0) {
-        Label_Hardware(0x5);
-        Widget_SaveButton(0);
-    } else {
-        if (cfg.sd_status == 1) {
-            if (cfg.sensor_save_flag & 1 << s_data[select].id) {
-                Widget_SaveButton(1);
-                Label_Hardware(0x3);
-            } else {
-                Widget_SaveButton(0);
-                Label_Hardware(0xff);
-            }
-        } else if (cfg.sd_status == 2) {
-            Label_Hardware(0x1);
-            Widget_SaveButton(0);
-        } else {
-            Label_Hardware(0x4);
-            Widget_SaveButton(0);
-        }
+    spr.createSprite(340, 10);
+    // 问题
+    int *page_location = new int[pages_num];
+
+    int temp = 0;
+
+    for (int i = 0; i < pages_num; i++) {
+        page_location[temp] = 140 - pages_num / 2 * 10 * (1 + pages_num % 2) + i * 20;
+        temp++;
     }
-    // layout_refresh = false;
-    return true;
-}
 
-/* Display page title in the top bar */
-void UI::Widget_Title(uint8_t t) {
-    for(uint8_t i = 0; i < 3; i++){
-        uint32_t color = (i==t) ? (tft.color565(135, 206, 235)) : TFT_WHITE;
-        tft.fillRoundRect(17+i*(17+84), 4, 84, FONT_ROW_HEIGHT+15, 8, color);
-    }
-    tft.setFreeFont(FSSB9);
-    tft.setTextColor(TFT_BLACK);
-    tft.drawCentreString("Sense", 59, 14, GFXFF);
-    tft.drawCentreString("Process", 59+101, 14, GFXFF);
-    tft.drawCentreString("Uplink", 59+202, 14, GFXFF);
-    tft.drawLine(0+10, 2*FONT_ROW_HEIGHT, SCREEN_WIDTH-10, 2*FONT_ROW_HEIGHT, TFT_WHITE);
-}
-
-/* Display a switch button for sd card save */
-void UI::Widget_SaveButton(uint8_t button) {
-    tft.setTextColor(TFT_WHITE);
-    tft.drawString("Save to TF card ", 32, 125, FONT4);
-    unsigned int gg_switch_state_color[4] = {tft.color565(211, 211, 211), TFT_BLUE,
-                                             tft.color565(201, 201, 201),
-                                             tft.color565(65, 105, 235)};
-    if (button == 1) {
-        tft.fillCircle(240, 130, 14/2, gg_switch_state_color[button + 2]);
-        tft.fillRect(240, 130 - 14/2, 22, 14 + 1, gg_switch_state_color[button + 2]);
-        tft.fillCircle(240 + 22, 130, 14, gg_switch_state_color[button]);
-    } else {
-        tft.fillCircle(240 + 22, 130, 14/2, gg_switch_state_color[button + 2]);
-        tft.fillRect(240, 130 - 14/2, 22, 14 + 1, gg_switch_state_color[button + 2]);
-        tft.fillCircle(240, 130, 14, gg_switch_state_color[button]);
-    }
-}
-
-/* Display a row of dots to indicates the current page */
-void UI::Widget_PagePos(int pages_num, int page_select) {
-    int posX = (SCREEN_WIDTH - ((pages_num - 1) * 20)) / 2;
     for (int i = 0; i < pages_num; i++) {
         if (i == page_select)
             tft.fillCircle(posX + 20 * i, 206, 3, tft.color565(0, 193, 255));
@@ -740,132 +691,78 @@ void UI::Widget_Signal(int16_t signal, int32_t x, int32_t y) {
         color[2] = tft.color565(100, 100, 100);
         color[3] = tft.color565(100, 100, 100);
     } else {
-        color[0] = tft.color565(140, 42, 42);// No signal
-        color[1] = tft.color565(140, 42, 42);
-        color[2] = tft.color565(140, 42, 42);
-        color[3] = tft.color565(140, 42, 42);
+        Status2Display(0);
+        ret = false;
     }
-    tft.fillRect(x+73, y+155, 3, 11, color[0]);
-    tft.fillRect(x+79, y+152, 3, 14, color[1]);
-    tft.fillRect(x+85, y+149, 3, 17, color[2]);
-    tft.fillRect(x+91, y+146, 3, 20, color[3]);
-}
-
-void UI::Widget_LoraState(int32_t x, int32_t y){
-    uint16_t circle_color;
-    switch (cfg.lora_status) {
-    case LORA_INIT_START:
-        circle_color = tft.color565(139, 139, 0); // Data transmission status: init failed
-        tft.setTextColor(TFT_YELLOW);
-        tft.drawString("LoRaWAN INIT", 208, 5.8 * FONT_ROW_HEIGHT + 6, 2);
-        break;
-    case LORA_INIT_FAILED:
-        circle_color = tft.color565(34, 139, 139); // Data transmission status: init failed
-        tft.setTextColor(TFT_RED);
-        tft.drawString("LoRaWAN INIT", 208, 5.8 * FONT_ROW_HEIGHT + 6, 2);
-        tft.drawString("Failed", 238, 6.6 * FONT_ROW_HEIGHT + 6, 2);
-        break;
-    case LORA_INIT_SUCCESS:
-        circle_color = tft.color565(0, 139, 0); // Data transmission status: init success
-        tft.setTextColor(TFT_GREEN);
-        tft.drawString("LoRaWAN INIT", 208, 5.8 * FONT_ROW_HEIGHT + 6, 2);
-        tft.drawString("Success", 238, 6.6 * FONT_ROW_HEIGHT + 6, 2);
-        break;
-    case LORA_JOIN_FAILED:
-        circle_color = tft.color565(160, 34, 34); // Data transmission status: join failed
-        tft.setTextColor(TFT_RED);
-        tft.drawString("Join LoRaWAN", 208, 5.8 * FONT_ROW_HEIGHT + 6, 2);
-        tft.drawString("Failed", 238, 6.6 * FONT_ROW_HEIGHT + 6, 2);
-        break;
-    case LORA_JOIN_SUCCESS:
-        circle_color = tft.color565(0, 139, 0); // Data transmission status: join success
-        tft.setTextColor(TFT_GREEN);
-        tft.drawString("Join LoRaWAN", 208, 5.8 * FONT_ROW_HEIGHT + 6, 2);
-        tft.drawString("Success", 238, 6.6 * FONT_ROW_HEIGHT + 6, 2);
-        break;
-    case LORA_SEND_FAILED:
-        circle_color = tft.color565(255, 165, 0); // Data transmission status: Packet loss
-        tft.setTextColor(TFT_RED);
-        tft.drawString("Send", 241, 5.8 * FONT_ROW_HEIGHT + 6, 2);
-        tft.drawString("Failed", 238, 6.6 * FONT_ROW_HEIGHT + 6, 2);
-        break;
-    case LORA_SEND_SUCCESS:
-        circle_color = tft.color565(0, 139, 0); // Data transmission status: Packet success
-        tft.setTextColor(TFT_GREEN);
-        tft.drawString("Send", 241, 5.8 * FONT_ROW_HEIGHT + 6, 2);
-        tft.drawString("Success", 238, 6.6 * FONT_ROW_HEIGHT + 6, 2);
-        break;
-    default:
-        break;
+    //获取显示数据的位置
+    if (select >= index + 3) {
+        index += 1;
     }
-    tft.fillCircle(253+x, 4.9*FONT_ROW_HEIGHT+6+y, 10, circle_color);
-}
-
-void UI::Label_CentreBtn(String name, uint16_t color) {
-    tft.fillRoundRect(110, 180, 100, 28, 8, color);
-    tft.setFreeFont(FSS9);
-    tft.setTextColor(TFT_WHITE, color);
-    tft.drawCentreString(name, 160, 185, 1);
-    // tft.drawCentreString(name, 160, 181, 2);
-}
-
-void UI::Label_Network(void) {
-    tft.setFreeFont(FSSB9);
-    if (cfg.wificonnected == true) {
-        tft.setTextColor(TFT_GREEN, TFT_BLACK); // Networking status indication：ON
-        tft.drawString("WiFi", 60, 215, 2);       // Show the network you are in
-    } else if (cfg.lora_status == LORA_JOIN_SUCCESS || cfg.lora_status == LORA_SEND_SUCCESS ||
-               cfg.lora_status == LORA_SEND_FAILED) {
-        tft.setTextColor(TFT_GREEN, TFT_BLACK); // Networking status indication：ON
-        tft.drawString("LoRa", 60, 215, 2);       // Show the network you are in
-    } else {
-        tft.setTextColor(TFT_RED, TFT_BLACK); // Networking status indication：OFF
-        tft.drawString("OFF", 60, 215, 2);      // Show the network you are in
+    if (select < index) {
+        index = select;
     }
-    tft.setTextColor(TFT_WHITE);
-    tft.drawString("Network:", 5, 215, 2);
-}
+    //只显示select-1, select和select+1的数据
+    //处理好特殊情况，第一个和最后一个
+    for (int si = 0; si < 3; si++) {
+        spr.createSprite(90, 130);
+        //高亮选择的数据
+        if (index + si == select) {
+            spr.fillRect(0, 25, 90, 130, tft.color565(0, 139, 0));
+        }
 
-void UI::Label_Hardware(uint8_t status) {
-    tft.setFreeFont(FSS9);
-    tft.setTextColor(TFT_YELLOW);
-    switch (status) {
-    case 0:
-        tft.drawString("Plug in a Grove sensor", 170, 215, 2);
-        break;
-    case 1:
-        tft.drawTriangle(140, 233, 151, 215, 162, 233, TFT_YELLOW);
-        tft.drawString("! ", 150, 219, 2);
-        tft.drawString("TF card storage is full", 168, 215, 2);
-        break;
-    case 2:
-        tft.drawString("Vision AI Sensor connected", 142, 215, 2);
-        break;
-    case 3:
-        tft.drawString("Saving has been started", 162, 215, 2);
-        break;
-    case 4:
-        tft.drawString("Please insert TF card", 170, 215, 2);
-        break;
-    case 5:
-        tft.drawString("No data needs to be stored", 146, 215, 2);
-        break;
-    default:
-        tft.drawString("                             ", 170, 215, 2);
-        break;
+        if (index + si >= s_data.size()) {
+            SensorADDDisplay(index + si == select);
+        } else {
+            // Display the sensor name
+            SensorSubTitle(s_data[index + si].name);
+            SensorUnit(s_data[index + si].data_unit);
+            //显示数据： 0正常显示 1显示平均值
+            spr.setFreeFont(FSS9);
+            spr.setTextColor(TFT_WHITE);
+            if (s_data[index + si].ui_type == SENSOR_UI_TYPE_NORMAL) {
+                //一次只显示4个数据，每个测量数据4个byte
+                if (s_data[index + si].size > 4 * 4)
+                    sense_display_num = 4 * 4;
+                else
+                    sense_display_num = s_data[index + si].size;
+                //把框分成4行，每行显示一个数据
+                for (int i = 0; i < sense_display_num; i += 4) {
+                    int32_t dd = ((uint8_t *)s_data[index + si].data)[i] << 0 |
+                                 ((uint8_t *)s_data[index + si].data)[i + 1] << 8 |
+                                 ((uint8_t *)s_data[index + si].data)[i + 2] << 16 |
+                                 ((uint8_t *)s_data[index + si].data)[i + 3] << 24;
+                    if (s_data[index + si].data_type == SENSOR_DATA_TYPE_INT32)
+                        spr.drawString(String(dd), 2, 30 + 24 * i / 4,
+                                       2 * (4 - sense_display_num / 4));
+                    else if (s_data[index + si].data_type == SENSOR_DATA_TYPE_FLOAT)
+                        spr.drawFloat((float)dd / 100, 2, 2, 30 + 24 * i / 4,
+                                      2 * (4 - sense_display_num / 4));
+                    // todo，数据单位，暂时显示为空
+                    spr.drawString("  ", 68, 30 + 24 * i, 2);
+                }
+            } else {
+                int32_t temp = 0;
+                for (int i = 0; i < s_data[index + si].size; i += 4) {
+                    temp += *(int32_t *)(s_data[index + si].data + i);
+                }
+                temp /= s_data[index + si].size / 4;
+                spr.drawString(String(s_data[index + si].size / 4), 2, 30, 4);
+                if (s_data[index + si].data_type == SENSOR_DATA_TYPE_INT32)
+                    spr.drawString(String(temp), 2, 30 + 24, 4);
+                else if (s_data[index + si].data_type == SENSOR_DATA_TYPE_FLOAT)
+                    spr.drawFloat((float)temp / 100, 2, 2, 30 + 24, 4);
+            }
+        }
+        //根据数据的index，显示不同的位置，一个页面只能显示三个，页面不够补+号。
+        spr.pushSprite(20 + si * 100, 60);
+        spr.deleteSprite();
     }
-}
-
-void UI::Label_SensorInfo(String name, String unit, uint8_t pos) {
-    if (!layout_refresh)
-        return;
-    uint8_t name_font = (name.length() > 9) ? FONT2 : GFXFF;
-    uint8_t unit_font = (unit.length() > 9) ? FONT2 : GFXFF;
-    tft.setFreeFont(FSS9); // tft.setFreeFont(FSSB9);
-    tft.setTextColor(TFT_WHITE, tft.color565(100, 100, 100));
-    tft.drawCentreString(name, 65+pos*100, 60, name_font);
-    tft.setTextColor(TFT_WHITE);
-    tft.drawCentreString(unit, 65+pos*100, 170, unit_font);
+    // SensorADDDisplay(1);
+    SensorPageState(s_data.size() / 3 + 1, select / 3);
+    s_data_ready = true;
+    Status1Display(0);
+    // 暂时不支持折线图
+    return false;
 }
 
 void UI::Label_SensorAdd(uint8_t pos) {

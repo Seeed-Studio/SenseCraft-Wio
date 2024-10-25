@@ -203,3 +203,4 @@ To get started with this project, here is a list of links that we think miaght b
 - [Train and Deploy Your Own AI Model onto SenseCAP K1100](https://wiki.seeedstudio.com/Train-Deploy-AI-Model-A1101-Grove-Vision-AI)
 - [Wio Terminal Getting Started Wiki](https://wiki.seeedstudio.com/Wio-Terminal-Getting-Started)
 - [IoT for Beginner Courses by Microsoft](https://github.com/microsoft/IoT-For-Beginners)
+- [Working with Git](https://docs.github.com/en/get-started/using-git/about-git)

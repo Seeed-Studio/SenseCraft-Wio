@@ -6,7 +6,7 @@
 #if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
 #define BSWAP16(code) __builtin_bswap16(code);
 #define BSWAP32(code) __builtin_bswap32(code);
-#else //大端模式则什么也不做直接返回
+#else //Big-endian mode does nothing and returns directly
 #define BSWAP16(code) code
 #define BSWAP32(code) code
 #endif
@@ -386,7 +386,7 @@ void LoRaThread::Run() {
             cfg.lora_sucess_cnt = 0;
             cfg.lora_rssi       = 0;
         }
-        // 暂时延时处理
+        // Temporarily delay processing
         Delay(Ticks::SecondsToTicks(1));
     }
 }

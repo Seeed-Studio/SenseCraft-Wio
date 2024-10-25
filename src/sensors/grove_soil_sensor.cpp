@@ -16,13 +16,13 @@ bool grove_soil_sensor::read(struct sensor_data *sdata) {
     }
     analogRead(SOILPIN);
     delay(2);
-    // 求和
+    // sum
     for (int i = 0; i < READ_NUM; i++) {
         data[i] = analogRead(SOILPIN);
         delayMicroseconds(2);
         sum += data[i];
     }
-    //求方差
+    //Find the variance
     for (int i = 0; i < READ_NUM; i++) {
         variance = variance + pow(data[i] - sum / READ_NUM, 2);
     }
